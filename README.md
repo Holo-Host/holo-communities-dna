@@ -1,54 +1,22 @@
 # holo-hylo
 
-## Getting Started
+DNAs required for running Hylo on Holochain.
 
-1. `git clone git@github.com:Hylozoic/hylo-holo-evo.git`
-2. `cd hylo-holo-evo`
-
-### Using the default Hylo Staging API configuration
-
-  * From the root of the project run: `cp .env.staging .env`
-
-## Running local:
-
-1. `yarn install`
-2. `yarn build`
-3. `yarn start`
-
-## Running using Docker:
-
-1. Build the docker container: `docker build -t holo-hylo-docker .`
-2. Run the docker container:
-~~~
-docker run -it \
-  -v ${PWD}:/usr/src/app \
-  -v /usr/src/app/node_modules \
-  -p 9000:9000 \
-  --rm \
-  holo-hylo-docker`
-~~~
+! This is a work in progress and only limited functionality is available at this stage !
 
 ## Building and running Holochain instance
 
 Instructions for installing Rust and building the holochain container can be found at [developer.holochain](https://developer.holochain.org/start.html).
 
 After this is installed the DNA can be build using
-`npm run hc:build`
+`npm run build`
 and started using
-`npm run hc:start`
+`npm run start`
 
 If you plan to develop the DNA code further the automated tests can be run using
-`npm run hc:test`
+`npm run test`
 
 At the current time the container config does not include configuration of the network. This is because at the time of writing you must hard code the IPs in the local network. Defauls about this can be found at [developer.holochain](https://developer.holochain.org/start.html) and will likely be updated soon.
-
-The following tasks/dependencies still need to be met for holochain integration to be complete
-
-- [ ] Bugfix in holochain so that refreshes are not required
-- [ ] Fix bug on registering user
-- [ ] Restructure entries for scalability
-- [ ] Networking that works across the internet
-- [ ] Ordering/timestamping of messages
 
 ## Example queries
 Handy to have these here for reference. These are the 4 queries that are redirected to holochain.
