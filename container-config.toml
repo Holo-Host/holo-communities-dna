@@ -1,0 +1,51 @@
+
+[[agents]]
+id = "test_agent1"
+name = "HoloTester1"
+public_address = "HcSciIJiNJF89yphrkfnAoAsgoj4qrj8ubzzKKNOudfvdsuunwZwdz4eqfwjtjr"
+key_file = "./HcSciIJiNJF89yphrkfnAoAsgoj4qrj8ubzzKKNOudfvdsuunwZwdz4eqfwjtjr"
+
+[[agents]]
+id = "test_agent2"
+name = "HoloTester2"
+public_address = "HcScJY7gJUHUzjrmjykzJth5NS9xwygzpSoJUBqY5Q5to44b9x7qShOPa7Zrh6r"
+key_file = "./HcScJY7gJUHUzjrmjykzJth5NS9xwygzpSoJUBqY5Q5to44b9x7qShOPa7Zrh6r"
+
+[[dnas]]
+id = "chat_dna"
+file = "./dna/hylo.dna.json"
+hash = "Qm328wyq38924y"
+
+
+[[instances]]
+id = "hylo-chat"
+dna = "chat_dna"
+agent = "test_agent1"
+[instances.logger]
+type = "simple"
+file = "app_spec.log"
+[instances.storage]
+type = "file"
+path = "tmp-storage"
+
+
+[[interfaces]]
+id = "websocket_interface"
+[interfaces.driver]
+type = "websocket"
+port = 3400
+[[interfaces.instances]]
+id = "hylo-chat"
+
+#===================================================================
+
+[[ui_bundles]]
+id = "main"
+root_dir = "./build"
+hash = "Qm000"
+
+[[ui_interfaces]]
+id = "ui-interface"
+bundle = "main"
+port = 4000
+dna_interface = "websocket_interface"
