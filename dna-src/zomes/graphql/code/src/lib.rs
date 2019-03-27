@@ -15,6 +15,7 @@ extern crate holochain_core_types_derive;
 extern crate juniper;
 #[macro_use]
 extern crate derive_more;
+#[macro_use] extern crate cached;
 
 use hdk::{
     error::{ZomeApiError, ZomeApiResult},
