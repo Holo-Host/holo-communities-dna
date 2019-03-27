@@ -1,4 +1,3 @@
-const queries = require('../queries')
 module.exports = (scenario) => {
 
 scenario.runTape('Can register a user and retrieve them again', async (t, {alice}) => {
