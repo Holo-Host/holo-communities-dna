@@ -14,7 +14,12 @@ use hdk::{
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Post {
-    pub participants: Vec<String>,
+    pub announcement: bool,
+    pub title: String,
+    pub details: String,
+    pub post_type: String,
+    pub creator: Address,
+    pub timestamp: String,
 }
 
 
