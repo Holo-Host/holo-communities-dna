@@ -1,50 +1,49 @@
+use hdk::error::ZomeApiResult;
 use juniper::{FieldResult, ID};
+use serde_json::json;
 
 use crate::Context;
-use crate::holochain_juniper::HID;
+use crate::holochain_juniper::{HID, call_cached};
 
 use super::person::Person;
 use super::message_thread::MessageThread;
 
-/*
-type Message {
-  id: ID
-  text: String
-  creator: Person
-  messageThread: MessageThread
-  createdAt: String
-}
-*/
+
 #[derive(Constructor, Clone)]
 pub struct Message {
     pub id: HID,
 }
+
+fn retrieve_message(m: &Message) -> ZomeApiResult<serde_json::Value> {
+	let id: String = m.id.clone().into();
+	call_cached("chat", "get_message", json!({"message_addr": id}).into())
+}
+
 graphql_object!(Message: Context |&self| {
 	field id(&executor) -> ID {
 		self.id.clone().into()
 	}
 
 	field text(&executor) -> FieldResult<String> {
-		// let text = message::get_text(
-		// 	executor.context().cache.borrow_mut(), 
-		// 	&self.id.to_string().into())?;
-		// Ok(text)
-		Ok("".to_string())
+		retrieve_message(self)?
+			.get("text")
+			.map(|s| String::from(s.as_str().unwrap()))
+			.ok_or("Could not retrieve field of message".into())
 	}
 
 	field creator(&executor) -> FieldResult<Person> {
-		// let id = message::get_message_creator(
-		// 	executor.context().cache.borrow_mut(), 
-		// 	&self.id.to_string().into())?;
-		// Ok(Person{id: id.to_string().into()})
-		Ok(Person{id: "".to_string().into()})
+		let id: String = retrieve_message(self)?
+			.get("creator")
+			.map(|s| String::from(s.as_str().unwrap()))
+			.ok_or("Could not retrieve field of message")?;
+		Ok(Person{id: id.into()})
 	}
 
 	field messageThread(&executor) -> FieldResult<MessageThread> {
-		// let id = message::get_thread_id(
-		// 	executor.context().cache.borrow_mut(), 
-		// 	&self.id.to_string().into())?;
-		// Ok(MessageThread{id: id.into()})
+		let id: String = retrieve_message(self)?
+			.get("message_thread")
+			.map(|s| String::from(s.as_str().unwrap()))
+			.ok_or("Could not retrieve field of message")?;
 		Ok(MessageThread{id: "".to_string().into()})
 	}
 
