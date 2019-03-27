@@ -119,18 +119,14 @@ pub struct Mutation;
 graphql_object!(Mutation: Context |&self| {
 
     field createMessage(&executor, data: MessageInput) -> FieldResult<Message> {
-    	// let id = post_message_to_thread(
-     //        executor.context().cache.borrow_mut(),
-    	// 	&data.message_thread_id.unwrap_or("".into()).into(),
-    	// 	data.text.unwrap_or("".into()),
-     //        data.created_at.unwrap_or("".into()),
-    	// )?;
-    	// Ok(Message{
-    	// 	id: id.into(),
-    	// })
-        Ok(Message{
-            id: "".to_string().into()
-        })
+        let id = call_cached("chat", "post_message_to_thread", json!({
+            "thread_addr": data.message_thread_id.unwrap(),
+            "text": data.text.unwrap_or("".into()),
+            "timestamp": data.created_at.unwrap_or("".into())
+        }).into())?;
+    	Ok(Message{
+    		id: id.as_str().unwrap().to_string().into()
+    	})
     }
 
     field findOrCreateThread(&executor, data: MessageThreadInput) -> FieldResult<MessageThread> {

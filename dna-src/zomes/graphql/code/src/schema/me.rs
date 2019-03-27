@@ -23,10 +23,6 @@ graphql_object!(Me: Context |&self| {
 	}
 
 	field messageThreads(&executor, first: Option<i32>, offset: Option<i32>, order: Option<String>, sort_by: Option<String>) -> FieldResult<MessageThreadQuerySet> {
-		// Ok(MessageThreadQuerySet{
-		// 	total: 0,
-		// 	items: Vec::new()
-		// })
 		let result = call_cached("chat", "get_my_threads", json!({}).into())?;
 		let result_vec = result.as_array().unwrap();
 		Ok(MessageThreadQuerySet{

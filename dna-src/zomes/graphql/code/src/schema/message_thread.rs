@@ -52,17 +52,15 @@ graphql_object!(MessageThread: Context |&self| {
   }
 
   field messages(&executor, first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<MessageQuerySet> {
-  	// let message_ids = thread::get_thread_messages(executor.context().cache.borrow_mut(), &self.id.to_string().into())?;
-   //    Ok(MessageQuerySet{
-   //    	total: message_ids.len() as i32,
-   //    	items: message_ids.into_iter().map(|id| Message{
-   //    		id: id.into(),
-   //    	}).collect()
-   //    })
+  	let result = call_cached("chat", "get_thread_messages", json!({"thread_addr": self.id.to_string()}).into())?;
+    let message_ids: Vec<serde_json::Value> = result.as_array().unwrap().to_vec();
+
     Ok(MessageQuerySet{
-      total: 0,
-      items: Vec::new()
-    }) 
+    	total: message_ids.len() as i32,
+    	items: message_ids.into_iter().map(|id| Message{
+    		id: id.as_str().unwrap().to_string().into(),
+    	}).collect()
+    })
   }
 
   field unreadCount(&executor) -> i32 {

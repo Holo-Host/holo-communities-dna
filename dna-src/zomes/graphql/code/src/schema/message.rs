@@ -1,50 +1,55 @@
-use juniper::{FieldResult, ID};
+use hdk::holochain_core_types::error::HolochainError;
+use hdk::holochain_core_types::json::JsonString;
+use hdk::error::ZomeApiResult;
+use juniper::{FieldError, FieldResult, ID};
+use serde_json::json;
+use std::convert::TryFrom;
 
 use crate::Context;
-use crate::holochain_juniper::HID;
+use crate::holochain_juniper::{HID, call_cached};
 
 use super::person::Person;
 use super::message_thread::MessageThread;
 
-/*
-type Message {
-  id: ID
-  text: String
-  creator: Person
-  messageThread: MessageThread
-  createdAt: String
-}
-*/
+
 #[derive(Constructor, Clone)]
 pub struct Message {
     pub id: HID,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
+pub struct MessageEntry {
+    pub timestamp: String,
+    pub text: String,
+    pub thread_id: String,
+    pub creator: String,
+}
+
+impl Message {
+	fn retrieve_entry(&self) -> ZomeApiResult<MessageEntry> {
+		let id: String = self.id.clone().into();
+		let result = JsonString::from(call_cached("chat", "get_message", json!({"message_addr": id}).into())?);
+		let message_entry = MessageEntry::try_from(result)?;
+		Ok(message_entry)
+	}
+}
+
 graphql_object!(Message: Context |&self| {
 	field id(&executor) -> ID {
 		self.id.clone().into()
 	}
 
 	field text(&executor) -> FieldResult<String> {
-		// let text = message::get_text(
-		// 	executor.context().cache.borrow_mut(), 
-		// 	&self.id.to_string().into())?;
-		// Ok(text)
-		Ok("".to_string())
+		Ok(self.retrieve_entry()?.text)
 	}
 
 	field creator(&executor) -> FieldResult<Person> {
-		// let id = message::get_message_creator(
-		// 	executor.context().cache.borrow_mut(), 
-		// 	&self.id.to_string().into())?;
-		// Ok(Person{id: id.to_string().into()})
-		Ok(Person{id: "".to_string().into()})
+		let id: String = self.retrieve_entry()?.creator;
+		Ok(Person{id: id.into()})
 	}
 
 	field messageThread(&executor) -> FieldResult<MessageThread> {
-		// let id = message::get_thread_id(
-		// 	executor.context().cache.borrow_mut(), 
-		// 	&self.id.to_string().into())?;
-		// Ok(MessageThread{id: id.into()})
+		let id: String = self.retrieve_entry()?.thread_id;
 		Ok(MessageThread{id: "".to_string().into()})
 	}
 
