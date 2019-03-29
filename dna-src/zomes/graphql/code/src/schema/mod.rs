@@ -16,6 +16,7 @@ mod person;
 mod message_thread;
 mod message;
 mod me;
+mod post;
 
 use person::{Person, PersonQuerySet};
 use message::{Message};
