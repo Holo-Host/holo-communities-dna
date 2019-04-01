@@ -47,3 +47,9 @@ id = "ui-interface"
 bundle = "main"
 port = 4000
 dna_interface = "websocket_interface"
+
+# [logger]
+# type="debug"
+# [[logger.rules.rules]]
+# exclude=true
+# pattern=".*"
