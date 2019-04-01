@@ -49,8 +49,7 @@ graphql_object!(Message: Context |&self| {
 	}
 
 	field messageThread(&executor) -> FieldResult<MessageThread> {
-		let id: String = self.retrieve_entry()?.thread_id;
-		Ok(MessageThread{id: "".to_string().into()})
+		Ok(MessageThread{id: self.retrieve_entry()?.thread_id.into()})
 	}
 
 	field createdAt(&executor) -> String {
