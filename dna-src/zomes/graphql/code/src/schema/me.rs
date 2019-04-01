@@ -19,7 +19,7 @@ type Me {
 pub struct Me;
 graphql_object!(Me: Context |&self| {
 	field id(&executor) -> FieldResult<ID> {
-		Ok(identity::get_identity(&AGENT_ADDRESS)?.hylo_id.into())
+		Ok(identity::get_identity(AGENT_ADDRESS.to_string().into())?.hylo_id.into())
 	}
 
 	field messageThreads(&executor, first: Option<i32>, offset: Option<i32>, order: Option<String>, sort_by: Option<String>) -> FieldResult<MessageThreadQuerySet> {

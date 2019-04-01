@@ -18,15 +18,15 @@ pub struct Person {
 graphql_object!(Person: Context |&self| {
 	field id(&executor) -> FieldResult<ID> {
 		// be careful. This field is the Hylo ID not the holochain ID
-		Ok(identity::get_identity(&self.id.to_string().into())?.hylo_id.into())
+		Ok(identity::get_identity(self.id.to_string().into())?.hylo_id.into())
 	}
 
 	field name(&executor) -> FieldResult<String> {
-		Ok(identity::get_identity(&self.id.to_string().into())?.name)
+		Ok(identity::get_identity(self.id.to_string().into())?.name)
 	}
 
 	field avatarUrl(&executor) -> FieldResult<String> {
-		Ok(identity::get_identity(&self.id.to_string().into())?.avatar_url)
+		Ok(identity::get_identity(self.id.to_string().into())?.avatar_url)
 	}
 
 	field memberships(&executor, first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Membership>> {

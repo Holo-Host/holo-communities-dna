@@ -21,13 +21,17 @@ pub struct Identity {
     pub hylo_id: String,
 }
 
-pub fn get_identity(agent_id: &Address) -> ZomeApiResult<Identity> {
-    utils::get_links_and_load_type::<_, Identity>(agent_id, "registered")?
-        .first()
-        .map(|result| result.to_owned())
-        .ok_or(ZomeApiError::Internal(
-            "Agent has not been registered".into(),
-        ))
+
+cached! {
+    CACHE;
+    fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> = {
+        utils::get_links_and_load_type::<_, Identity>(&agent_id, "registered")?
+            .first()
+            .map(|result| result.to_owned())
+            .ok_or(ZomeApiError::Internal(
+                "Agent has not been registered".into(),
+            ))
+    }
 }
 
 pub fn register_user(name: String, avatar_url: String, hylo_id: String) -> ZomeApiResult<Address> {

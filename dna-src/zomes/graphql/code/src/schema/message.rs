@@ -1,7 +1,7 @@
 use hdk::holochain_core_types::error::HolochainError;
 use hdk::holochain_core_types::json::JsonString;
 use hdk::error::ZomeApiResult;
-use juniper::{FieldError, FieldResult, ID};
+use juniper::{FieldResult, ID};
 use serde_json::json;
 use std::convert::TryFrom;
 
