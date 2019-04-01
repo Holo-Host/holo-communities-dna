@@ -5,17 +5,16 @@ name = "HoloTester1"
 public_address = "HcSCjdUIsn6Botxcf8bwmQFDqMz6aqctojcPhzNi54B39cbwJFIuKNjP9uambii"
 keystore_file = "./agent1.keystore"
 
-[[agents]]
-id = "test_agent2"
-name = "HoloTester2"
-public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
-keystore_file = "./agent2.keystore"
+# [[agents]]
+# id = "test_agent2"
+# name = "HoloTester2"
+# public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
+# keystore_file = "./agent2.keystore"
 
 [[dnas]]
 id = "chat_dna"
 file = "./dna/hylo.dna.json"
 hash = "Qm328wyq38924y"
-
 
 [[instances]]
 id = "hylo-chat"
@@ -27,7 +26,6 @@ file = "app_spec.log"
 [instances.storage]
 type = "file"
 path = "tmp-storage"
-
 
 [[interfaces]]
 id = "websocket_interface"
