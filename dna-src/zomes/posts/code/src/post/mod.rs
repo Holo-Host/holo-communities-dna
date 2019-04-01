@@ -1,14 +1,11 @@
 
 use hdk::{
     self,
-    utils,
     entry_definition::ValidatingEntryType,
-    error::ZomeApiResult,
     holochain_core_types::{
-        cas::content::Address, dna::entry_types::Sharing, entry::Entry, error::HolochainError,
+        dna::entry_types::Sharing, error::HolochainError,
         json::JsonString,
     },
-    AGENT_ADDRESS,
 };
 
 
@@ -23,13 +20,12 @@ pub fn def() -> ValidatingEntryType {
         name: "post",
         description: "",
         sharing: Sharing::Public,
-        native_type: Post,
 
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_thread: Post, _ctx: hdk::ValidationData| {
+        validation: |_validation_data: hdk::EntryValidationData<Post>| {
             Ok(())
         },
 
@@ -42,7 +38,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )

@@ -150,13 +150,12 @@ pub fn def() -> ValidatingEntryType {
         name: "identity",
         description: "Extra information attached to an agent address",
         sharing: Sharing::Public,
-        native_type: Identity,
 
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_identity: Identity, _ctx: hdk::ValidationData| {
+        validation: |_validation_data: hdk::EntryValidationData<Identity>| {
             Ok(())
         },
 
@@ -169,7 +168,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             ),
@@ -181,7 +180,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )
