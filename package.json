@@ -5,6 +5,7 @@
   "scripts": {
     "start": "mkdir -p tmp-storage && holochain -c ./container-config.toml",
     "build": "mkdir -p ./dna && cd dna-src && hc package --strip-meta -o ../dna/hylo.dna.json",
-    "test": "cd dna-src && hc test"
+    "test": "cd dna-src && hc test",
+    "hc:test": "cd dna-src && ../holochain/hc test"
   }
 }
