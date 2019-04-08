@@ -109,3 +109,45 @@ module.exports.getMessagesQuery = `
     }
   }
 `
+
+module.exports.createCommentQuery = `
+mutation ($postId: String, $text: String) {
+    createComment(data: {postId: $postId, text: $text}) {
+      id
+      text
+      post {
+        id
+      }
+      createdAt
+      creator {
+        id
+      }
+    }
+  }
+`
+
+module.exports.getCommentsQuery = `
+query ($id: ID, $cursor: ID) {
+    post(id: $id) {
+      id
+      comments(first: 10, cursor: $cursor, order: "desc") {
+        items {
+          id
+          text
+          creator {
+            id
+            name
+            avatarUrl
+          }
+          createdAt
+          attachments {
+            id
+            url
+          }
+        }
+        total
+        hasMore
+      }
+    }
+  }
+`
