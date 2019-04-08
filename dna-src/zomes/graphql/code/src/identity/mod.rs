@@ -22,16 +22,14 @@ pub struct Identity {
 }
 
 
-cached! {
-    CACHE;
-    fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> = {
-        utils::get_links_and_load_type::<_, Identity>(&agent_id, "registered")?
-            .first()
-            .map(|result| result.to_owned())
-            .ok_or(ZomeApiError::Internal(
-                "Agent has not been registered".into(),
-            ))
-    }
+
+pub fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> {
+    utils::get_links_and_load_type::<_, Identity>(&agent_id, "registered")?
+        .first()
+        .map(|result| result.to_owned())
+        .ok_or(ZomeApiError::Internal(
+            "Agent has not been registered".into(),
+        ))
 }
 
 pub fn register_user(name: String, avatar_url: String, hylo_id: String) -> ZomeApiResult<Address> {
@@ -66,7 +64,7 @@ pub fn register_user(name: String, avatar_url: String, hylo_id: String) -> ZomeA
     let id_anchor_addr = hdk::commit_entry(&id_anchor_entry)?;  
     hdk::link_entries(&id_anchor_addr, &AGENT_ADDRESS, "belongs_to")?;
 
-    register_test_identities()?;
+    // register_test_identities()?;
 
     Ok(ident_addr.to_string().into())
 }
