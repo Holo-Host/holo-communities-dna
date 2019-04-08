@@ -13,11 +13,11 @@ const instanceBob = Config.instance(agentBob, dna)
 const twoAgentScenario = new Scenario([instanceAlice, instanceBob], { debugLog: false })
 
 
-// require('./agent/register')(singleAgentScenario)
-// require('./agent/threads')(singleAgentScenario)
-// require('./agent/messages')(singleAgentScenario)
+require('./agent/register')(singleAgentScenario)
+require('./agent/threads')(singleAgentScenario)
+require('./agent/messages')(singleAgentScenario)
 
-// require('./agent/gql_threads')(singleAgentScenario)
-// require('./agent/gql_messages')(singleAgentScenario)
+require('./agent/gql_threads')(singleAgentScenario)
+require('./agent/gql_messages')(singleAgentScenario)
 
 require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
