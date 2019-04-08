@@ -21,13 +21,17 @@ pub struct Identity {
     pub hylo_id: String,
 }
 
-pub fn get_identity(agent_id: &Address) -> ZomeApiResult<Identity> {
-    utils::get_links_and_load_type::<_, Identity>(agent_id, "registered")?
-        .first()
-        .map(|result| result.to_owned())
-        .ok_or(ZomeApiError::Internal(
-            "Agent has not been registered".into(),
-        ))
+
+cached! {
+    CACHE;
+    fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> = {
+        utils::get_links_and_load_type::<_, Identity>(&agent_id, "registered")?
+            .first()
+            .map(|result| result.to_owned())
+            .ok_or(ZomeApiError::Internal(
+                "Agent has not been registered".into(),
+            ))
+    }
 }
 
 pub fn register_user(name: String, avatar_url: String, hylo_id: String) -> ZomeApiResult<Address> {
@@ -150,13 +154,12 @@ pub fn def() -> ValidatingEntryType {
         name: "identity",
         description: "Extra information attached to an agent address",
         sharing: Sharing::Public,
-        native_type: Identity,
 
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_identity: Identity, _ctx: hdk::ValidationData| {
+        validation: |_validation_data: hdk::EntryValidationData<Identity>| {
             Ok(())
         },
 
@@ -169,7 +172,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             ),
@@ -181,7 +184,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )

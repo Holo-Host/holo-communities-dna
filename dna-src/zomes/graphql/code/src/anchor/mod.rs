@@ -16,13 +16,12 @@ pub fn def() -> ValidatingEntryType {
         name: "anchor",
         description: "",
         sharing: Sharing::Public,
-        native_type: Anchor,
 
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_name: Anchor, _ctx: hdk::ValidationData| {
+        validation: |_validation_data: hdk::EntryValidationData<Anchor>| {
             Ok(())
         },
 
@@ -35,7 +34,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             ),
@@ -47,7 +46,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             ),
@@ -59,7 +58,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             ),
@@ -71,7 +70,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )

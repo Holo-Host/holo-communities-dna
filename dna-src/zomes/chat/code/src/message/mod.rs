@@ -45,13 +45,12 @@ pub fn def() -> ValidatingEntryType {
         name: "message",
         description: "A generic message entry",
         sharing: Sharing::Public,
-        native_type: Message,
 
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_message: Message, _ctx: hdk::ValidationData| {
+        validation: |_validation_data: hdk::EntryValidationData<Message>| {
             Ok(())
         },
 
@@ -64,7 +63,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )

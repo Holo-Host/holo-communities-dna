@@ -1,7 +1,7 @@
 use hdk::holochain_core_types::error::HolochainError;
 use hdk::holochain_core_types::json::JsonString;
 use hdk::error::ZomeApiResult;
-use juniper::{FieldError, FieldResult, ID};
+use juniper::{FieldResult, ID};
 use serde_json::json;
 use std::convert::TryFrom;
 
@@ -49,8 +49,7 @@ graphql_object!(Message: Context |&self| {
 	}
 
 	field messageThread(&executor) -> FieldResult<MessageThread> {
-		let id: String = self.retrieve_entry()?.thread_id;
-		Ok(MessageThread{id: "".to_string().into()})
+		Ok(MessageThread{id: self.retrieve_entry()?.thread_id.into()})
 	}
 
 	field createdAt(&executor) -> String {

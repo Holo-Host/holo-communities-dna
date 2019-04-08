@@ -62,13 +62,12 @@ pub fn def() -> ValidatingEntryType {
         name: "thread",
         description: "A thread in which messages are posted",
         sharing: Sharing::Public,
-        native_type: Thread,
 
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_thread: Thread, _ctx: hdk::ValidationData| {
+        validation: |_validation_data: hdk::EntryValidationData<Thread>| {
             Ok(())
         },
 
@@ -81,7 +80,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             ),
@@ -93,7 +92,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             ),
@@ -105,7 +104,7 @@ pub fn def() -> ValidatingEntryType {
                     hdk::ValidationPackageDefinition::Entry
                 },
 
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                validation: |_validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )
