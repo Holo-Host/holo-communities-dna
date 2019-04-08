@@ -33,10 +33,10 @@ pub fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> {
 }
 
 pub fn register_user(name: String, avatar_url: String, hylo_id: String) -> ZomeApiResult<Address> {
-    // don't reregister everyone if it has been done already
+    // only register the test identities if there are none already
     let n_registered = get_people()?.len();
-    if n_registered > 0 {
-        return Ok(Address::new())
+    if n_registered == 0 {
+        register_test_identities()?;
     }
 
     let identity_entry = Entry::App("identity".into(), Identity { name, avatar_url, hylo_id: hylo_id.clone() }.into());
@@ -64,7 +64,6 @@ pub fn register_user(name: String, avatar_url: String, hylo_id: String) -> ZomeA
     let id_anchor_addr = hdk::commit_entry(&id_anchor_entry)?;  
     hdk::link_entries(&id_anchor_addr, &AGENT_ADDRESS, "belongs_to")?;
 
-    // register_test_identities()?;
 
     Ok(ident_addr.to_string().into())
 }
