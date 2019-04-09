@@ -17,10 +17,12 @@ require('./agent/register')(singleAgentScenario)
 require('./agent/threads')(singleAgentScenario)
 require('./agent/messages')(singleAgentScenario)
 require('./agent/comments')(singleAgentScenario)
+require('./agent/posts')(singleAgentScenario)
 
 require('./agent/gql_comments')(singleAgentScenario)
 require('./agent/gql_threads')(singleAgentScenario)
 require('./agent/gql_messages')(singleAgentScenario)
 
 require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
+
 
