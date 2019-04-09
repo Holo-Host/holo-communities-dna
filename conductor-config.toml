@@ -5,12 +5,6 @@ name = "HoloTester1"
 public_address = "HcSCjdUIsn6Botxcf8bwmQFDqMz6aqctojcPhzNi54B39cbwJFIuKNjP9uambii"
 keystore_file = "./agent1.keystore"
 
-# [[agents]]
-# id = "test_agent2"
-# name = "HoloTester2"
-# public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
-# keystore_file = "./agent2.keystore"
-
 [[dnas]]
 id = "chat_dna"
 file = "./dna/hylo.dna.json"
@@ -53,3 +47,9 @@ dna_interface = "websocket_interface"
 # [[logger.rules.rules]]
 # exclude=true
 # pattern=".*"
+
+# [network]
+# n3h_path = "/path/to/n3h"
+# n3h_persistence_path = "/tmp"
+# bootstrap_nodes = []
+# n3h_log_level = "t"
