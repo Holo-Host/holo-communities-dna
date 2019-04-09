@@ -7,12 +7,16 @@ use crate::Context;
 mod person;
 mod message_thread;
 mod message;
+mod comment;
 mod me;
+mod post;
 
 use person::{Person, PersonQuerySet};
 use message::{Message};
+use comment::{Comment};
 use message_thread::{MessageThread};
 use me::Me;
+use post::Post;
 
 
 /*=====================================
@@ -31,6 +35,14 @@ struct MessageInput {
     text: Option<String>,
 	created_at: Option<String>
 }
+
+#[derive(GraphQLInputObject)]
+struct CommentInput {
+    post_id: Option<String>,
+    text: Option<String>,
+	created_at: Option<String>
+}
+
 
 /*=====  End of Input Objects  ======*/
 
@@ -83,6 +95,13 @@ graphql_object!(Query: Context |&self| {
     		}
     	)
 	}
+
+    field post(&executor, id: Option<ID>) -> FieldResult<Post> {
+        match id {
+            Some(id) => Ok(Post{id: id.into()}),
+            None => Err(FieldError::new("Must call with an id parameter", Value::Null))
+        }
+    }
 
 });
 
@@ -146,6 +165,18 @@ graphql_object!(Mutation: Context |&self| {
     	Ok(Success::new(id.to_string()))
     }
 
+    field createComment(&executor, data: CommentInput) -> FieldResult<Comment> {
+        let id = call_cached("comments", "create_comment", json!({
+            "comment": {
+                "base": data.post_id.unwrap(),
+                "text": data.text.unwrap_or("".into()),
+                "timestamp": data.created_at.unwrap_or("2019-01-14T07:52:22+0000".into())
+            }
+        }).into())?;
+    	Ok(Comment{
+    		id: id.as_str().unwrap().to_string().into()
+    	})
+    }
 });
 
 
