@@ -1,10 +1,15 @@
 
 use hdk::{
     self,
+    utils,
+    error::ZomeApiResult,
+    AGENT_ADDRESS,
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
         dna::entry_types::Sharing, error::HolochainError,
         json::JsonString,
+        cas::content::Address,
+        entry::Entry,
     },
 };
 
