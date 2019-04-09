@@ -35,44 +35,44 @@ pub const COMMENT_ENTRY_TYPE: &str = "comment";
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct CommentData {
     pub base: String,
-    pub content: String,
+    pub text: String,
     pub timestamp: Iso8601,
 }
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct Comment {
     base: String,
-    author: Address,
-    content: String,
+    creator: Address,
+    text: String,
     timestamp: Iso8601,
 }
 
 /// Converts an input comment (without author) into a comment entry for saving to the DHT
 impl CommentData {
-    pub fn with_author(&self, author: Address) -> Comment {
+    pub fn with_creator(&self, creator: Address) -> Comment {
         Comment{
             base: self.base.clone(),
-            content: self.content.clone(),
+            text: self.text.clone(),
             timestamp: self.timestamp.clone(),
-            author,
+            creator,
         }
     }
 }
 
 // API methods
 
-pub fn handle_create_comment(input_entry: CommentData) -> ZomeApiResult<Address> {
+pub fn handle_create_comment(comment: CommentData) -> ZomeApiResult<Address> {
     // create and store the comment
     let entry = Entry::App(
         COMMENT_ENTRY_TYPE.into(),
-        input_entry.with_author(
+        comment.with_creator(
             AGENT_ADDRESS.to_string().into()
         ).into()
     );
     let address = hdk::commit_entry(&entry)?;
 
     // store an entry for the ID of the base object the comment was made on
-    let base_entry = Entry::App(BASE_ENTRY_TYPE.into(), input_entry.base.into());
+    let base_entry = Entry::App(BASE_ENTRY_TYPE.into(), comment.base.into());
     let base_address = hdk::commit_entry(&base_entry)?;
 
     // link the comment to its originating thing

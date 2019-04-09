@@ -2,12 +2,12 @@ module.exports = (scenario) => {
 
   const testComment1 = {
   	base: "base1",
-  	content: "comment1",
+  	text: "comment1",
   	timestamp: "2019-03-29T01:58:10+00:00"
   }
   const testComment2 = {
   	base: "base1",
-  	content: "comment2",
+  	text: "comment2",
   	timestamp: "2019-03-29T01:58:10+00:00"
   }
 
@@ -34,11 +34,11 @@ module.exports = (scenario) => {
 
   	// get a single comment by its address
   	await callComments('get_comment', { address })
-  	t.deepEqual(lastResult().Ok, { author: alice.agentId, ...testComment1 })
+  	t.deepEqual(lastResult().Ok, { creator: alice.agentId, ...testComment1 })
 
   	// get all the comments on a base
   	await callComments('get_comments', { base: 'base1' })
-  	t.deepEqual(lastResult().Ok, [testComment1, testComment2].map(e => ({author: alice.agentId, ...e})))
+  	t.deepEqual(lastResult().Ok, [testComment1, testComment2].map(e => ({creator: alice.agentId, ...e})))
 
   	results.forEach((r, i) => {
     		console.log(i, r)

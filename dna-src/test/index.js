@@ -7,10 +7,11 @@ const agentAlice = Config.agent('alice')
 const instanceAlice = Config.instance(agentAlice, dna)
 const scenario = new Scenario([instanceAlice], { debugLog: true })
 
-require('./agent/comments')(scenario)
-require('./agent/register')(scenario)
-require('./agent/threads')(scenario)
-require('./agent/messages')(scenario)
-
-require('./agent/gql_threads')(scenario)
-require('./agent/gql_messages')(scenario)
+// require('./agent/comments')(scenario)
+// require('./agent/register')(scenario)
+// require('./agent/threads')(scenario)
+// require('./agent/messages')(scenario)
+//
+// require('./agent/gql_threads')(scenario)
+// require('./agent/gql_messages')(scenario)
+require('./agent/gql_comments')(scenario)

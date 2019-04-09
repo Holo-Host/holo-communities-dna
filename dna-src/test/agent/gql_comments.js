@@ -2,17 +2,18 @@ const queries = require('../queries')
 module.exports = (scenario) => {
 
 scenario.runTape('Can add a comment to a post', async (t, {alice}) => {
-    // let register_response = await alice.callSync("graphql", "graphql", {
-    //   query: queries.registerQuery,
-    //   variables: {id: "000", name: "wollum", avatarUrl: "//"}
-    // })
-    // console.log(register_response)
-    //
-    // // add a thread
-    // const add_result = await alice.callSync("graphql", "graphql", {
-    //   query: queries.findOrCreateThreadQuery,
-    //   variables: {participantIds: []}
-    // })
+    let register_response = await alice.callSync("graphql", "graphql", {
+      query: queries.registerQuery,
+      variables: {id: "000", name: "wollum", avatarUrl: "//"}
+    })
+    console.log(register_response)
+
+    // create a comment
+    const add_result = await alice.callSync("graphql", "graphql", {
+      query: queries.createCommentQuery,
+      variables: {postId: '100', text: 'Holo Comment'}
+    })
+    console.log(add_result)
     // let threadId = JSON.parse(add_result.Ok).findOrCreateThread.id
     // t.equal(threadId.length, 46) // thread was created and hash returned
     //
