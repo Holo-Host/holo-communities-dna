@@ -9,6 +9,7 @@ mod message_thread;
 mod message;
 mod comment;
 mod me;
+mod post;
 
 use person::{Person, PersonQuerySet};
 use message::{Message};
