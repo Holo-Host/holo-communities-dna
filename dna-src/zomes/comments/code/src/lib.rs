@@ -19,8 +19,8 @@ use hdk::holochain_core_types::{
 };
 
 use comment_entry::{
-    CommentData,
     Comment,
+    CommentData,
     comment_def,
     handle_create_comment,
     handle_get_comment,
@@ -51,7 +51,7 @@ define_zome! {
         }
         get_comments: {
             inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<Comment>>|,
+            outputs: |result: ZomeApiResult<Vec<Address>>|,
             handler: handle_get_comments
         }
     ]

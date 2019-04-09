@@ -12,15 +12,14 @@
 use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
-    utils::get_links_and_load_type,
 };
 use hdk::holochain_core_types::{
     entry::Entry,
     dna::entry_types::Sharing,
+    cas::content::Address,
 };
 
 use super::comment_entry::{
-    Comment,
     COMMENT_ENTRY_TYPE,
 };
 
@@ -36,10 +35,9 @@ pub const COMMENT_LINK_TAG: &str = "commented_on";
 
 // API methods
 
-pub fn handle_get_comments(base: String) -> ZomeApiResult<Vec<Comment>> {
+pub fn handle_get_comments(base: String) -> ZomeApiResult<Vec<Address>> {
     let address = hdk::entry_address(&Entry::App(BASE_ENTRY_TYPE.into(), base.into()))?;
-    hdk::debug("handle_get_comments")?;
-    get_links_and_load_type::<&str, Comment>(&address, COMMENT_LINK_TAG)
+    Ok(hdk::get_links(&address, COMMENT_LINK_TAG)?.addresses().to_vec())
 }
 
 // Entry definition

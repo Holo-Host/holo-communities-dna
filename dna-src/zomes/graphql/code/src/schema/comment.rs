@@ -9,17 +9,13 @@ use hdk::error::ZomeApiResult;
 use std::convert::TryFrom;
 use crate::holochain_juniper::call_cached;
 use crate::holochain_juniper::HID;
+use crate::schema::post::Post;
 use crate::Context;
 use super::person::Person;
 
 #[derive(Constructor, Clone)]
 pub struct Comment {
     pub id: HID,
-}
-
-#[derive(GraphQLObject)]
-pub struct Post {
-    pub id: ID,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
@@ -44,7 +40,7 @@ graphql_object!(Comment: Context |&self| {
 		self.id.clone().into()
 	}
 
-    field creator(&executor) -> FieldResult<Person> {
+  field creator(&executor) -> FieldResult<Person> {
 		let id: String = self.retrieve_entry()?.creator;
 		Ok(Person{id: id.into()})
 	}
@@ -57,16 +53,20 @@ graphql_object!(Comment: Context |&self| {
 		"createdFrom".into()
 	}
 
-    field text(&executor) -> FieldResult<String> {
+  field text(&executor) -> FieldResult<String> {
 		Ok(self.retrieve_entry()?.text)
 	}
 
-    field post(&executor) -> FieldResult<Post> {
+  field post(&executor) -> FieldResult<Post> {
 		let id: String = self.retrieve_entry()?.base;
 		Ok(Post{id: id.into()})
 	}
+
+  field attachments(&executor) -> FieldResult<Vec<Attachment>> {
+    Ok(Vec::new())
   }
-);
+
+});
 
 
 
@@ -95,3 +95,9 @@ graphql_object!(CommentQuerySet: Context |&self| {
     Some(self.items.iter().map(|item| Some(item.clone())).collect())
   }
 });
+
+#[derive(GraphQLObject)]
+pub struct Attachment {
+  id: ID,
+  url: String,
+}

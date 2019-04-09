@@ -16,6 +16,7 @@ use message::{Message};
 use comment::{Comment};
 use message_thread::{MessageThread};
 use me::Me;
+use post::Post;
 
 
 /*=====================================
@@ -94,6 +95,13 @@ graphql_object!(Query: Context |&self| {
     		}
     	)
 	}
+
+    field post(&executor, id: Option<ID>) -> FieldResult<Post> {
+        match id {
+            Some(id) => Ok(Post{id: id.into()}),
+            None => Err(FieldError::new("Must call with an id parameter", Value::Null))
+        }
+    }
 
 });
 
