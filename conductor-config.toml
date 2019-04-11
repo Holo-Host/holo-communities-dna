@@ -24,23 +24,23 @@ path = "tmp-storage"
 [[interfaces]]
 id = "websocket_interface"
 [interfaces.driver]
-type = "websocket"
-port = 3400
+type = "http"
+port = 3001
 [[interfaces.instances]]
 id = "hylo-chat"
 
 #===================================================================
 
-[[ui_bundles]]
-id = "main"
-root_dir = "./build"
-hash = "Qm000"
-
-[[ui_interfaces]]
-id = "ui-interface"
-bundle = "main"
-port = 4000
-dna_interface = "websocket_interface"
+# [[ui_bundles]]
+# id = "main"
+# root_dir = "./ui"
+# hash = "Qm000"
+#
+# [[ui_interfaces]]
+# id = "ui-interface"
+# bundle = "main"
+# port = 4000
+# dna_interface = "websocket_interface"
 
 # [logger]
 # type="debug"

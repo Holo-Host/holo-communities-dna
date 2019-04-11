@@ -29,20 +29,20 @@ define_zome! {
 
     functions: [
          get_post: {
-            inputs: |post_addr: Address|,
+            inputs: |address: Address|,
             outputs: |result: ZomeApiResult<post::Post>|,
             handler: post::get_post
-        } 
+        }
         create_post: {
             inputs: |title: String, details: String, post_type: String, announcement: bool, timestamp: String|,
             outputs: |result: ZomeApiResult<Address>|,
             handler: post::create_post
-        }         
+        }
     ]
-    traits: { 
+    traits: {
         hc_public [
             get_post,
             create_post
-        ] 
+        ]
     }
 }

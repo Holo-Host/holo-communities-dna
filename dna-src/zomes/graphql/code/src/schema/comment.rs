@@ -36,36 +36,35 @@ impl Comment {
 }
 
 graphql_object!(Comment: Context |&self| {
-	field id(&executor) -> ID {
-		self.id.clone().into()
-	}
+    field id(&executor) -> ID {
+    	self.id.clone().into()
+    }
 
-  field creator(&executor) -> FieldResult<Person> {
-		let id: String = self.retrieve_entry()?.creator;
-		Ok(Person{id: id.into()})
-	}
+    field creator(&executor) -> FieldResult<Person> {
+    	let id: String = self.retrieve_entry()?.creator;
+    	Ok(Person{id: id.into()})
+    }
 
-	field createdAt(&executor) -> String {
-		"2019-01-14T07:52:22+0000".into()
-	}
+    field createdAt(&executor) -> String {
+    	"2019-01-14T07:52:22+0000".into()
+    }
 
-	field createdFrom(&executor) -> String {
-		"createdFrom".into()
-	}
+    field createdFrom(&executor) -> String {
+    	"createdFrom".into()
+    }
 
-  field text(&executor) -> FieldResult<String> {
-		Ok(self.retrieve_entry()?.text)
-	}
+    field text(&executor) -> FieldResult<String> {
+    	Ok(self.retrieve_entry()?.text)
+    }
 
-  field post(&executor) -> FieldResult<Post> {
-		let id: String = self.retrieve_entry()?.base;
-		Ok(Post{id: id.into()})
-	}
+    field post(&executor) -> FieldResult<Post> {
+    	let id: String = self.retrieve_entry()?.base;
+    	Ok(Post{id: id.into()})
+    }
 
-  field attachments(&executor) -> FieldResult<Vec<Attachment>> {
+    field attachments(&executor) -> FieldResult<Vec<Attachment>> {
     Ok(Vec::new())
-  }
-
+    }
 });
 
 

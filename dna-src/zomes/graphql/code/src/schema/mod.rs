@@ -43,6 +43,13 @@ struct CommentInput {
 	created_at: Option<String>
 }
 
+#[derive(GraphQLInputObject)]
+struct PostInput {
+    #[graphql(name="type", description="The latitude")]
+    r#type: Option<String>,
+    title: Option<String>,
+    details: Option<String>
+}
 
 /*=====  End of Input Objects  ======*/
 
@@ -176,6 +183,23 @@ graphql_object!(Mutation: Context |&self| {
     	Ok(Comment{
     		id: id.as_str().unwrap().to_string().into()
     	})
+    }
+
+    field createPost(&executor, data: PostInput) -> FieldResult<Post> {
+        let id = call_cached("posts", "create_post", json!(
+            {
+                "post_type": data.r#type.unwrap(),
+                "title": data.title.unwrap(),
+                "details": data.details.unwrap_or("".into()),
+                "announcement": false,
+                "timestamp": "2019-01-14T07:52:22+0000"
+            }
+        ).into())?;
+        hdk::debug(id.clone())?;
+
+        Ok(Post{
+            id: id.as_str().unwrap().to_string().into()
+        })
     }
 });
 

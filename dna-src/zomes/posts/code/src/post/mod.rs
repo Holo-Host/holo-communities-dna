@@ -25,8 +25,8 @@ pub struct Post {
     pub timestamp: String,
 }
 
-pub fn get_post(post_addr: Address) -> ZomeApiResult<Post> {
-    utils::get_as_type(post_addr)
+pub fn get_post(address: Address) -> ZomeApiResult<Post> {
+    utils::get_as_type(address)
 }
 
 pub fn create_post(title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<Address> {
@@ -38,7 +38,7 @@ pub fn create_post(title: String, details: String, post_type: String, announceme
                 details,
                 post_type,
                 creator: AGENT_ADDRESS.to_string().into(),
-                announcement,
+                announcement: false,
                 timestamp
             }.into()
         )
