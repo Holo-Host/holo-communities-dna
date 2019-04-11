@@ -70,7 +70,7 @@ graphql_object!(Post: Context |&self| {
 			}).into()
 		)?;
 
-		hdk::debug(result.clone())?;
+		// hdk::debug(result.clone())?;
 
 	    let comment_ids: Vec<serde_json::Value> = result.as_array()
 	    	.ok_or(FieldError::new(

@@ -17,6 +17,7 @@ use hdk::holochain_core_types::{
     entry::Entry,
     dna::entry_types::Sharing,
     cas::content::Address,
+    json::RawString,
 };
 
 use super::comment_entry::{
@@ -36,7 +37,7 @@ pub const COMMENT_LINK_TAG: &str = "commented_on";
 // API methods
 
 pub fn handle_get_comments(base: String) -> ZomeApiResult<Vec<Address>> {
-    let address = hdk::entry_address(&Entry::App(BASE_ENTRY_TYPE.into(), base.into()))?;
+    let address = hdk::entry_address(&Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(base).into()))?;
     Ok(hdk::get_links(&address, COMMENT_LINK_TAG)?.addresses().to_vec())
 }
 

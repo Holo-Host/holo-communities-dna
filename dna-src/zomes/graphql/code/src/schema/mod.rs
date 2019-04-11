@@ -157,7 +157,7 @@ graphql_object!(Mutation: Context |&self| {
             }).collect::<Vec<String>>().clone();
 
         let result_value = call_cached("chat", "get_or_create_thread", json!({"participant_ids": participant_agent_ids}).into())?;
-        hdk::debug(result_value.clone())?;
+        // hdk::debug(result_value.clone())?;
         return Ok(MessageThread {
             id: result_value.as_str().unwrap().to_string().into()
         })
@@ -195,7 +195,7 @@ graphql_object!(Mutation: Context |&self| {
                 "timestamp": "2019-01-14T07:52:22+0000"
             }
         ).into())?;
-        hdk::debug(id.clone())?;
+        // hdk::debug(id.clone())?;
 
         Ok(Post{
             id: id.as_str().unwrap().to_string().into()
