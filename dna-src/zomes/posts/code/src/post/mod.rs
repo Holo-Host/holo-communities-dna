@@ -8,12 +8,11 @@ use hdk::{
     holochain_core_types::{
         dna::entry_types::Sharing, error::HolochainError,
         json::JsonString,
+        json::RawString,
         cas::content::Address,
         entry::Entry,
     },
 };
-
-const COMMENTER_LINK_TAG: &str = "commenter";
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Post {
@@ -25,12 +24,18 @@ pub struct Post {
     pub timestamp: String,
 }
 
+pub type Base = String;
+
 pub fn get_post(address: Address) -> ZomeApiResult<Post> {
     utils::get_as_type(address)
 }
 
-pub fn create_post(title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<Address> {
-    hdk::commit_entry(
+pub fn create_post(base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<Address> {
+
+    let base_entry = Entry::App("base".into(), RawString::from(base).into());
+    let base_address = hdk::commit_entry(&base_entry)?;
+
+    let post_address = hdk::commit_entry(
         &Entry::App (
             "post".into(),
             Post {
@@ -42,11 +47,23 @@ pub fn create_post(title: String, details: String, post_type: String, announceme
                 timestamp
             }.into()
         )
-    )
+    )?;
+
+    // // link the post to its originating thing
+    // hdk::link_entries(
+    //     &base_address,
+    //     &post_address,
+    //     "posted_in",
+    // )?;
+    Ok(base_address)
 }
 
+pub fn get_posts(base: String) -> ZomeApiResult<Vec<Address>> {
+    let address = hdk::entry_address(&Entry::App("base".into(), RawString::from(base).into()))?;
+    Ok(hdk::get_links(&address, "posted_in")?.addresses().to_vec())
+}
 
-pub fn def() -> ValidatingEntryType {
+pub fn post_def() -> ValidatingEntryType {
     entry!(
         name: "post",
         description: "",
@@ -58,18 +75,29 @@ pub fn def() -> ValidatingEntryType {
 
         validation: |_validation_data: hdk::EntryValidationData<Post>| {
             Ok(())
-        },
+        }
+    )
+}
 
+pub fn base_def() -> ValidatingEntryType {
+    entry!(
+        name: "base",
+        description: "Universally unique ID of something that is being posted in",
+        sharing: Sharing::Public,
+        validation_package: || {
+            hdk::ValidationPackageDefinition::Entry
+        },
+        validation: | _validation_data: hdk::EntryValidationData<Base>| {
+            Ok(())
+        },
         links: [
             to!(
-                "%agent_id",
-                tag: COMMENTER_LINK_TAG,
-
+                "post",
+                tag: "posted_in",
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },
-
-                validation: |_validation_data: hdk::LinkValidationData| {
+                validation: | _validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )

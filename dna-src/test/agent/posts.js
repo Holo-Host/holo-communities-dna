@@ -2,12 +2,14 @@ module.exports = (scenario) => {
 
 scenario.runTape('Can create a post', async (t, {alice}) => {
     const add_post_result = await alice.callSync("posts", "create_post", {
+      base: "community1",
       title: "new post",
       details: "this is a details string",
       post_type: "a type",
       announcement: false,
       timestamp: ""
     })
+    console.log(add_post_result)
     const address = add_post_result.Ok
     console.log(address)
     t.equal(address.length, 46)

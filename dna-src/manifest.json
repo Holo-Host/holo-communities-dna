@@ -1,6 +1,6 @@
 {
-  "name": "Holochain App Name",
-  "description": "A Holochain app",
+  "name": "Hylo",
+  "description": "A Social Network running on Holochain",
   "authors": [
     {
       "identifier": "Author Name <author@name.com>",

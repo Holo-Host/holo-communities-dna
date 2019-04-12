@@ -22,7 +22,8 @@ mod post;
 
 define_zome! {
     entries: [
-        post::def()
+        post::post_def(),
+        post::base_def()
     ]
 
     genesis: || { Ok(()) }
@@ -34,15 +35,22 @@ define_zome! {
             handler: post::get_post
         }
         create_post: {
-            inputs: |title: String, details: String, post_type: String, announcement: bool, timestamp: String|,
+            inputs: |base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String|,
             outputs: |result: ZomeApiResult<Address>|,
             handler: post::create_post
         }
+        get_posts: {
+            inputs: |base: String|,
+            outputs: |result: ZomeApiResult<Vec<Address>>|,
+            handler: post::get_posts
+        }
     ]
+
     traits: {
         hc_public [
             get_post,
-            create_post
+            create_post,
+            get_posts
         ]
     }
 }

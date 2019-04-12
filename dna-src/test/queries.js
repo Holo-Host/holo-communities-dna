@@ -222,3 +222,23 @@ query (  $sortBy: String,  $offset: Int,  $search: String,  $filter: String,  $t
   }
 }
 `
+
+module.exports.createCommunityQuery =`
+mutation ($data: CommunityInput) {
+  createCommunity(data: $data) {
+    id
+    name
+    slug
+  }
+}
+`
+
+module.exports.getCommunityQuery = `
+query ($id: ID) {
+  community(id: $id) {
+    id
+    name
+    slug
+  }
+}
+`
