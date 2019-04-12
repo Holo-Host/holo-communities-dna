@@ -22,12 +22,12 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     t.equal(postId.length, 46) // thread was created and hash returned
 
     // retrieve post
-    // const getResult = await alice.callSync("graphql", "graphql", {
-    //   query: queries.getCommentsQuery,
-    //   variables: {id: '100'}
-    // })
-    //
-    // console.log(getResult)
-
+    const getResult = await alice.callSync("graphql", "graphql", {
+      query: queries.getPostQuery,
+      variables: {id: postId}
+    })
+    console.log(getResult)
+    let postTitle = JSON.parse(getResult.Ok).post.title
+    t.equal(postTitle, "new post") // thread was created and hash returned
   })
 }
