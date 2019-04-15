@@ -27,7 +27,7 @@ pub struct Post {
 pub type Base = RawString;
 
 const POST_BASE_ENTRY: &str = "post_base";
-const POST_LINK_TAG: &str = "posted";
+const POST_LINK_TAG: &str = "posted_in";
 
 pub fn get_post(address: Address) -> ZomeApiResult<Post> {
     utils::get_as_type(address)

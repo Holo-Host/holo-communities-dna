@@ -17,8 +17,8 @@ const twoAgentScenario = new Scenario([instanceAlice, instanceBob], { debugLog: 
 // require('./agent/threads')(singleAgentScenario)
 // require('./agent/messages')(singleAgentScenario)
 // require('./agent/comments')(singleAgentScenario)
-require('./agent/posts')(singleAgentScenario)
-// require('./agent/community')(singleAgentScenario)
+// require('./agent/posts')(singleAgentScenario)
+require('./agent/community')(singleAgentScenario)
 
 // require('./agent/gql_comments')(singleAgentScenario)
 // require('./agent/gql_threads')(singleAgentScenario)
