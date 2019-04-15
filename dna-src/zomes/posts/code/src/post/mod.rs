@@ -26,13 +26,16 @@ pub struct Post {
 
 pub type Base = RawString;
 
+const POST_BASE_ENTRY: &str = "post_base";
+const POST_LINK_TAG: &str = "posted";
+
 pub fn get_post(address: Address) -> ZomeApiResult<Post> {
     utils::get_as_type(address)
 }
 
 pub fn create_post(base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<Address> {
 
-    let base_entry = Entry::App("base".into(), RawString::from(base).into());
+    let base_entry = Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into());
     let base_address = hdk::commit_entry(&base_entry)?;
 
     let post_address = hdk::commit_entry(
@@ -49,18 +52,19 @@ pub fn create_post(base: String, title: String, details: String, post_type: Stri
         )
     )?;
 
-    // // link the post to its originating thing
-    // hdk::link_entries(
-    //     &base_address,
-    //     &post_address,
-    //     "posted_in",
-    // )?;
+    // link the post to its originating thing
+    hdk::link_entries(
+        &base_address,
+        &post_address,
+        POST_LINK_TAG,
+    )?;
+
     Ok(post_address)
 }
 
 pub fn get_posts(base: String) -> ZomeApiResult<Vec<Address>> {
-    let address = hdk::entry_address(&Entry::App("base".into(), RawString::from(base).into()))?;
-    Ok(hdk::get_links(&address, "posted_in")?.addresses().to_vec())
+    let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
+    Ok(hdk::get_links(&address, POST_LINK_TAG)?.addresses().to_vec())
 }
 
 pub fn post_def() -> ValidatingEntryType {
@@ -81,7 +85,7 @@ pub fn post_def() -> ValidatingEntryType {
 
 pub fn base_def() -> ValidatingEntryType {
     entry!(
-        name: "base",
+        name: POST_BASE_ENTRY,
         description: "Universally unique ID of something that is being posted in",
         sharing: Sharing::Public,
         validation_package: || {
@@ -93,7 +97,7 @@ pub fn base_def() -> ValidatingEntryType {
         links: [
             to!(
                 "post",
-                tag: "posted_in",
+                tag: POST_LINK_TAG,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },

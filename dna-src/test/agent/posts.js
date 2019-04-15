@@ -1,7 +1,6 @@
 module.exports = (scenario) => {
 
 const testPost = {
-  base: "community1",
   title: "new post",
   details: "this is a details string",
   post_type: "a type",
@@ -10,7 +9,7 @@ const testPost = {
 }
 
 scenario.runTape('Can create a post', async (t, {alice}) => {
-    const add_post_result = await alice.callSync("posts", "create_post", testPost)
+    const add_post_result = await alice.callSync("posts", "create_post", { base: "community1", ...testPost } )
     console.log(add_post_result)
     const address = add_post_result.Ok
     console.log(address)
@@ -20,12 +19,12 @@ scenario.runTape('Can create a post', async (t, {alice}) => {
       address
     })
     console.log(get_post_result)
-    t.deepEqual(get_post_result.Ok, testPost, "Could retrieve the added post by address")
+    t.deepEqual(get_post_result.Ok, { ...testPost, creator: alice.agentId }, "Could retrieve the added post by address")
 
     const get_posts_result = await alice.callSync("posts", "get_posts", {
       base: "community1"
     })
     console.log(get_post_result)
-    t.deepEqual(get_posts_result, [testPost], "Could retrieve the added post from the base")
+    t.deepEqual(get_posts_result.Ok, [address], "Could retrieve the added post from the base")
   })
 }
