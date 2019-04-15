@@ -154,11 +154,13 @@ query ($id: ID, $cursor: ID) {
 
 module.exports.createPostQuery = `
 mutation (
+  $base: String,
   $type: String,
   $title: String,
   $details: String
 ) {
   createPost(data: {
+    base: $base,
     type: $type,
     title: $title,
     details: $details
@@ -213,22 +215,25 @@ query (  $sortBy: String,  $offset: Int,  $search: String,  $filter: String,  $t
       }
       createdAt
       updatedAt
-      communities {
-        id
-        name
-        slug
-      }
     }
   }
 }
 `
 
 module.exports.createCommunityQuery =`
-mutation ($data: CommunityInput) {
-  createCommunity(data: $data) {
+mutation (
+  $base: String,
+  $name: String,
+  $slug: String
+) {
+  createCommunity(data: {
+    base: $base,
+    name: $name,
+    slug: $slug
+  })
+  {
     id
     name
-    slug
   }
 }
 `
@@ -238,7 +243,6 @@ query ($id: ID) {
   community(id: $id) {
     id
     name
-    slug
   }
 }
 `

@@ -10,6 +10,7 @@ mod message;
 mod comment;
 mod me;
 mod post;
+mod community;
 
 use person::{Person, PersonQuerySet};
 use message::{Message};
@@ -17,7 +18,7 @@ use comment::{Comment};
 use message_thread::{MessageThread};
 use me::Me;
 use post::Post;
-
+use community::Community;
 
 /*=====================================
 =            Input Objects            =
@@ -47,10 +48,17 @@ struct CommentInput {
 struct PostInput {
     #[graphql(name="type", description="The latitude")]
     r#type: Option<String>,
+    base: Option<String>,
     title: Option<String>,
     details: Option<String>
 }
 
+#[derive(GraphQLInputObject)]
+struct CommunityInput {
+    base: Option<String>,
+    name: Option<String>,
+	slug: Option<String>
+}
 /*=====  End of Input Objects  ======*/
 
 
@@ -103,6 +111,13 @@ graphql_object!(Query: Context |&self| {
     	)
 	}
 
+    field community(&executor, id: Option<ID>) -> FieldResult<Community> {
+        match id {
+            Some(id) => Ok(Community{id: id.into()}),
+            None => Err(FieldError::new("Must call with an id parameter", Value::Null))
+        }
+    }
+
     field post(&executor, id: Option<ID>) -> FieldResult<Post> {
         match id {
             Some(id) => Ok(Post{id: id.into()}),
@@ -110,6 +125,12 @@ graphql_object!(Query: Context |&self| {
         }
     }
 
+    field comment(&executor, id: Option<ID>) -> FieldResult<Comment> {
+        match id {
+            Some(id) => Ok(Comment{id: id.into()}),
+            None => Err(FieldError::new("Must call with an id parameter", Value::Null))
+        }
+    }
 });
 
 /*
@@ -188,6 +209,7 @@ graphql_object!(Mutation: Context |&self| {
     field createPost(&executor, data: PostInput) -> FieldResult<Post> {
         let id = call_cached("posts", "create_post", json!(
             {
+                "base": data.base.unwrap(),
                 "post_type": data.r#type.unwrap(),
                 "title": data.title.unwrap(),
                 "details": data.details.unwrap_or("".into()),
@@ -195,9 +217,22 @@ graphql_object!(Mutation: Context |&self| {
                 "timestamp": "2019-01-14T07:52:22+0000"
             }
         ).into())?;
-        // hdk::debug(id.clone())?;
 
         Ok(Post{
+            id: id.as_str().unwrap().to_string().into()
+        })
+    }
+
+    field createCommunity(&executor, data: CommunityInput) -> FieldResult<Community> {
+        let id = call_cached("community", "create_community", json!(
+            {
+                "base": data.base.unwrap(),
+                "name": data.name.unwrap_or("".into()),
+                "slug": data.slug.unwrap_or("".into())
+            }
+        ).into())?;
+
+        Ok(Community{
             id: id.as_str().unwrap().to_string().into()
         })
     }

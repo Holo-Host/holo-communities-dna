@@ -12,6 +12,7 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     const addResult = await alice.callSync("graphql", "graphql", {
       query: queries.createPostQuery,
       variables: {
+        base: "base to link from",
         title: "new post",
         details: "this is a details string",
         type: "a type"
@@ -29,5 +30,14 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     console.log(getResult)
     let postTitle = JSON.parse(getResult.Ok).post.title
     t.equal(postTitle, "new post") // thread was created and hash returned
+
+    // // retrieve posts
+    // const getResult = await alice.callSync("graphql", "graphql", {
+    //   query: queries.getPostsQuery,
+    //   variables: {id: '100'}
+    // })
+    // t.deepEqual(getResult.Ok.length, 2)
+    // console.log(getResult)
+
   })
 }
