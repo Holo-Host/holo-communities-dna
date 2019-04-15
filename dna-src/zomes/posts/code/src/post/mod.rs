@@ -24,7 +24,7 @@ pub struct Post {
     pub timestamp: String,
 }
 
-pub type Base = String;
+pub type Base = RawString;
 
 pub fn get_post(address: Address) -> ZomeApiResult<Post> {
     utils::get_as_type(address)
@@ -55,7 +55,7 @@ pub fn create_post(base: String, title: String, details: String, post_type: Stri
     //     &post_address,
     //     "posted_in",
     // )?;
-    Ok(base_address)
+    Ok(post_address)
 }
 
 pub fn get_posts(base: String) -> ZomeApiResult<Vec<Address>> {
