@@ -152,175 +152,97 @@ query ($id: ID, $cursor: ID) {
   }
 `
 
+module.exports.createPostQuery = `
+mutation (
+  $base: String,
+  $type: String,
+  $title: String,
+  $details: String
+) {
+  createPost(data: {
+    base: $base,
+    type: $type,
+    title: $title,
+    details: $details
+  })
+  {
+    id
+    title
+    details
+    type
+    creator {
+      id
+      name
+      avatarUrl
+    }
+    createdAt
+    updatedAt
+  }
+}`
 
 module.exports.getPostQuery = `
-query ($id: ID) {  
+query ($id: ID) {
   post(id: $id) {
-    id  
-    announcement  
-    title  
-    details 
-    type  
-    creator {    
-      id    
-      name    
-      avatarUrl  
-    }  
-    createdAt  
-    updatedAt  
-    commenters(first: 3) {    
-      id    
-      name    
-      avatarUrl  
-    }  
-    commentersTotal  
-    comments(first: 10, order: "desc") {    
-      items {      
-        id      
-        text      
-        creator {        
-          id        
-          name        
-          avatarUrl      
-        }      
-        attachments {        
-          id        
-          url      
-        }      
-        createdAt    
-      }    
-      total    
-      hasMore  
-    }  
-    linkPreview {   
-     id    
-     title    
-     url    
-     imageUrl  
-   }  
-   votesTotal  
-   myVote  
-   communities {    
-     id    
-     name    
-     slug  
-   }  
-   attachments {    
-     id    
-     position    
-     type    
-     url  
-   }  
-   postMemberships {    
-     id    
-     pinned    
-     community {      
-       id    
-     }  
-   }  
-   topics {    
-     id    
-     name    
-     postsTotal    
-     followersTotal  
-   }  
-   members {    
-     total    
-     hasMore    
-     items {      
-       id      
-       name      
-       avatarUrl      
-       bio      
-       tagline      
-       location      
-       skills (first: 100) {        
-         items {          
-           id          
-           name        
-         }      
-       }    
-     }  
-   }  
- }
+    id
+    title
+    details
+    type
+    creator {
+      id
+      name
+      avatarUrl
+    }
+    createdAt
+    updatedAt
+  }
 }
 `
 
 
 module.exports.getPostsQuery = `
-query (  $sortBy: String,  $offset: Int,  $search: String,  $filter: String,  $topic: ID,  $first: Int) {  
-  posts(  first: $first,  offset: $offset,  sortBy: $sortBy,  search: $search,  filter: $filter,  topic: $topic,  order: "desc") {  
-    hasMore  
-    items {      
-      id  
-      announcement  
-      title  
-      details  
-      type  
-      creator {    
-        id    
-        name    
-        avatarUrl  
-      }  
-      createdAt  
-      updatedAt  
-      commenters(first: 3) {    
-        id    
-        name    
-        avatarUrl  
-      }  
-      commentersTotal    
-      linkPreview {    
-        id    
-        title    
-        url    
-        imageUrl  
-      }  
-      votesTotal  
-      myVote  
-      communities {    
-        id    
-        name    
-        slug  
-      }  
-      attachments {    
-        id    
-        position    
-        type    
-        url  
-      }  
-      postMemberships {    
-        id    
-        pinned    
-        community {      
-          id    
-        }  
-      }  
-      topics {    
-        id    
-        name    
-        postsTotal    
-        followersTotal  
-      }  
-      members {    
-        total    
-        hasMore    
-        items {      
-          id      
-          name      
-          avatarUrl      
-          bio      
-          tagline      
-          location      
-          skills (first: 100) {        
-            items {          
-              id          
-              name        
-            }      
-          }    
-        }  
-      }  
+query (  $sortBy: String,  $offset: Int,  $search: String,  $filter: String,  $topic: ID,  $first: Int) {
+  posts(  first: $first,  offset: $offset,  sortBy: $sortBy,  search: $search,  filter: $filter,  topic: $topic,  order: "desc") {
+    hasMore
+    items {
+      id
+      title
+      details
+      post_type
+      creator {
+        id
+        name
+        avatarUrl
+      }
+      createdAt
+      updatedAt
     }
+  }
+}
+`
+
+module.exports.createCommunityQuery =`
+mutation (
+  $base: String,
+  $name: String,
+  $slug: String
+) {
+  createCommunity(data: {
+    base: $base,
+    name: $name,
+    slug: $slug
+  })
+  {
+    id
+    name
+  }
+}
+`
+
+module.exports.getCommunityQuery = `
+query ($id: ID) {
+  community(id: $id) {
+    id
+    name
   }
 }
 `

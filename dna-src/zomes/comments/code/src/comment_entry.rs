@@ -21,6 +21,7 @@ use hdk::holochain_core_types::{
     dna::entry_types::Sharing,
     error::HolochainError,
     json::JsonString,
+    json::RawString,
 };
 
 use super::base_entry::{
@@ -73,7 +74,7 @@ pub fn handle_create_comment(comment: CommentData) -> ZomeApiResult<Address> {
     let address = hdk::commit_entry(&entry)?;
 
     // store an entry for the ID of the base object the comment was made on
-    let base_entry = Entry::App(BASE_ENTRY_TYPE.into(), comment.base.into());
+    let base_entry = Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(comment.base).into());
     let base_address = hdk::commit_entry(&base_entry)?;
 
     // link the comment to its originating thing

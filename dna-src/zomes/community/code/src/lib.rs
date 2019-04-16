@@ -18,39 +18,39 @@ use hdk::{
     }
 };
 
-mod post;
+mod community;
 
 define_zome! {
     entries: [
-        post::post_def(),
-        post::base_def()
+        community::base_def(),
+        community::community_def()
     ]
 
     genesis: || { Ok(()) }
 
     functions: [
-         get_post: {
+         get_community: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<post::Post>|,
-            handler: post::get_post
+            outputs: |result: ZomeApiResult<community::Community>|,
+            handler: community::get_community
         }
-        create_post: {
-            inputs: |base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String|,
+        create_community: {
+            inputs: |base: String, name: String, slug: String|,
             outputs: |result: ZomeApiResult<Address>|,
-            handler: post::create_post
+            handler: community::create_community
         }
-        get_posts: {
+        get_communitys: {
             inputs: |base: String|,
             outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: post::get_posts
+            handler: community::get_communitys
         }
     ]
 
     traits: {
         hc_public [
-            get_post,
-            create_post,
-            get_posts
+            get_community,
+            create_community,
+            get_communitys
         ]
     }
 }

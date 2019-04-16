@@ -9,7 +9,7 @@ use hdk::holochain_core_types:: {
 };
 
 /*
- * a wrapper for the hdk::call function that routes it to other zomes in this DNA 
+ * a wrapper for the hdk::call function that routes it to other zomes in this DNA
  * and deals with deserializing the ZomeApiResult from string.Default
  * This will get much better soon with the upgrades to the hdk::call
 */
@@ -17,8 +17,8 @@ use hdk::holochain_core_types:: {
 cached!{
     CACHE;
     fn call_cached(
-        zome_name: &'static str, 
-        fn_name: &'static str, 
+        zome_name: &'static str,
+        fn_name: &'static str,
         fn_args: JsonString
     ) -> ZomeApiResult<serde_json::Value> = {
         let result_json_string = hdk::call(hdk::THIS_INSTANCE, zome_name, Address::from(hdk::PUBLIC_TOKEN.to_string()), fn_name, fn_args)?;
@@ -67,7 +67,7 @@ impl From<JsonString> for HID {
 
 impl Into<JsonString> for HID {
     fn into(self) -> JsonString {
-        self.0.to_string().into()
+        JsonString::from_json(&self.0.to_string())
     }
 }
 
