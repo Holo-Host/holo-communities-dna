@@ -46,8 +46,7 @@ graphql_object!(Comment: Context |&self| {
     }
 
     field createdAt(&executor) -> FieldResult<String> {
-      let timestamp: String = (self.retrieve_entry()?.timestamp);
-      Ok(timestamp.into())
+      Ok(self.retrieve_entry()?.timestamp)
     }
 
     field createdFrom(&executor) -> String {
