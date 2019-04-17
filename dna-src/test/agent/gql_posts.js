@@ -31,13 +31,5 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     let postTitle = JSON.parse(getResult.Ok).post.title
     t.equal(postTitle, "new post") // thread was created and hash returned
 
-    // // retrieve posts
-    // const getResult = await alice.callSync("graphql", "graphql", {
-    //   query: queries.getPostsQuery,
-    //   variables: {id: '100'}
-    // })
-    // t.deepEqual(getResult.Ok.length, 2)
-    // console.log(getResult)
-
   })
 }

@@ -63,7 +63,7 @@ graphql_object!(Comment: Context |&self| {
     }
 
     field attachments(&executor) -> FieldResult<Vec<Attachment>> {
-    Ok(Vec::new())
+      Ok(Vec::new())
     }
 });
 

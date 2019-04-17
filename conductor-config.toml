@@ -29,6 +29,15 @@ port = 3400
 [[interfaces.instances]]
 id = "hylo-chat"
 
+[[interfaces]]
+id = "GraphiQl-http-interface"
+[interfaces.driver]
+type = "http"
+port = 3001
+[[interfaces.instances]]
+id = "hylo-chat"
+
+
 #===================================================================
 
 # [[ui_bundles]]
