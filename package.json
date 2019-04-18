@@ -3,16 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-<<<<<<< HEAD
-    "start": "mkdir -p tmp-storage && ../holochain/holochain -c ./conductor-config.toml",
-    "build": "rm -rf tmp-storage && mkdir -p ./dna && cd dna-src && ../../holochain/hc package --strip-meta -o ../dna/hylo.dna.json",
-    "test": "cd dna-src && hc test",
-    "hc:test": "cd dna-src && ../../holochain/hc test"
-=======
     "start": "mkdir -p tmp-storage && holochain -c ./conductor-config.toml",
     "build": "rm -rf tmp-storage && mkdir -p ./dna && cd dna-src && hc package --strip-meta -o ../dna/hylo.dna.json",
     "test": "cd dna-src && hc test",
-    "hc:test": "cd dna-src && hc test"
->>>>>>> 7cd31b56e6df3f3269544b2aba0b87bcb2e6c0d0
+    "local:start": "mkdir -p tmp-storage && ../holochain/holochain -c ./conductor-config.toml",
+    "local:build": "rm -rf tmp-storage && mkdir -p ./dna && cd dna-src && ../../holochain/hc package --strip-meta -o ../dna/hylo.dna.json",
+    "local:test": "cd dna-src && ../../holochain/hc test"
   }
 }
