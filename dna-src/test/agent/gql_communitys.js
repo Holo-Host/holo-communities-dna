@@ -1,7 +1,9 @@
 const queries = require('../queries')
 module.exports = (scenario) => {
 
-scenario.runTape('Can create a new community via graphql', async (t, {alice}) => {
+  const slug = "/community1"
+
+  scenario.runTape('Can create a new community via graphql', async (t, {alice}) => {
     let register_response = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
       variables: {id: "000", name: "wollum", avatarUrl: "//"}
@@ -14,7 +16,7 @@ scenario.runTape('Can create a new community via graphql', async (t, {alice}) =>
       variables: {
         base: "a base string to link from",
         name: "new graphql community",
-        slug: "this is the url"
+        slug
       }
     })
     console.log(addResult)
@@ -29,5 +31,26 @@ scenario.runTape('Can create a new community via graphql', async (t, {alice}) =>
     console.log(getResult)
     let communityName = JSON.parse(getResult.Ok).community.name
     t.equal(communityName, "new graphql community") // thread was created and hash returned
+
+    // add a post with the community as the base
+    const addPostResult = await alice.callSync("graphql", "graphql", {
+      query: queries.createPostQuery,
+      variables: {
+        base: slug,
+        title: "new post 3000",
+        details: "this is a details string",
+        type: "a type"
+      }
+    })
+    console.log(addPostResult)
+
+    // retrieve all the posts from the community
+    const getPostsResult = await alice.callSync("graphql", "graphql", {
+      query: queries.getCommunityPostsQuery,
+      variables: {id: communityId}
+    })
+    console.log(getPostsResult)
+    t.equal(JSON.parse(getPostsResult.Ok).community.posts.items.length, 1)
+
   })
 }

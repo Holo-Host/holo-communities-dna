@@ -28,5 +28,6 @@ const checkFor = async (agent, name) => {
       query: queries.getPeopleQuery,
       variables: {}
     })
+    console.log(result)
     return JSON.parse(result.Ok).people.items.filter(p => p.name === name).length
 }

@@ -248,3 +248,26 @@ query ($id: ID) {
   }
 }
 `
+
+module.exports.getCommunityPostsQuery = `
+query ($id: ID) {
+  community(id: $id) {
+    posts {
+      hasMore
+      items {
+        id
+        title
+        details
+        type
+        creator {
+          id
+          name
+          avatarUrl
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+`

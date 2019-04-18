@@ -45,8 +45,8 @@ graphql_object!(Comment: Context |&self| {
     	Ok(Person{id: id.into()})
     }
 
-    field createdAt(&executor) -> String {
-    	"2019-01-14T07:52:22+0000".into()
+    field createdAt(&executor) -> FieldResult<String> {
+      Ok(self.retrieve_entry()?.timestamp)
     }
 
     field createdFrom(&executor) -> String {
@@ -63,7 +63,7 @@ graphql_object!(Comment: Context |&self| {
     }
 
     field attachments(&executor) -> FieldResult<Vec<Attachment>> {
-    Ok(Vec::new())
+      Ok(Vec::new())
     }
 });
 

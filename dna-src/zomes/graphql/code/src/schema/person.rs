@@ -1,3 +1,4 @@
+use crate::schema::community::Community;
 use crate::holochain_juniper::HID;
 use juniper::{FieldResult, ID};
 use crate::Context;
@@ -30,12 +31,7 @@ graphql_object!(Person: Context |&self| {
 	}
 
 	field memberships(&executor, first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Membership>> {
-		Ok(vec![
-			Membership{
-				id: self.id.clone().to_string().into(),
-				community: Community::default()
-			}
-		])
+		Ok(Vec::new())
 	}
 });
 
@@ -67,24 +63,18 @@ graphql_object!(PersonQuerySet: Context |&self| {
 });
 
 
-
-#[derive(GraphQLObject)]
-pub struct Community {
-    pub id: ID,
-    pub name: String,
-}
-
-impl Default for Community {
-    fn default() -> Self { 
-    	Community {
-			id: "999999".to_string().into(),
-			name: "Holochain!".to_string()
-		}
-	}
-}
-
-#[derive(GraphQLObject)]
+#[derive(Constructor, Clone)]
 pub struct Membership {
-    pub id: ID,
-    pub community: Community,
+    pub id: HID,
 }
+
+graphql_object!(Membership: Context |&self| {
+	field id() -> FieldResult<ID> {
+		// be careful. This field is the Hylo ID not the holochain ID
+		Ok(identity::get_identity(self.id.to_string().into())?.hylo_id.into())
+	}
+
+	field community() -> FieldResult<Community> {
+		Ok(Community::new("".to_string().into()))
+	}
+});
