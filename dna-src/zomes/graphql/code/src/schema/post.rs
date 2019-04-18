@@ -95,3 +95,24 @@ graphql_object!(Post: Context |&self| {
 		"2019-01-14T07:52:22+0000".into()
 	}
 });
+
+
+#[derive(Constructor, Clone)]
+pub struct PostQuerySet {
+    pub total: i32,
+    pub items: Vec<Post>,
+}
+
+graphql_object!(PostQuerySet: Context |&self| {
+	field total(&executor) -> i32 {
+		self.total
+	}
+
+	field hasMore(&executor) -> bool {
+		false
+	}
+
+	field items(&executor) -> Option<Vec<Option<Post>>> {
+		Some(self.items.iter().map(|item| Some(item.clone())).collect())
+	}
+});
