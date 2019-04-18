@@ -18,7 +18,7 @@ agent = "test_agent1"
 type = "simple"
 file = "app_spec.log"
 [instances.storage]
-type = "file"
+type = "memory"
 path = "tmp-storage"
 
 [[interfaces]]

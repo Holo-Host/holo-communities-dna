@@ -50,6 +50,7 @@ module.exports = (scenario) => {
       variables: {id: communityId}
     })
     console.log(getPostsResult)
+    t.equal(JSON.parse(getPostsResult.Ok).community.posts.items.length, 1)
 
   })
 }
