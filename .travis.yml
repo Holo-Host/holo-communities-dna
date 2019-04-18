@@ -8,5 +8,7 @@ before_install:
   - wget --header='Accept:application/octet-stream' https://api.github.com/repos/holochain/holochain-rust/releases/assets/12005882 -O hc.tar.gz
   - tar xvfz hc.tar.gz
   - ls
+  - hcdir=$(dirname $(find . -iname 'hc')) && cd $hcdir
+  - mv hc ../
 script:
-  - hcdir=$(dirname $(find . -iname 'hc')) && cd $hcdir && hcdir=$(pwd) && cd .. && cd dna-src && $hcdir/hc test
+  - cd dna-src && ../hc test
