@@ -1,0 +1,12 @@
+dist: trusty
+
+language: node_js
+node_js:
+  - '11'
+
+before_install:
+  - wget --header='Accept:application/octet-stream' https://api.github.com/repos/holochain/holochain-rust/releases/assets/12005882 -O hc.tar.gz
+  - tar xvfz hc.tar.gz
+  - ls
+script:
+  - hcdir=$(dirname $(find . -iname 'hc')) && cd $hcdir && hcdir=$(pwd) && cd .. && cd dna-src && $hcdir/hc test

@@ -207,7 +207,7 @@ query (  $sortBy: String,  $offset: Int,  $search: String,  $filter: String,  $t
       id
       title
       details
-      post_type
+      type
       creator {
         id
         name
@@ -234,6 +234,7 @@ mutation (
   {
     id
     name
+    slug
   }
 }
 `
@@ -243,6 +244,7 @@ query ($id: ID) {
   community(id: $id) {
     id
     name
+    slug
   }
 }
 `

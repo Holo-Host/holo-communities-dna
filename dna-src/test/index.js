@@ -13,17 +13,17 @@ const instanceBob = Config.instance(agentBob, dna)
 const twoAgentScenario = new Scenario([instanceAlice, instanceBob], { debugLog: true })
 
 
-require('./agent/register')(singleAgentScenario)
-require('./agent/threads')(singleAgentScenario)
-require('./agent/messages')(singleAgentScenario)
-require('./agent/comments')(singleAgentScenario)
-require('./agent/posts')(singleAgentScenario)
-require('./agent/community')(singleAgentScenario)
-
-require('./agent/gql_comments')(singleAgentScenario)
-require('./agent/gql_threads')(singleAgentScenario)
-require('./agent/gql_messages')(singleAgentScenario)
-require('./agent/gql_posts')(singleAgentScenario)
+// require('./agent/register')(singleAgentScenario)
+// require('./agent/threads')(singleAgentScenario)
+// require('./agent/messages')(singleAgentScenario)
+// require('./agent/comments')(singleAgentScenario)
+// require('./agent/posts')(singleAgentScenario)
+// require('./agent/community')(singleAgentScenario)
+//
+// require('./agent/gql_comments')(singleAgentScenario)
+// require('./agent/gql_threads')(singleAgentScenario)
+// require('./agent/gql_messages')(singleAgentScenario)
+// require('./agent/gql_posts')(singleAgentScenario)
 require('./agent/gql_communitys')(singleAgentScenario)
-
-require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
+//
+// require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
