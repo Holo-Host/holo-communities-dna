@@ -10,5 +10,6 @@ before_install:
   - ls
   - hcdir=$(dirname $(find . -iname 'hc')) && cd $hcdir
   - mv hc ../
+  - cd ..
 script:
   - cd dna-src && ../hc test
