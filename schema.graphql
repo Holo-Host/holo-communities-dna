@@ -38,6 +38,9 @@ type Post {
   updatedAt: String
   creator: Person
   comments(first: Int, cursor: ID, order: String): CommentQuerySet
+  commenters(first: Int): [Person]
+  commentersTotal: Int
+  communities(first: Int, cursor: ID, order: String): [Community]
 }
 
 type CommentQuerySet {
@@ -97,6 +100,7 @@ input PostInput {
   details: String
   type: String
   communitySlug: String
+  createdAt: String
 }
 
 input CommentInput {
