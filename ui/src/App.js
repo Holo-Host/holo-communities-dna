@@ -7,13 +7,13 @@ import fetch from 'isomorphic-fetch';
 
 function graphQLFetcher(graphQLParams) {
 
-  const params = { query: graphQLParams.query, variables: {}}
+  graphQLParams.variables = graphQLParams.variables || {}
 
   const payload = {
     instance_id: 'hylo-chat',
     zome: 'graphql',
     function: 'graphql',
-    params,
+    params: graphQLParams,
   }
 
   return fetch('http://localhost:3001', {
