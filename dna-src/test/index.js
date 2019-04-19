@@ -28,14 +28,7 @@ singleAgentScenario.runTape('Reference GraphQL schema matches the implementation
 	const implSchemaDef = JSON.parse(getSchemaResult.Ok)
 	const implSchema = buildClientSchema(implSchemaDef)
 
-	const diffs = referenceSchema.diff(implSchema).filter(d => {
-		// dont worry about description diffs and backward compatible changes
-		return (
-			d.diffType !== 'FieldDescriptionDiff' && 
-			d.diffType !== 'TypeDescriptionDiff' && 
-			!d.backwardsCompatible
-		)
-	});
+	const diffs = referenceSchema.diff(implSchema).filter(d => !d.backwardsCompatible)
 
 	if(diffs.length > 0) {
 		console.log(diffs)
