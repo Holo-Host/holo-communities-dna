@@ -12,7 +12,7 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     const addResult = await alice.callSync("graphql", "graphql", {
       query: queries.createPostQuery,
       variables: {
-        base: "base to link from",
+        communitySlug: "base to link from",
         title: "new post",
         details: "this is a details string",
         type: "a type"

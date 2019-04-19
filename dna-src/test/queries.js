@@ -7,8 +7,8 @@ mutation ($id: ID, $name: String, $avatarUrl: String) {
 `
 
 module.exports.getPeopleQuery = `
-query PeopleContacts ($first: Int) {
-  people (first: $first) {
+query PeopleContacts {
+  people {
     items {
       id
       name
@@ -26,16 +26,14 @@ query PeopleContacts ($first: Int) {
 `
 
 module.exports.getMessageThreadsQuery = `
-query ($first: Int, $offset: Int) {
+query {
   me {
     id
-    messageThreads(sortBy: "updatedAt", order: "desc", first: $first, offset: $offset) {
+    messageThreads {
       total
       hasMore
       items {
         id
-        unreadCount
-        lastReadAt
         createdAt
         updatedAt
         participants {
@@ -43,7 +41,7 @@ query ($first: Int, $offset: Int) {
           name
           avatarUrl
         }
-        messages(first: 1, order: "desc") {
+        messages {
           items {
             id
             createdAt
@@ -89,10 +87,10 @@ mutation ($messageThreadId: String, $text: String) {
 }`
 
 module.exports.getMessagesQuery = `
-  query ($id: ID, $cursor: ID) {
+  query ($id: ID) {
     messageThread (id: $id) {
       id
-      messages(first: 80, cursor: $cursor, order: "desc") {
+      messages {
         items {
           id
           createdAt
@@ -127,10 +125,10 @@ mutation ($postId: String, $text: String) {
 `
 
 module.exports.getCommentsQuery = `
-query ($id: ID, $cursor: ID) {
+query ($id: ID) {
     post(id: $id) {
       id
-      comments(first: 10, cursor: $cursor, order: "desc") {
+      comments {
         items {
           id
           text
@@ -154,13 +152,13 @@ query ($id: ID, $cursor: ID) {
 
 module.exports.createPostQuery = `
 mutation (
-  $base: String,
+  $communitySlug: String,
   $type: String,
   $title: String,
   $details: String
 ) {
   createPost(data: {
-    base: $base,
+    communitySlug: $communitySlug,
     type: $type,
     title: $title,
     details: $details
@@ -200,8 +198,8 @@ query ($id: ID) {
 
 
 module.exports.getPostsQuery = `
-query (  $sortBy: String,  $offset: Int,  $search: String,  $filter: String,  $topic: ID,  $first: Int) {
-  posts(  first: $first,  offset: $offset,  sortBy: $sortBy,  search: $search,  filter: $filter,  topic: $topic,  order: "desc") {
+query {
+  posts {
     hasMore
     items {
       id
@@ -222,12 +220,10 @@ query (  $sortBy: String,  $offset: Int,  $search: String,  $filter: String,  $t
 
 module.exports.createCommunityQuery =`
 mutation (
-  $base: String,
   $name: String,
   $slug: String
 ) {
   createCommunity(data: {
-    base: $base,
     name: $name,
     slug: $slug
   })
@@ -239,8 +235,8 @@ mutation (
 `
 
 module.exports.getCommunityQuery = `
-query ($id: ID) {
-  community(id: $id) {
+query ($id: ID, $slug: String) {
+  community(id: $id, slug: $slug) {
     id
     name
   }

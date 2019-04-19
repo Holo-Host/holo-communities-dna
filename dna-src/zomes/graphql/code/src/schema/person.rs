@@ -17,20 +17,20 @@ pub struct Person {
     pub id: HID,
 }
 graphql_object!(Person: Context |&self| {
-	field id(&executor) -> FieldResult<ID> {
+	field id() -> FieldResult<ID> {
 		// be careful. This field is the Hylo ID not the holochain ID
 		Ok(identity::get_identity(self.id.to_string().into())?.hylo_id.into())
 	}
 
-	field name(&executor) -> FieldResult<String> {
+	field name() -> FieldResult<String> {
 		Ok(identity::get_identity(self.id.to_string().into())?.name)
 	}
 
-	field avatarUrl(&executor) -> FieldResult<String> {
+	field avatarUrl() -> FieldResult<String> {
 		Ok(identity::get_identity(self.id.to_string().into())?.avatar_url)
 	}
 
-	field memberships(&executor, first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Membership>> {
+	field memberships(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Membership>> {
 		Ok(Vec::new())
 	}
 });
@@ -49,15 +49,15 @@ pub struct PersonQuerySet {
     pub items: Vec<Person>,
 }
 graphql_object!(PersonQuerySet: Context |&self| {
-	field total(&executor) -> i32 {
+	field total() -> i32 {
 		self.total
 	}
 
-	field hasMore(&executor) -> bool {
+	field hasMore() -> bool {
 		false
 	}
 
-	field items(&executor) -> Option<Vec<Option<Person>>> {
+	field items() -> Option<Vec<Option<Person>>> {
 		Some(self.items.iter().map(|item| Some(item.clone())).collect())
 	}
 });
