@@ -12,18 +12,49 @@ const agentBob = Config.agent('bob')
 const instanceBob = Config.instance(agentBob, dna)
 const twoAgentScenario = new Scenario([instanceAlice, instanceBob], { debugLog: true })
 
+singleAgentScenario.runTape('Reference GraphQL schema matches the implementation', async (t, {alice}) => {
 
-require('./agent/register')(singleAgentScenario)
-require('./agent/threads')(singleAgentScenario)
-require('./agent/messages')(singleAgentScenario)
-require('./agent/comments')(singleAgentScenario)
-require('./agent/posts')(singleAgentScenario)
-require('./agent/community')(singleAgentScenario)
+	const fs = require('fs');
+	const { buildSchema, buildClientSchema, introspectionQuery } = require('graphql');
+	require('graphql-schema-utils');
 
-require('./agent/gql_comments')(singleAgentScenario)
-require('./agent/gql_threads')(singleAgentScenario)
-require('./agent/gql_messages')(singleAgentScenario)
-require('./agent/gql_posts')(singleAgentScenario)
-require('./agent/gql_communitys')(singleAgentScenario)
+	const referenceSchemaDef = fs.readFileSync('../schema.graphql', "utf8");
+	const referenceSchema = buildSchema(referenceSchemaDef);
 
-require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
+	const getSchemaResult = await alice.callSync("graphql", "graphql", {
+	  	query: introspectionQuery,
+		variables: {}
+	})
+	console.log(getSchemaResult)
+	const implSchemaDef = JSON.parse(getSchemaResult.Ok)
+	const implSchema = buildClientSchema(implSchemaDef)
+
+	const diffs = referenceSchema.diff(implSchema).filter(d => {
+		// dont worry about description diffs
+		return d.diffType !== 'FieldDescriptionDiff'
+	});
+
+	if(diffs.length > 0) {
+		console.log(diffs)
+	}
+
+	t.equal(diffs.length, 0)
+})
+
+
+
+
+// require('./agent/register')(singleAgentScenario)
+// require('./agent/threads')(singleAgentScenario)
+// require('./agent/messages')(singleAgentScenario)
+// require('./agent/comments')(singleAgentScenario)
+// require('./agent/posts')(singleAgentScenario)
+// require('./agent/community')(singleAgentScenario)
+
+// require('./agent/gql_comments')(singleAgentScenario)
+// require('./agent/gql_threads')(singleAgentScenario)
+// require('./agent/gql_messages')(singleAgentScenario)
+// require('./agent/gql_posts')(singleAgentScenario)
+// require('./agent/gql_communitys')(singleAgentScenario)
+
+// require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
