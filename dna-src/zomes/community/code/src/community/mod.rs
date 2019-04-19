@@ -29,9 +29,9 @@ pub fn get_community(address: Address) -> ZomeApiResult<Community> {
     utils::get_as_type(address)
 }
 
-pub fn create_community(base: String, name: String, slug: String) -> ZomeApiResult<Address> {
+pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
 
-    let base_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(base).into());
+    let base_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from("communities_base").into());
     let base_address = hdk::commit_entry(&base_entry)?;
 
     let community_address = hdk::commit_entry(
@@ -54,8 +54,8 @@ pub fn create_community(base: String, name: String, slug: String) -> ZomeApiResu
     Ok(community_address)
 }
 
-pub fn get_communitys(base: String) -> ZomeApiResult<Vec<Address>> {
-    let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(base).into()))?;
+pub fn get_communitys() -> ZomeApiResult<Vec<Address>> {
+    let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from("communities_base").into()))?;
     Ok(hdk::get_links(&address, COMMUNITY_LINK_TAG)?.addresses().to_vec())
 }
 

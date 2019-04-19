@@ -46,16 +46,15 @@ struct CommentInput {
 
 #[derive(GraphQLInputObject)]
 struct PostInput {
-    #[graphql(name="type", description="The latitude")]
-    r#type: Option<String>,
-    base: Option<String>,
     title: Option<String>,
-    details: Option<String>
+    details: Option<String>,
+    #[graphql(name="type", description="The post type")]
+    r#type: Option<String>,
+    community_slug: Option<String>
 }
 
 #[derive(GraphQLInputObject)]
 struct CommunityInput {
-    base: Option<String>,
     name: Option<String>,
 	slug: Option<String>
 }
@@ -70,15 +69,15 @@ struct CommunityInput {
 pub struct Query;
 graphql_object!(Query: Context |&self| {
 
-    field apiVersion(&executor) -> FieldResult<String> {
+    field apiVersion() -> FieldResult<String> {
         Ok("0.0.1".to_string())
     }
 
-    field me(&executor) -> FieldResult<Me> {
+    field me() -> FieldResult<Me> {
     	Ok(Me)
     }
 
-    field messageThread(&executor, id: Option<ID>) -> FieldResult<MessageThread> {
+    field messageThread(id: Option<ID>) -> FieldResult<MessageThread> {
     	match id {
     		Some(id) => Ok(MessageThread{id: id.into()}),
     		None => Err(FieldError::new("Must call with an id parameter", Value::Null))
@@ -111,21 +110,29 @@ graphql_object!(Query: Context |&self| {
     	)
 	}
 
-    field community(&executor, id: Option<ID>) -> FieldResult<Community> {
+    field community(id: Option<ID>, slug: Option<String>) -> FieldResult<Community> {
+        // TODO: look up community by slug optionally
         match id {
             Some(id) => Ok(Community{id: id.into()}),
             None => Err(FieldError::new("Must call with an id parameter", Value::Null))
         }
     }
 
-    field post(&executor, id: Option<ID>) -> FieldResult<Post> {
+    field post(id: Option<ID>) -> FieldResult<Post> {
         match id {
             Some(id) => Ok(Post{id: id.into()}),
             None => Err(FieldError::new("Must call with an id parameter", Value::Null))
         }
     }
 
-    field comment(&executor, id: Option<ID>) -> FieldResult<Comment> {
+    field person(id: Option<ID>) -> FieldResult<Person> {
+        match id {
+            Some(id) => Ok(Person{id: id.into()}),
+            None => Err(FieldError::new("Must call with an id parameter", Value::Null))
+        }
+    }
+
+    field comment(id: Option<ID>) -> FieldResult<Comment> {
         match id {
             Some(id) => Ok(Comment{id: id.into()}),
             None => Err(FieldError::new("Must call with an id parameter", Value::Null))
@@ -140,15 +147,14 @@ graphql_object!(Query: Context |&self| {
  */
 
  #[derive(GraphQLObject)]
-struct Success {
+struct GenericResult {
     success: bool,
-    data: String,
 }
-impl Success {
-    pub fn new(data: String) -> Self {
-        Success{
+
+impl GenericResult {
+    pub fn new() -> Self {
+        GenericResult{
             success: true,
-            data,
         }
     }
 }
@@ -157,7 +163,8 @@ impl Success {
 pub struct Mutation;
 graphql_object!(Mutation: Context |&self| {
 
-    field createMessage(&executor, data: MessageInput) -> FieldResult<Message> {
+    field createMessage(data: Option<MessageInput>) -> FieldResult<Message> {
+        let data = data.unwrap();
         let id = call_cached("chat", "post_message_to_thread", json!({
             "thread_addr": data.message_thread_id.unwrap(),
             "text": data.text.unwrap_or("".into()),
@@ -168,8 +175,8 @@ graphql_object!(Mutation: Context |&self| {
     	})
     }
 
-    field findOrCreateThread(&executor, data: MessageThreadInput) -> FieldResult<MessageThread> {
-    	let participant_hylo_ids: Vec<String> = data.participant_ids.unwrap().into_iter().map(|elem| elem.unwrap()).collect();
+    field findOrCreateThread(data: Option<MessageThreadInput>) -> FieldResult<MessageThread> {
+    	let participant_hylo_ids: Vec<String> = data.unwrap().participant_ids.unwrap().into_iter().map(|elem| elem.unwrap()).collect();
 
         let participant_agent_ids = participant_hylo_ids
             .iter()
@@ -184,16 +191,17 @@ graphql_object!(Mutation: Context |&self| {
         })
     }
 
-    field registerUser(id: Option<ID>, name: Option<String>, avatar_url: Option<String>) -> FieldResult<Success> {
+    field registerUser(id: Option<ID>, name: Option<String>, avatar_url: Option<String>) -> FieldResult<GenericResult> {
     	let id = identity::register_user(
     		name.unwrap_or("?".into()),
     		avatar_url.unwrap_or("".into()),
     		id.unwrap_or(juniper::ID::new("")).to_string(),
     	)?;
-    	Ok(Success::new(id.to_string()))
+    	Ok(GenericResult::new())
     }
 
-    field createComment(&executor, data: CommentInput) -> FieldResult<Comment> {
+    field createComment(data: Option<CommentInput>) -> FieldResult<Comment> {
+        let data = data.unwrap();
         let id = call_cached("comments", "create_comment", json!({
             "comment": {
                 "base": data.post_id.unwrap(),
@@ -206,10 +214,11 @@ graphql_object!(Mutation: Context |&self| {
     	})
     }
 
-    field createPost(&executor, data: PostInput) -> FieldResult<Post> {
+    field createPost(data: Option<PostInput>) -> FieldResult<Post> {
+        let data = data.unwrap();
         let id = call_cached("posts", "create_post", json!(
             {
-                "base": data.base.unwrap(),
+                "base": data.community_slug.unwrap(),
                 "post_type": data.r#type.unwrap(),
                 "title": data.title.unwrap(),
                 "details": data.details.unwrap_or("".into()),
@@ -223,10 +232,10 @@ graphql_object!(Mutation: Context |&self| {
         })
     }
 
-    field createCommunity(&executor, data: CommunityInput) -> FieldResult<Community> {
+    field createCommunity(data: Option<CommunityInput>) -> FieldResult<Community> {
+        let data = data.unwrap();
         let id = call_cached("community", "create_community", json!(
             {
-                "base": data.base.unwrap(),
                 "name": data.name.unwrap_or("".into()),
                 "slug": data.slug.unwrap_or("".into())
             }

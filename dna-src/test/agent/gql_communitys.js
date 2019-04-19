@@ -14,7 +14,6 @@ module.exports = (scenario) => {
     const addResult = await alice.callSync("graphql", "graphql", {
       query: queries.createCommunityQuery,
       variables: {
-        base: "a base string to link from",
         name: "new graphql community",
         slug
       }
@@ -36,7 +35,7 @@ module.exports = (scenario) => {
     const addPostResult = await alice.callSync("graphql", "graphql", {
       query: queries.createPostQuery,
       variables: {
-        base: slug,
+        communitySlug: slug,
         title: "new post 3000",
         details: "this is a details string",
         type: "a type"

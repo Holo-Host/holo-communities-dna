@@ -12,37 +12,25 @@ use super::person::Person;
 use super::message::{Message, MessageQuerySet};
 
 
-/*
-type MessageThread {
-  id: ID
-  createdAt: String
-  updatedAt: String
-  participants(first: i32, cursor: ID, order: String): [Person]
-  participantsTotal: Int
-  messages(first: Int, cursor: ID, order: String): MessageQuerySet
-  unreadCount: Int
-  lastReadAt: String
-}
-*/
 #[derive(Constructor, Clone)]
 pub struct MessageThread {
     pub id: HID,
 }
 
 graphql_object!(MessageThread: Context |&self| {
-	field id(&executor) -> ID {
+	field id() -> ID {
 		self.id.clone().into()
 	}
 
-	field createdAt(&executor) -> String {
+	field createdAt() -> String {
 		"2019-01-14T07:52:22+0000".into()
 	}
 
-	field updatedAt(&executor) -> String {
+	field updatedAt() -> String {
 		"2019-01-14T07:52:22+0000".into()
 	}
 
-  field participants(&executor, first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Option<Person>>> {
+  field participants(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Option<Person>>> {
       let result = call_cached("chat", "get_thread_participants", json!({"thread_addr": self.id.to_string()}).into())?;
       let person_ids: Vec<serde_json::Value> = result.as_array().unwrap().to_vec();
 
@@ -51,7 +39,12 @@ graphql_object!(MessageThread: Context |&self| {
       })).collect())
   }
 
-  field messages(&executor, first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<MessageQuerySet> {
+  field participantsTotal() -> FieldResult<i32> {
+    let result = call_cached("chat", "get_thread_participants", json!({"thread_addr": self.id.to_string()}).into())?;
+    Ok(result.as_array().unwrap().to_vec().len() as i32)
+  }
+
+  field messages(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<MessageQuerySet> {
   	let result = call_cached("chat", "get_thread_messages", json!({"thread_addr": self.id.to_string()}).into())?;
     let message_ids: Vec<serde_json::Value> = result.as_array().unwrap().to_vec();
 
@@ -63,11 +56,11 @@ graphql_object!(MessageThread: Context |&self| {
     })
   }
 
-  field unreadCount(&executor) -> i32 {
+  field unreadCount() -> i32 {
   	0
   }
 
-  field lastReadAt(&executor) -> String {
+  field lastReadAt() -> String {
 	"".into()
   }
 });
@@ -87,15 +80,15 @@ pub struct MessageThreadQuerySet {
     pub items: Vec<MessageThread>,
 }
 graphql_object!(MessageThreadQuerySet: Context |&self| {
-  field total(&executor) -> i32 {
+  field total() -> i32 {
     self.total
   }
 
-  field hasMore(&executor) -> bool {
+  field hasMore() -> bool {
     false
   }
 
-  field items(&executor) -> Option<Vec<Option<MessageThread>>> {
+  field items() -> Option<Vec<Option<MessageThread>>> {
     Some(self.items.iter().map(|item| Some(item.clone())).collect())
   }
 });

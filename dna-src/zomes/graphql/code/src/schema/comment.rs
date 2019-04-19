@@ -36,33 +36,33 @@ impl Comment {
 }
 
 graphql_object!(Comment: Context |&self| {
-    field id(&executor) -> ID {
+    field id() -> ID {
     	self.id.clone().into()
     }
 
-    field creator(&executor) -> FieldResult<Person> {
+    field creator() -> FieldResult<Person> {
     	let id: String = self.retrieve_entry()?.creator;
     	Ok(Person{id: id.into()})
     }
 
-    field createdAt(&executor) -> FieldResult<String> {
+    field createdAt() -> FieldResult<String> {
       Ok(self.retrieve_entry()?.timestamp)
     }
 
-    field createdFrom(&executor) -> String {
+    field createdFrom() -> String {
     	"createdFrom".into()
     }
 
-    field text(&executor) -> FieldResult<String> {
+    field text() -> FieldResult<String> {
     	Ok(self.retrieve_entry()?.text)
     }
 
-    field post(&executor) -> FieldResult<Post> {
+    field post() -> FieldResult<Post> {
     	let id: String = self.retrieve_entry()?.base;
     	Ok(Post{id: id.into()})
     }
 
-    field attachments(&executor) -> FieldResult<Vec<Attachment>> {
+    field attachments() -> FieldResult<Vec<Attachment>> {
       Ok(Vec::new())
     }
 });
@@ -82,15 +82,15 @@ pub struct CommentQuerySet {
     pub items: Vec<Comment>,
 }
 graphql_object!(CommentQuerySet: Context |&self| {
-  field total(&executor) -> i32 {
+  field total() -> i32 {
     self.total
   }
 
-  field hasMore(&executor) -> bool {
+  field hasMore() -> bool {
     false
   }
 
-  field items(&executor) -> Option<Vec<Option<Comment>>> {
+  field items() -> Option<Vec<Option<Comment>>> {
     Some(self.items.iter().map(|item| Some(item.clone())).collect())
   }
 });

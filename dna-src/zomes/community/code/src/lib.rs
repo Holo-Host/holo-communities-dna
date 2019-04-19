@@ -35,12 +35,12 @@ define_zome! {
             handler: community::get_community
         }
         create_community: {
-            inputs: |base: String, name: String, slug: String|,
+            inputs: |name: String, slug: String|,
             outputs: |result: ZomeApiResult<Address>|,
             handler: community::create_community
         }
         get_communitys: {
-            inputs: |base: String|,
+            inputs: | |,
             outputs: |result: ZomeApiResult<Vec<Address>>|,
             handler: community::get_communitys
         }

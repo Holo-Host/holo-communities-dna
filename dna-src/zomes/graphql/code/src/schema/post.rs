@@ -41,28 +41,28 @@ impl Post {
 }
 
 graphql_object!(Post: Context |&self| {
-	field id(&executor) -> ID {
+	field id() -> ID {
 		self.id.clone().into()
 	}
 
-	field creator(&executor) -> FieldResult<Person> {
+	field creator() -> FieldResult<Person> {
   		let id: String = self.retrieve_entry()?.creator.to_string();
   		Ok(Person{id: id.into()})
   	}
 
-	field type(&executor) -> FieldResult<String> {
+	field type() -> FieldResult<String> {
 		Ok(self.retrieve_entry()?.post_type)
 	}
 
-	field title(&executor) -> FieldResult<String> {
+	field title() -> FieldResult<String> {
   		Ok(self.retrieve_entry()?.title)
   	}
 
-	field details(&executor) -> FieldResult<String> {
+	field details() -> FieldResult<String> {
   		Ok(self.retrieve_entry()?.details)
   	}
 
-	field comments(&executor, first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<CommentQuerySet> {
+	field comments(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<CommentQuerySet> {
 
 		let result = call_cached("comments", "get_comments",
 			json!({
@@ -87,11 +87,11 @@ graphql_object!(Post: Context |&self| {
 	    })
 	}
 
-	field createdAt(&executor) -> String {
+	field createdAt() -> String {
 		"2019-01-14T07:52:22+0000".into()
 	}
 
-	field updatedAt(&executor) -> String {
+	field updatedAt() -> String {
 		"2019-01-14T07:52:22+0000".into()
 	}
 });
@@ -104,15 +104,15 @@ pub struct PostQuerySet {
 }
 
 graphql_object!(PostQuerySet: Context |&self| {
-	field total(&executor) -> i32 {
+	field total() -> i32 {
 		self.total
 	}
 
-	field hasMore(&executor) -> bool {
+	field hasMore() -> bool {
 		false
 	}
 
-	field items(&executor) -> Option<Vec<Option<Post>>> {
+	field items() -> Option<Vec<Option<Post>>> {
 		Some(self.items.iter().map(|item| Some(item.clone())).collect())
 	}
 });

@@ -25,13 +25,16 @@ singleAgentScenario.runTape('Reference GraphQL schema matches the implementation
 	  	query: introspectionQuery,
 		variables: {}
 	})
-	console.log(getSchemaResult)
 	const implSchemaDef = JSON.parse(getSchemaResult.Ok)
 	const implSchema = buildClientSchema(implSchemaDef)
 
 	const diffs = referenceSchema.diff(implSchema).filter(d => {
-		// dont worry about description diffs
-		return d.diffType !== 'FieldDescriptionDiff'
+		// dont worry about description diffs and backward compatible changes
+		return (
+			d.diffType !== 'FieldDescriptionDiff' && 
+			d.diffType !== 'TypeDescriptionDiff' && 
+			!d.backwardsCompatible
+		)
 	});
 
 	if(diffs.length > 0) {
@@ -42,19 +45,17 @@ singleAgentScenario.runTape('Reference GraphQL schema matches the implementation
 })
 
 
+require('./agent/register')(singleAgentScenario)
+require('./agent/threads')(singleAgentScenario)
+require('./agent/messages')(singleAgentScenario)
+require('./agent/comments')(singleAgentScenario)
+require('./agent/posts')(singleAgentScenario)
+require('./agent/community')(singleAgentScenario)
 
+require('./agent/gql_comments')(singleAgentScenario)
+require('./agent/gql_threads')(singleAgentScenario)
+require('./agent/gql_messages')(singleAgentScenario)
+require('./agent/gql_posts')(singleAgentScenario)
+require('./agent/gql_communitys')(singleAgentScenario)
 
-// require('./agent/register')(singleAgentScenario)
-// require('./agent/threads')(singleAgentScenario)
-// require('./agent/messages')(singleAgentScenario)
-// require('./agent/comments')(singleAgentScenario)
-// require('./agent/posts')(singleAgentScenario)
-// require('./agent/community')(singleAgentScenario)
-
-// require('./agent/gql_comments')(singleAgentScenario)
-// require('./agent/gql_threads')(singleAgentScenario)
-// require('./agent/gql_messages')(singleAgentScenario)
-// require('./agent/gql_posts')(singleAgentScenario)
-// require('./agent/gql_communitys')(singleAgentScenario)
-
-// require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
+require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)
