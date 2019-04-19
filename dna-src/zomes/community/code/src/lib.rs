@@ -34,6 +34,11 @@ define_zome! {
             outputs: |result: ZomeApiResult<community::Community>|,
             handler: community::get_community
         }
+        get_community_address_by_slug: {
+            inputs: |slug: String|,
+            outputs: |result: ZomeApiResult<Address>|,
+            handler: community::get_community_address_by_slug
+        }
         create_community: {
             inputs: |name: String, slug: String|,
             outputs: |result: ZomeApiResult<Address>|,
@@ -50,7 +55,8 @@ define_zome! {
         hc_public [
             get_community,
             create_community,
-            get_communitys
+            get_communitys,
+            get_community_address_by_slug
         ]
     }
 }

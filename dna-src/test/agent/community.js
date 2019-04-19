@@ -15,6 +15,12 @@ module.exports = (scenario) => {
     console.log(get_community_result)
     t.equal(get_community_result.Ok.name, "Test Community 1")
 
+    const get_community_result_by_slug = await alice.callSync("community", "get_community_address_by_slug", {
+      slug: "url/slug1"
+    })
+    console.log(get_community_result_by_slug)
+    t.equal(get_community_result_by_slug.Ok, address)
+
     const get_communitys_result = await alice.callSync("community", "get_communitys", {
     })
     console.log(get_communitys_result)

@@ -31,6 +31,16 @@ module.exports = (scenario) => {
     let communityName = JSON.parse(getResult.Ok).community.name
     t.equal(communityName, "new graphql community") // thread was created and hash returned
 
+
+    // retrieve community by slug
+    const getResultSlug = await alice.callSync("graphql", "graphql", {
+      query: queries.getCommunityQuery,
+      variables: {slug}
+    })
+    console.log(getResultSlug)
+    let communityNameSlug = JSON.parse(getResultSlug.Ok).community.name
+    t.equal(communityNameSlug, "new graphql community") // thread was created and hash returned
+
     // add a post with the community as the base
     const addPostResult = await alice.callSync("graphql", "graphql", {
       query: queries.createPostQuery,

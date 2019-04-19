@@ -112,10 +112,22 @@ graphql_object!(Query: Context |&self| {
 
     field community(id: Option<ID>, slug: Option<String>) -> FieldResult<Community> {
         // TODO: look up community by slug optionally
+        let id: Option<ID> = match slug {
+            Some(slug) => {
+                let address = call_cached("community", "get_community_address_by_slug", 
+                    json!({
+                        "slug": slug,
+                    }).into())?;
+                Some(address.as_str().unwrap().to_string().into())
+            },
+            None => id
+        };
+
         match id {
             Some(id) => Ok(Community{id: id.into()}),
-            None => Err(FieldError::new("Must call with an id parameter", Value::Null))
+            None => Err(FieldError::new("Must call with either an id parameter or a slug", Value::Null))
         }
+
     }
 
     field post(id: Option<ID>) -> FieldResult<Post> {

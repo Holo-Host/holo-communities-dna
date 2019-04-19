@@ -235,8 +235,8 @@ mutation (
 `
 
 module.exports.getCommunityQuery = `
-query ($id: ID) {
-  community(id: $id) {
+query ($id: ID, $slug: String) {
+  community(id: $id, slug: $slug) {
     id
     name
   }

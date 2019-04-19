@@ -2,14 +2,13 @@
 use hdk::{
     self,
     utils,
-    error::ZomeApiResult,
-    AGENT_ADDRESS,
+    error::{ZomeApiError, ZomeApiResult},
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
         dna::entry_types::Sharing, error::HolochainError,
         json::JsonString,
         json::RawString,
-        cas::content::Address,
+        cas::content::{Address},
         entry::Entry,
     },
 };
@@ -29,10 +28,19 @@ pub fn get_community(address: Address) -> ZomeApiResult<Community> {
     utils::get_as_type(address)
 }
 
+pub fn get_community_address_by_slug(slug: String) -> ZomeApiResult<Address> {
+    let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug).into()))?;
+    let all_communities = hdk::get_links(&address, COMMUNITY_LINK_TAG)?.addresses().clone();
+    all_communities.to_owned().into_iter().next().ok_or(ZomeApiError::Internal("No communities for this slug".into()))
+}
+
 pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
 
-    let base_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from("communities_base").into());
+    let base_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into());
     let base_address = hdk::commit_entry(&base_entry)?;
+
+    let slug_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug.clone()).into());
+    let slug_address = hdk::commit_entry(&slug_entry)?;
 
     let community_address = hdk::commit_entry(
         &Entry::App (
@@ -44,18 +52,23 @@ pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
         )
     )?;
 
-    // link the community to its originating thing
     hdk::link_entries(
         &base_address,
         &community_address,
         COMMUNITY_LINK_TAG,
     )?;
+    hdk::link_entries(
+        &slug_address,
+        &community_address,
+        COMMUNITY_LINK_TAG,
+    )?;
+
 
     Ok(community_address)
 }
 
 pub fn get_communitys() -> ZomeApiResult<Vec<Address>> {
-    let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from("communities_base").into()))?;
+    let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into()))?;
     Ok(hdk::get_links(&address, COMMUNITY_LINK_TAG)?.addresses().to_vec())
 }
 
