@@ -50,7 +50,8 @@ struct PostInput {
     details: Option<String>,
     #[graphql(name="type", description="The post type")]
     r#type: Option<String>,
-    community_slug: Option<String>
+    community_slug: Option<String>,
+    created_at: Option<String>
 }
 
 #[derive(GraphQLInputObject)]

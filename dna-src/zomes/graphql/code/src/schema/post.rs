@@ -11,9 +11,12 @@ use hdk::error::ZomeApiResult;
 use std::convert::TryFrom;
 use super::person::Person;
 
-use crate::schema::comment::{
-	Comment,
-	CommentQuerySet,
+use crate::schema::{
+	comment::{
+		Comment,
+		CommentQuerySet,
+	},
+	community::Community,
 };
 
 #[derive(Constructor, Clone)]
@@ -94,6 +97,23 @@ graphql_object!(Post: Context |&self| {
 	field updatedAt() -> String {
 		"2019-01-14T07:52:22+0000".into()
 	}
+
+	field commenters(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Option<Vec<Option<Person>>>> {
+		Ok(
+			Some(Vec::new())
+		)
+	}
+
+	field commentersTotal() -> FieldResult<i32> {
+		Ok(0)
+	}
+
+	field communities(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Option<Vec<Option<Community>>>> {
+		Ok(
+			Some(Vec::new())
+		)
+	}
+
 });
 
 
