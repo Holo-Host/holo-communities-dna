@@ -22,6 +22,7 @@ pub struct Post {
     pub creator: Address,
     pub announcement: bool,
     pub timestamp: String,
+    pub base: String,
 }
 
 pub type Base = RawString;
@@ -35,7 +36,7 @@ pub fn get_post(address: Address) -> ZomeApiResult<Post> {
 
 pub fn create_post(base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<Address> {
 
-    let base_entry = Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into());
+    let base_entry = Entry::App(POST_BASE_ENTRY.into(), RawString::from(base.clone()).into());
     let base_address = hdk::commit_entry(&base_entry)?;
 
     let post_address = hdk::commit_entry(
@@ -46,8 +47,9 @@ pub fn create_post(base: String, title: String, details: String, post_type: Stri
                 details,
                 post_type,
                 creator: AGENT_ADDRESS.to_string().into(),
-                announcement: false,
-                timestamp
+                announcement,
+                timestamp,
+                base
             }.into()
         )
     )?;

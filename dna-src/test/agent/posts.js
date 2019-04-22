@@ -5,11 +5,12 @@ const testPost = {
   details: "this is a details string",
   post_type: "a type",
   announcement: false,
-  timestamp: ""
+  timestamp: "",
+  base: "community1",
 }
 
 scenario.runTape('Can create a post', async (t, {alice}) => {
-    const add_post_result = await alice.callSync("posts", "create_post", { base: "community1", ...testPost } )
+    const add_post_result = await alice.callSync("posts", "create_post", testPost )
     console.log(add_post_result)
     const address = add_post_result.Ok
     console.log(address)
@@ -22,7 +23,7 @@ scenario.runTape('Can create a post', async (t, {alice}) => {
     t.deepEqual(get_post_result.Ok, { ...testPost, creator: alice.agentId }, "Could retrieve the added post by address")
 
     const get_posts_result = await alice.callSync("posts", "get_posts", {
-      base: "community1"
+      base: testPost.base
     })
     console.log(get_post_result)
     t.deepEqual(get_posts_result.Ok, [address], "Could retrieve the added post from the base")

@@ -35,7 +35,7 @@ cached!{
 
 
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct HID(ID);
 
 impl fmt::Display for HID {
@@ -55,6 +55,12 @@ impl From<String> for HID {
 impl Into<String> for HID {
     fn into(self) -> String {
         self.0.to_string()
+    }
+}
+
+impl From<&str> for HID {
+    fn from(str: &str) -> Self {
+        HID(String::from(str).into())
     }
 }
 
