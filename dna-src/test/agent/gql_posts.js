@@ -8,11 +8,22 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     })
     console.log(register_response)
 
+    const slug = "/test_community"
+
+    // create a community to post in
+    const addCommunityResult = await alice.callSync("graphql", "graphql", {
+      query: queries.createCommunityQuery,
+      variables: {
+        name: "new graphql community",
+        slug
+      }
+    })
+
     // create a post
     const addResult = await alice.callSync("graphql", "graphql", {
       query: queries.createPostQuery,
       variables: {
-        communitySlug: "base to link from",
+        communitySlug: slug,
         title: "new post",
         details: "this is a details string",
         type: "a type"
@@ -32,6 +43,11 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     t.equal(post.title, "new post") // thread was created and hash returned
     t.equal(post.commentersTotal, 0)
     t.deepEqual(post.commenters, [])
+    t.deepEqual(post.communities, [{
+      name: "new graphql community",
+      slug
+    }])
+
 
     // come a comments
     await alice.callSync("graphql", "graphql", {

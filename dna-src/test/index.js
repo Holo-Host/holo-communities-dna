@@ -42,7 +42,7 @@ singleAgentScenario.runTape('Reference GraphQL schema matches the implementation
 // require('./agent/threads')(singleAgentScenario)
 // require('./agent/messages')(singleAgentScenario)
 // require('./agent/comments')(singleAgentScenario)
-require('./agent/posts')(singleAgentScenario)
+// require('./agent/posts')(singleAgentScenario)
 // require('./agent/community')(singleAgentScenario)
 
 // require('./agent/gql_comments')(singleAgentScenario)

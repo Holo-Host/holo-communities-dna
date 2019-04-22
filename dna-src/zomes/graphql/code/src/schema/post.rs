@@ -28,12 +28,13 @@ pub struct Post {
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct PostEntry {
-	pub title: String,
+    pub title: String,
     pub details: String,
     pub post_type: String,
     pub creator: Address,
     pub announcement: bool,
     pub timestamp: String,
+    pub base: String,
 }
 
 impl Post {
@@ -132,9 +133,18 @@ graphql_object!(Post: Context |&self| {
 	}
 
 	field communities(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Option<Vec<Option<Community>>>> {
-		Ok(
-			Some(Vec::new())
-		)
+  		let community_slug = self.retrieve_entry()?.base;
+  		let id: HID = call_cached("community", "get_community_address_by_slug", json!(
+            {
+                "slug": community_slug,
+            }
+        ).into())?.as_str().unwrap().into();
+
+        hdk::debug(id.clone())?;
+
+		Ok(Some(
+			vec![Some(Community{id})]
+		))
 	}
 
 });

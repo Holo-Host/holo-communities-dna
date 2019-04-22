@@ -10,7 +10,7 @@ module.exports = (scenario) => {
     })
     console.log(register_response)
 
-    // create a comment
+    // create a community
     const addResult = await alice.callSync("graphql", "graphql", {
       query: queries.createCommunityQuery,
       variables: {

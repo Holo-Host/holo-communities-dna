@@ -59,6 +59,12 @@ impl Into<String> for HID {
     }
 }
 
+impl From<&str> for HID {
+    fn from(str: &str) -> Self {
+        HID(String::from(str).into())
+    }
+}
+
 // conversions to and from JsonString
 impl From<JsonString> for HID {
     fn from(str: JsonString) -> Self {

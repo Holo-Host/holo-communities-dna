@@ -197,6 +197,10 @@ query ($id: ID) {
       name
     }
     commentersTotal
+    communities {
+      name
+      slug
+    }
   }
 }
 `
