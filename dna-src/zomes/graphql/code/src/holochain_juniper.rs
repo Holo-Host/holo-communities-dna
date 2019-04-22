@@ -1,3 +1,4 @@
+use core::hash::Hash;
 use hdk::error::{ZomeApiResult, ZomeApiError};
 use hdk::holochain_core_types::error::HolochainError;
 use std::fmt;
@@ -35,7 +36,7 @@ cached!{
 
 
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct HID(ID);
 
 impl fmt::Display for HID {

@@ -1,5 +1,7 @@
+use itertools::Itertools;
+
 use crate::holochain_juniper::{call_cached, HID};
-use juniper::{FieldResult, FieldError, ID};
+use juniper::{FieldResult, ID};
 use serde_json::json;
 use crate::Context;
 use hdk::holochain_core_types::{
@@ -7,7 +9,7 @@ use hdk::holochain_core_types::{
 	json::JsonString,
 	cas::content::Address,
 };
-use hdk::error::ZomeApiResult;
+use hdk::error::{ZomeApiResult, ZomeApiError};
 use std::convert::TryFrom;
 use super::person::Person;
 
@@ -36,10 +38,45 @@ pub struct PostEntry {
 
 impl Post {
 	fn retrieve_entry(&self) -> ZomeApiResult<PostEntry> {
-		let id: String = self.id.clone().into();
-		let result = JsonString::from(call_cached("posts", "get_post", json!({"address": id}).into())?);
+		let result = JsonString::from(call_cached("posts", "get_post", 
+			json!({
+				"address": self.id.to_string()
+			}).into())?
+		);
 		let post_entry = PostEntry::try_from(result)?;
 		Ok(post_entry)
+	}
+
+	fn get_comments(&self) -> ZomeApiResult<Vec<Comment>> {
+		let result = call_cached("comments", "get_comments",
+			json!({
+				"base": self.id.to_string()
+			}).into()
+		)?;
+
+	    Ok(
+	    	result.as_array()
+	    	.ok_or(ZomeApiError::Internal(
+	    		format!("Could not parse get comments response: {}", result)
+	    	))?
+	    	.to_vec()
+	    	.into_iter()
+	    	.map(|id| Comment{
+	    		id: id.as_str().unwrap().to_string().into(),
+	    	}).collect()
+	    )
+	}
+
+	fn get_commenters(&self) -> ZomeApiResult<Vec<Person>> {
+		Ok(self.get_comments()?
+			.iter()
+			.map(|comment| {
+				let id: String = comment.retrieve_entry().unwrap().creator;
+	    		Person{id: id.into()}
+			})
+			.dedup()
+			.collect()
+		)
 	}
 }
 
@@ -66,46 +103,32 @@ graphql_object!(Post: Context |&self| {
   	}
 
 	field comments(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<CommentQuerySet> {
-
-		let result = call_cached("comments", "get_comments",
-			json!({
-				"base": self.id.to_string()
-			}).into()
-		)?;
-
-		// hdk::debug(result.clone())?;
-
-	    let comment_ids: Vec<serde_json::Value> = result.as_array()
-	    	.ok_or(FieldError::new(
-	    		format!("Could not parse get comments response: {}", result),
-	    		graphql_value!({ "internal_error": "Could not parse" })
-	    		))?
-	    	.to_vec();
-
+		let comments = self.get_comments()?;
 	    Ok(CommentQuerySet{
-	    	total: comment_ids.len() as i32,
-	    	items: comment_ids.into_iter().map(|id| Comment{
-	    		id: id.as_str().unwrap().to_string().into(),
-	    	}).collect()
+	    	total: comments.len() as i32,
+	    	items: comments
 	    })
 	}
 
-	field createdAt() -> String {
-		"2019-01-14T07:52:22+0000".into()
+	field createdAt() -> FieldResult<String> {
+  		Ok(self.retrieve_entry()?.timestamp)
 	}
 
-	field updatedAt() -> String {
-		"2019-01-14T07:52:22+0000".into()
+	field updatedAt() -> FieldResult<String> {
+  		Ok(self.retrieve_entry()?.timestamp)
 	}
 
 	field commenters(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Option<Vec<Option<Person>>>> {
-		Ok(
-			Some(Vec::new())
-		)
+		Ok(Some(
+			self.get_commenters()?
+			.into_iter()
+			.map(Some)
+			.collect()
+		))
 	}
 
 	field commentersTotal() -> FieldResult<i32> {
-		Ok(0)
+		Ok(self.get_commenters()?.len() as i32)
 	}
 
 	field communities(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Option<Vec<Option<Community>>>> {

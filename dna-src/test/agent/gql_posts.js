@@ -8,7 +8,7 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     })
     console.log(register_response)
 
-    // create a comment
+    // create a post
     const addResult = await alice.callSync("graphql", "graphql", {
       query: queries.createPostQuery,
       variables: {
@@ -28,8 +28,29 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
       variables: {id: postId}
     })
     console.log(getResult)
-    let postTitle = JSON.parse(getResult.Ok).post.title
-    t.equal(postTitle, "new post") // thread was created and hash returned
+    let post = JSON.parse(getResult.Ok).post
+    t.equal(post.title, "new post") // thread was created and hash returned
+    t.equal(post.commentersTotal, 0)
+    t.deepEqual(post.commenters, [])
 
+    // come a comments
+    await alice.callSync("graphql", "graphql", {
+      query: queries.createCommentQuery,
+      variables: {postId, text: 'first comment'}
+    })
+    await alice.callSync("graphql", "graphql", {
+      query: queries.createCommentQuery,
+      variables: {postId, text: 'another comment'}
+    })
+
+    // retrieve post after comment
+    const getResult2 = await alice.callSync("graphql", "graphql", {
+      query: queries.getPostQuery,
+      variables: {id: postId}
+    })
+    console.log(getResult2)
+    let post2 = JSON.parse(getResult2.Ok).post
+    t.equal(post2.commentersTotal, 1)
+    t.deepEqual(post2.commenters, [{id: "000", name: "wollum"}])
   })
 }

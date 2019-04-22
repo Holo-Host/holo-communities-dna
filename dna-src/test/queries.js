@@ -192,6 +192,11 @@ query ($id: ID) {
     }
     createdAt
     updatedAt
+    commenters {
+      id
+      name
+    }
+    commentersTotal
   }
 }
 `
