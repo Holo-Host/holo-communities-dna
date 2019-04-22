@@ -35,24 +35,24 @@ impl Message {
 }
 
 graphql_object!(Message: Context |&self| {
-	field id(&executor) -> ID {
+	field id() -> ID {
 		self.id.clone().into()
 	}
 
-	field text(&executor) -> FieldResult<String> {
+	field text() -> FieldResult<String> {
 		Ok(self.retrieve_entry()?.text)
 	}
 
-	field creator(&executor) -> FieldResult<Person> {
+	field creator() -> FieldResult<Person> {
 		let id: String = self.retrieve_entry()?.creator;
 		Ok(Person{id: id.into()})
 	}
 
-	field messageThread(&executor) -> FieldResult<MessageThread> {
+	field messageThread() -> FieldResult<MessageThread> {
 		Ok(MessageThread{id: self.retrieve_entry()?.thread_id.into()})
 	}
 
-	field createdAt(&executor) -> String {
+	field createdAt() -> String {
 		"2019-01-14T07:52:22+0000".into()
 	}
 });
@@ -71,15 +71,15 @@ pub struct MessageQuerySet {
 }
 
 graphql_object!(MessageQuerySet: Context |&self| {
-	field total(&executor) -> i32 {
+	field total() -> i32 {
 		self.total
 	}
 
-	field hasMore(&executor) -> bool {
+	field hasMore() -> bool {
 		false
 	}
 
-	field items(&executor) -> Option<Vec<Option<Message>>> {
+	field items() -> Option<Vec<Option<Message>>> {
 		Some(self.items.iter().map(|item| Some(item.clone())).collect())
 	}
 });

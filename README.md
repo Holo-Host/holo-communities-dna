@@ -18,6 +18,12 @@ If you plan to develop the DNA code further the automated tests can be run using
 
 At the current time the container config does not include configuration of the network. This is because at the time of writing you must hard code the IPs in the local network. Defauls about this can be found at [developer.holochain](https://developer.holochain.org/start.html) and will likely be updated soon.
 
+## Making changes to the schema
+
+The `schema.graphql` documents the specification of the schema that this DNA must implement. This is enforced via the automated tests.
+
+Any changes to the `schema.graphql` file must be approved by the frond-end dev team to ensure no unplanned breaking changes.
+
 ## Example queries
 Handy to have these here for reference. These are the 4 queries that are redirected to holochain.
 
