@@ -156,12 +156,14 @@ mutation (
   $type: String,
   $title: String,
   $details: String
+  $createdAt: String
 ) {
   createPost(data: {
     communitySlug: $communitySlug,
     type: $type,
     title: $title,
-    details: $details
+    details: $details,
+    createdAt: $createdAt
   })
   {
     id

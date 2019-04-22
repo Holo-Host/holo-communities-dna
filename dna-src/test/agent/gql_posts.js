@@ -26,7 +26,8 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
         communitySlug: slug,
         title: "new post",
         details: "this is a details string",
-        type: "a type"
+        type: "a type",
+        createdAt: "2019-01-14T07:52:22+0000"
       }
     })
     console.log(addResult)
@@ -43,6 +44,7 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     t.equal(post.title, "new post") // thread was created and hash returned
     t.equal(post.commentersTotal, 0)
     t.deepEqual(post.commenters, [])
+    t.deepEqual(post.createdAt, "2019-01-14T07:52:22+0000")
     t.deepEqual(post.communities, [{
       name: "new graphql community",
       slug

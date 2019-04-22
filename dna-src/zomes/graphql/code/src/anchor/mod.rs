@@ -2,7 +2,7 @@ use hdk::{
     self,
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
-        cas::content::Address, dna::entry_types::Sharing, error::HolochainError, json::JsonString,
+        dna::entry_types::Sharing, error::HolochainError, json::JsonString,
     },
 };
 

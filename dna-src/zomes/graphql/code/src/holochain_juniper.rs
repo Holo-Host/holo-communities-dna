@@ -1,4 +1,3 @@
-use core::hash::Hash;
 use hdk::error::{ZomeApiResult, ZomeApiError};
 use hdk::holochain_core_types::error::HolochainError;
 use std::fmt;

@@ -236,7 +236,7 @@ graphql_object!(Mutation: Context |&self| {
                 "title": data.title.unwrap(),
                 "details": data.details.unwrap_or("".into()),
                 "announcement": false,
-                "timestamp": "2019-01-14T07:52:22+0000"
+                "timestamp": data.created_at.unwrap_or("1970-01-01T00:00:00Z".into())
             }
         ).into())?;
 
