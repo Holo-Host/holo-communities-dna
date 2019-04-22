@@ -12,7 +12,7 @@ type Person {
   ...
 }
 */
-#[derive(Constructor, Clone)]
+#[derive(Constructor, Clone, PartialEq, Eq)]
 pub struct Person {
     pub id: HID,
 }

@@ -27,7 +27,7 @@ pub struct CommentEntry {
 }
 
 impl Comment {
-	fn retrieve_entry(&self) -> ZomeApiResult<CommentEntry> {
+	pub fn retrieve_entry(&self) -> ZomeApiResult<CommentEntry> {
 		let id: String = self.id.clone().into();
 		let result = JsonString::from(call_cached("comments", "get_comment", json!({"address": id}).into())?);
 		let comment_entry = CommentEntry::try_from(result)?;
