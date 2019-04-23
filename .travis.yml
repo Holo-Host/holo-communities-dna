@@ -5,7 +5,7 @@ node_js:
   - '11'
 
 before_install:
-  - wget --header='Accept:application/octet-stream' https://api.github.com/repos/holochain/holochain-rust/releases/assets/12005882 -O hc.tar.gz
+  - wget --header='Accept:application/octet-stream' https://api.github.com/repos/holochain/holochain-rust/releases/assets/12164716 -O hc.tar.gz
   - tar xvfz hc.tar.gz
   - ls
   - hcdir=$(dirname $(find . -iname 'hc')) && cd $hcdir
