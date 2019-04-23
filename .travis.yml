@@ -17,4 +17,4 @@ before_install:
   - cd ..
   - ls
 script:
-  - docker run -v "$(pwd):/hylo-holo-dnas" holochain/holochain-rust:develop bash -c "cd /hylo-holo-dnas/dna-src && ls && hc test"
+  - docker run -v "$(pwd):/hylo-holo-dnas" holochain/holochain-rust:develop bash -c "cd /hylo-holo-dnas/dna-src && ls && ./hc test"
