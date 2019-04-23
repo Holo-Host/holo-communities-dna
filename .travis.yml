@@ -15,5 +15,6 @@ before_install:
   - hcdir=$(dirname $(find . -iname 'hc')) && cd $hcdir
   - mv hc ../
   - cd ..
+  - ls
 script:
-  - docker run -v "$(pwd):/hylo-holo-dnas" holochain/holochain-rust:develop bash cd /hylo-holo-dnas/dna-src && ../hc test
+  - docker run -v "$(pwd):/hylo-holo-dnas" holochain/holochain-rust:develop bash -c "cd /hylo-holo-dnas && ls"
