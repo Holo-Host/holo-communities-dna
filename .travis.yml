@@ -1,8 +1,12 @@
 dist: trusty
 
 language: node_js
+
 node_js:
   - '11'
+
+services:
+- docker
 
 before_install:
   - wget --header='Accept:application/octet-stream' https://api.github.com/repos/holochain/holochain-rust/releases/assets/12164716 -O hc.tar.gz
@@ -12,4 +16,4 @@ before_install:
   - mv hc ../
   - cd ..
 script:
-  - cd dna-src && ../hc test
+  - docker run -v "$(pwd):/hylo-holo-dnas" holochain/holochain-rust:develop bash cd dna-src && ../hc test
