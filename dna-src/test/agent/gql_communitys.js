@@ -58,8 +58,7 @@ module.exports = (scenario) => {
       query: queries.getCommunityPostsQuery,
       variables: {id: communityId}
     })
-    console.log(getPostsResult)
+    console.log('getPostsResult', getPostsResult)
     t.equal(JSON.parse(getPostsResult.Ok).community.posts.items.length, 1)
-
   })
 }

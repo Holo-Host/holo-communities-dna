@@ -216,7 +216,7 @@ query {
       id
       title
       details
-      post_type
+      type
       creator {
         id
         name
@@ -241,6 +241,7 @@ mutation (
   {
     id
     name
+    slug
   }
 }
 `
@@ -250,6 +251,7 @@ query ($id: ID, $slug: String) {
   community(id: $id, slug: $slug) {
     id
     name
+    slug
   }
 }
 `
