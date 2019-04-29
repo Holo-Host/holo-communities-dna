@@ -9,4 +9,4 @@ services:
 - docker
 
 script:
-  - docker run -v "$(pwd):/hylo-holo-dnas" holochain/holochain-rust:latest bash -c "cd /hylo-holo-dnas/dna-src && ./hc test"
+  - docker run -v "$(pwd):/hylo-holo-dnas" holochain/holochain-rust:latest bash -c "cd /hylo-holo-dnas/dna-src && hc test"
