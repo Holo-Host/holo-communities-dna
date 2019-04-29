@@ -3,27 +3,17 @@ version: '2'
 services:
 
   # bootstrap:
-  #   image: holochain/holochain-proto:develop
+  #   image: holochain/holochain-rust:latest
   #   ports:
   #     - "3142:3142"
   #   command: bs
 
-  holochain-ui1:
-    image: holochain/holochain-proto:develop
+  hylo1:
+    image: holochain/holochain-rust:latest
     ports:
-      - "3141:3141"
+      - "4000:4000"
     depends_on:
       - bootstrap
     volumes:
-      - "${TARGETDIR}:/holochain-ui"
-    command: bash -c "cd /holochain-ui; hcdev -agentID=lucy -bootstrapServer=bootstrap:3142 web 3141"
-
-  holochain-ui2:
-    image: holochain/holochain-proto:develop
-    ports:
-      - "4141:4141"
-    depends_on:
-      - bootstrap
-    volumes:
-      - "${TARGETDIR}:/holochain-ui"
-    command: bash -c "cd /holochain-ui; hcdev -agentID=phil -bootstrapServer=bootstrap:3142 web 4141"
+      - "${TARGETDIR}:/hylo-holo-dnas"
+    command: bash -c "nix-shell --run 'holochain -c /hylo-holo-dnas/conductor-config-agent1.toml'"

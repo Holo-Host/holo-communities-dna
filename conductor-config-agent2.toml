@@ -1,0 +1,78 @@
+[[agents]]
+id = "test_agent2"
+name = "HoloTester2"
+public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
+keystore_file = "./agent2.keystore"
+
+[[dnas]]
+id = "chat_dna"
+file = "./dna/hylo.dna.json"
+hash = "Qm328wyq38924y"
+
+[[instances]]
+id = "hylo-chat"
+dna = "chat_dna"
+agent = "test_agent1"
+[instances.logger]
+type = "simple"
+file = "app_spec.log"
+[instances.storage]
+type = "memory"
+path = "tmp-storage"
+
+[[interfaces]]
+id = "websocket_interface"
+[interfaces.driver]
+type = "websocket"
+port = 3400
+[[interfaces.instances]]
+id = "hylo-chat"
+
+[[interfaces]]
+id = "GraphiQl-http-interface"
+[interfaces.driver]
+type = "http"
+port = 4002
+[[interfaces.instances]]
+id = "hylo-chat"
+
+
+#===================================================================
+
+# [[ui_bundles]]
+# id = "main"
+# root_dir = "./ui"
+# hash = "Qm000"
+#
+# [[ui_interfaces]]
+# id = "ui-interface"
+# bundle = "main"
+# port = 4000
+# dna_interface = "websocket_interface"
+
+# [logger]
+# type="debug"
+# [[logger.rules.rules]]
+# exclude=true
+# pattern=".*"
+
+# [network]
+# n3h_path = "/path/to/n3h"
+# n3h_persistence_path = "/tmp"
+# bootstrap_nodes = []
+# n3h_log_level = "t"
+
+#===================================================================
+# Extra Agents for network testing
+
+# [[agents]]
+# id = "test_agent2"
+# name = "HoloTester2"
+# public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
+# keystore_file = "./agent2.keystore"
+
+# [[agents]]
+# id = "test_agent"
+# name = "HoloTester3"
+# public_address = "HcSciyCRK7mIujyvc3OV7iAIv47h8itycdR6qd68IKI88ihgRvRv49ESjN58gcz"
+# keystore_file = "./agent3.keystore"

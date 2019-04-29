@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "mkdir -p tmp-storage && holochain -c ./conductor-config.toml",
+    "start": "mkdir -p tmp-storage && holochain -c ./conductor-config-agent1.toml",
     "build": "rm -rf tmp-storage && mkdir -p ./dna && cd dna-src && hc package --strip-meta -o ../dna/hylo.dna.json",
     "test": "cd dna-src && hc test",
-    "local:start": "mkdir -p tmp-storage && ../holochain/holochain -c ./conductor-config.toml",
+    "local:start": "mkdir -p tmp-storage && ../holochain/holochain -c ./conductor-config-agent1.toml",
     "local:build": "rm -rf tmp-storage && mkdir -p ./dna && cd dna-src && ../../holochain/hc package --strip-meta -o ../dna/hylo.dna.json",
     "local:test": "cd dna-src && ../../holochain/hc test"
   }
