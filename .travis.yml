@@ -7,3 +7,4 @@ script:
   - cd holochain-rust
   - ls
   - nix-shell
+  - hc --version
