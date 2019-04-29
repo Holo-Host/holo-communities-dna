@@ -6,4 +6,4 @@ script:
   - git clone https://github.com/holochain/holochain-rust.git
   - ls
   - cd dna-src
-  - nix-shell --run 'hc test' holochain-rust/shell.nix
+  - nix-shell --run 'hc test' ../holochain-rust/shell.nix
