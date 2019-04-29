@@ -1,4 +1,3 @@
-
 [[agents]]
 id = "test_agent1"
 name = "HoloTester1"
@@ -33,7 +32,7 @@ id = "hylo-chat"
 id = "GraphiQl-http-interface"
 [interfaces.driver]
 type = "http"
-port = 3001
+port = 4000
 [[interfaces.instances]]
 id = "hylo-chat"
 
@@ -62,3 +61,18 @@ id = "hylo-chat"
 # n3h_persistence_path = "/tmp"
 # bootstrap_nodes = []
 # n3h_log_level = "t"
+
+#===================================================================
+# Extra Agents for network testing
+
+# [[agents]]
+# id = "test_agent2"
+# name = "HoloTester2"
+# public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
+# keystore_file = "./agent2.keystore"
+
+# [[agents]]
+# id = "test_agent"
+# name = "HoloTester3"
+# public_address = "HcSciyCRK7mIujyvc3OV7iAIv47h8itycdR6qd68IKI88ihgRvRv49ESjN58gcz"
+# keystore_file = "./agent3.keystore"
