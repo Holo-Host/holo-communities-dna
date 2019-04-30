@@ -5,6 +5,7 @@ language: nix
 script:
   - git clone https://github.com/holochain/holochain-rust.git
   - ls
-  - nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
+  - nix-shell --run 'npm run test && npm run build && npm run start:agent1' ./holochain-rust/shell.nix
+  - curl http://localhost:3000
   - cd dna
   - ls
