@@ -5,5 +5,6 @@ language: nix
 script:
   - git clone https://github.com/holochain/holochain-rust.git
   - ls
-  - cd dna-src
-  - nix-shell --run 'hc test' ../holochain-rust/shell.nix
+  - nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
+  - cd dna
+  - ls
