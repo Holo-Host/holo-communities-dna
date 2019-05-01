@@ -1,20 +1,18 @@
 dist: trusty
-
 language: nix
-
 script:
-  - git clone https://github.com/holochain/holochain-rust.git
-  - ls
-  - nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
-  - PACKAGE_NAME=$(node -p -e "require('./package.json').name")
-  - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
-  - cd dna-src
-  - ls
-  - zip -r $PACKAGE_NAME-$PACKAGE_VERSION.zip *
+- git clone https://github.com/holochain/holochain-rust.git
+- ls
+- nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
+- PACKAGE_NAME=$(node -p -e "require('./package.json').name")
+- PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
+- cd dna-src
+- ls
+- zip -r $PACKAGE_NAME-$PACKAGE_VERSION.zip *
 deploy:
   provider: releases
   api-key:
-    secure: mxf8xEf1w4qQ+7dE21Mmjkmhn4APfx4tntqsMWRtQQ/Sqb7mP8QgGzHXIJyK275qvu0hA/27vp7Q9s7mG6cUHWCqQ3fx2Zc7qjL7CZIEKXKC3znh4JUcbAaS2DYPpWPNpAU/sbGHia7yW6c9pFN61vbMbZHXKJc+qHvh1agEeJ1GtmZcnpkHl71x447i2mjocuvYqs4eGQHdB/6nmHnS0dC1Ro6NS8VrW++gv+qNerMQhN6Y9M5YIq1jFx1vzAumIAGJ8VYZcOPACiQr4fThSaGLVpZm0FZmWrge+pjImPZURjmjflip1kIIE3ttxTEG2/mXCL4jLXE5TN/RtCEjulrTrkiv+5pI2txftasw1i6hY/NKNEJUAeEw8WiqTnDLLeV+EwxRTRozVtElZ4kwuOfRNyyPDLD2O6W0ONBkqV1Nel4eJp1+dsyeoNXxCaPzZdMKNHNe6jzmMrx7HNs3iNdy+8JlpIOJovEA1CglXqhiyJLbntePs+VrK4s4SyQ5R9szFABYS8LaajM3sj4Shw6BMp/wbFbkQyu1DDaY83EMtNX8XJ5fEqdtqc2ginGey94WHQo5XmtHMLTjpHDUs3WA2mhw0u/ZvoBXQ5UODxhcHUJrSm747apWKO3KrsTIHwd+yvNlHcAwdKxiGfppDUCsOgQLSHlgRFKuanS5Vds=
+    secure: AFW9AVOsFt5DlNpAl/I4kiEoYuinbE4AfRXxGsLaMKKfPFJyw7edKFrxv/tS3gUarlJerwWjcQyE4BU4NbypWmXUqOOhnq6ScvU8xA1+c+aKgF+RLqHE/YDvCzm+cqEvya+uj5l0wxKqenvSPUmh9Js68zAtSCPKr3tHjsj8l5CToHTGnJH4GUVA78hrJqyv58/QyrmxuXy7fdAIyC8cSKyzIUHfMMpvlAJxjKhkf3T4A0JfQ0R5nx7TxrGIKsj5FkUMaC+he/C841jmoatXUD23lMVSdKGE6yV7sR49c64JN7O94S3eCwoQjnLgO81V0EMA0bqbZ5lb6t8rAYqdLfiJpVT2lzktfUQ9YZqE5Cd25LVHpHQX5molVzYDm2SnqRgN8bbTBe3ITcuetPtz13KAkm/EdO7M/ZZZi7E5c0gSQuR+WSiJr1PRyY1RN2YQyzfqRNWY5LBZwuptg+Wyb7zYzb1BxaCULJ/ByEDH78J7yHywMstPuuz5FibXoaPqwDy71Mq6nOFF3Hu5wigwmEU5CY40tlXMtQZmKrHY/G2Qcs7+28Xp1JwWdC3RhKB0w11rWhuH3DJBYLDaFAfB1q7rG/JbhRKa0/LWjVMFFciSkpgpI2O40kreYh3XCj5PVFu4Qxbam1i12HD7Ny8qfOOyzORYxDfEDiIekdPd+B4=
   file: "$PACKAGE_NAME-$PACKAGE_VERSION.zip"
   skip_cleanup: true
   on:
