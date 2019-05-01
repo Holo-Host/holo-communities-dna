@@ -3,9 +3,9 @@ dist: trusty
 language: nix
 
 script:
-  # - git clone https://github.com/holochain/holochain-rust.git
+  - git clone https://github.com/holochain/holochain-rust.git
   - ls
-  # - nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
+  - nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
   - PACKAGE_NAME=$(node -p -e "require('./package.json').name")
   - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
   - cd dna-src
