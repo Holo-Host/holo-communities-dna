@@ -1,8 +1,8 @@
 [[agents]]
-id = "test_agent1"
-name = "HoloTester1"
-public_address = "HcSCjdUIsn6Botxcf8bwmQFDqMz6aqctojcPhzNi54B39cbwJFIuKNjP9uambii"
-keystore_file = "./agent1.keystore"
+id = "test_agent2"
+name = "HoloTester2"
+public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
+keystore_file = "./agent2.keystore"
 
 [[dnas]]
 id = "chat_dna"
@@ -12,7 +12,7 @@ hash = "Qm328wyq38924y"
 [[instances]]
 id = "hylo-chat"
 dna = "chat_dna"
-agent = "test_agent1"
+agent = "test_agent2"
 [instances.logger]
 type = "simple"
 file = "app_spec.log"
@@ -39,16 +39,16 @@ id = "hylo-chat"
 
 #===================================================================
 
-# [[ui_bundles]]
-# id = "main"
-# root_dir = "./ui"
-# hash = "Qm000"
-#
-# [[ui_interfaces]]
-# id = "ui-interface"
-# bundle = "main"
-# port = 4000
-# dna_interface = "websocket_interface"
+[[ui_bundles]]
+id = "main"
+root_dir = "./ui/build"
+hash = "Qm000"
+
+[[ui_interfaces]]
+id = "ui-interface"
+bundle = "main"
+port = 3000
+dna_interface = "websocket_interface"
 
 # [logger]
 # type="debug"
@@ -56,11 +56,11 @@ id = "hylo-chat"
 # exclude=true
 # pattern=".*"
 
-# [network]
-# n3h_path = "/path/to/n3h"
-# n3h_persistence_path = "/tmp"
-# bootstrap_nodes = []
-# n3h_log_level = "t"
+[network]
+n3h_path = "/path/to/n3h"
+n3h_persistence_path = "/tmp"
+bootstrap_nodes = []
+n3h_log_level = "t"
 
 #===================================================================
 # Extra Agents for network testing
