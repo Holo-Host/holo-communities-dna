@@ -6,11 +6,11 @@ script:
   # - git clone https://github.com/holochain/holochain-rust.git
   - ls
   # - nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
-  - cd dna-src
   - PACKAGE_NAME=$(node -p -e "require('./package.json').name")
   - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
+  - cd dna-src
   - ls
-  - zip -r $PACKAGE_NAME-$PACKAGE_VERSION.zip
+  - zip -r $PACKAGE_NAME-$PACKAGE_VERSION.zip *
 deploy:
   provider: releases
   api-key:
