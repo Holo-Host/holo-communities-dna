@@ -48,7 +48,7 @@ hash = "Qm000"
 id = "ui-interface"
 bundle = "main"
 port = 3000
-dna_interface = "websocket_interface"
+dna_interface = "GraphiQl-http-interface"
 
 # [logger]
 # type="debug"

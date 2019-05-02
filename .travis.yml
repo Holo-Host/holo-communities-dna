@@ -6,7 +6,7 @@ script:
 - nix-shell --run 'npm run test && npm run build' ./holochain-rust/shell.nix
 - PACKAGE_NAME=$(node -p -e "require('./package.json').name")
 - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
-- cd dna-src
+- cd dna
 - ls
 - zip -r $PACKAGE_NAME-$PACKAGE_VERSION.zip *
 deploy:
