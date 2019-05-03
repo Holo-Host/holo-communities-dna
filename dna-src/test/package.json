@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@holochain/holochain-nodejs": "0.4.11-alpha1",
+    "@holochain/holochain-nodejs": "0.4.13-alpha1",
     "graphql": "^14.2.1",
     "graphql-schema-utils": "^0.6.7",
     "json3": "*",

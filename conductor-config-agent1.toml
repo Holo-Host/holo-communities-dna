@@ -1,7 +1,7 @@
 [[agents]]
 id = "test_agent1"
 name = "HoloTester1"
-public_address = "HcSCjdUIsn6Botxcf8bwmQFDqMz6aqctojcPhzNi54B39cbwJFIuKNjP9uambii"
+public_address = "HcScjcgKqXC5pmfvka9DmtEJwVr548yd86UPtJGGoue9ynuikuRTN7oE5zcjgbi"
 keystore_file = "./agent1.keystore"
 
 [[dnas]]
@@ -24,7 +24,7 @@ path = "tmp-storage"
 id = "websocket_interface"
 [interfaces.driver]
 type = "websocket"
-port = 3400
+port = 3401
 [[interfaces.instances]]
 id = "hylo-chat"
 
@@ -32,7 +32,7 @@ id = "hylo-chat"
 id = "GraphiQl-http-interface"
 [interfaces.driver]
 type = "http"
-port = 4000
+port = 4001
 [[interfaces.instances]]
 id = "hylo-chat"
 
@@ -47,7 +47,7 @@ hash = "Qm000"
 [[ui_interfaces]]
 id = "ui-interface"
 bundle = "main"
-port = 3000
+port = 5001
 dna_interface = "GraphiQl-http-interface"
 
 # [logger]
@@ -61,18 +61,3 @@ n3h_path = "/path/to/n3h"
 n3h_persistence_path = "/tmp"
 bootstrap_nodes = []
 n3h_log_level = "t"
-
-#===================================================================
-# Extra Agents for network testing
-
-# [[agents]]
-# id = "test_agent2"
-# name = "HoloTester2"
-# public_address = "HcSCJC97Yu987nhupguu3vBF3HHVtbu4m7rZpgGF7qWwiiink586Ih539kHns7r"
-# keystore_file = "./agent2.keystore"
-
-# [[agents]]
-# id = "test_agent"
-# name = "HoloTester3"
-# public_address = "HcSciyCRK7mIujyvc3OV7iAIv47h8itycdR6qd68IKI88ihgRvRv49ESjN58gcz"
-# keystore_file = "./agent3.keystore"
