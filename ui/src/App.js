@@ -16,7 +16,7 @@ function graphQLFetcher(graphQLParams) {
     params: graphQLParams,
   }
 
-  return fetch('http://localhost:4000', {
+  return fetch('http://localhost:4001', {
     method: 'post',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

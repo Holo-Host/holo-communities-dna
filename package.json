@@ -1,13 +1,11 @@
 {
   "name": "holo-hylo-dna",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
-    "start:agent1": "rm -rf tmp-storage && mkdir -p tmp-storage && holochain -c ./conductor-config-agent1.toml",
-    "start:agent2": "rm -rf tmp-storage && mkdir -p tmp-storage && holochain -c ./conductor-config-agent2.toml",
+    "start:agent1": "holochain -c ./conductor-config-agent1.toml",
+    "start:agent2": "holochain -c ./conductor-config-agent2.toml",
+    "start:agent3": "holochain -c ./conductor-config-agent3.toml",
     "build": "rm -rf tmp-storage && mkdir -p ./dna && cd dna-src && hc package --strip-meta -o ../dna/hylo.dna.json",
-    "test": "cd dna-src && hc test",
-    "local:start": "rm -rf tmp-storage && mkdir -p tmp-storage && ../holochain/holochain -c ./conductor-config-agent1.toml",
-    "local:build": "rm -rf tmp-storage && mkdir -p ./dna && cd dna-src && ../../holochain/hc package --strip-meta -o ../dna/hylo.dna.json",
-    "local:test": "cd dna-src && ../../holochain/hc test"
+    "test": "cd dna-src && hc test"
   }
 }
