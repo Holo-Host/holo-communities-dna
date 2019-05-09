@@ -52,8 +52,8 @@ graphql_object!(Message: Context |&self| {
 		Ok(MessageThread{id: self.retrieve_entry()?.thread_id.into()})
 	}
 
-	field createdAt() -> String {
-		"2019-01-14T07:52:22+0000".into()
+	field createdAt() -> FieldResult<String> {
+		Ok(self.retrieve_entry()?.timestamp)
 	}
 });
 
