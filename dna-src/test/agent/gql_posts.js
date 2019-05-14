@@ -4,7 +4,7 @@ module.exports = (scenario) => {
 scenario.runTape('Can create a new post', async (t, {alice}) => {
     let register_response = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
-      variables: {id: "000", name: "wollum", avatarUrl: "//"}
+      variables: {name: "wollum", avatarUrl: "//"}
     })
     console.log(register_response)
 
@@ -69,6 +69,6 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     console.log(getResult2)
     let post2 = JSON.parse(getResult2.Ok).post
     t.equal(post2.commentersTotal, 1)
-    t.deepEqual(post2.commenters, [{id: "000", name: "wollum"}])
+    t.deepEqual(post2.commenters, [{id: alice.agentId, name: "wollum"}])
   })
 }

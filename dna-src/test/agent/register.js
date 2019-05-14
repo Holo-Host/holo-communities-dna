@@ -11,19 +11,19 @@ scenario.runTape('Can register a user and retrieve them again', async (t, {alice
 
     const register_result = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
-      variables: {id: "000", name: "wollum", avatarUrl: "//"}
+      variables: {name: "wollum", avatarUrl: "//"}
     })
     console.log(register_result)
-    t.equal(JSON.parse(register_result.Ok).registerUser.success, true)
+    t.equal(JSON.parse(register_result.Ok).registerUser.id, alice.agentId)
 
     const get_result = await alice.callSync("graphql", "graphql", {
       query: queries.getPeopleQuery,
-      variables: {first: 1}
+      variables: {id: alice.agentId}
     })
     console.log(get_result)
     t.assert(JSON.parse(get_result.Ok).people.items.length > 0)
     t.assert(JSON.parse(get_result.Ok).people.items.filter((person) => {
-      return person.id === "000"
+      return person.id === alice.agentId
     }).length > 0)
   })
 }
