@@ -24,7 +24,7 @@ path = "tmp-storage"
 id = "websocket_interface"
 [interfaces.driver]
 type = "websocket"
-port = 3400
+port = 3401
 [[interfaces.instances]]
 id = "hylo-chat"
 
@@ -59,5 +59,5 @@ dna_interface = "GraphiQl-http-interface"
 [network]
 n3h_path = "/path/to/n3h"
 n3h_persistence_path = "/tmp"
-bootstrap_nodes = ["wss://holo-dna.hylo.com:38474/?a=HcSci3mbfjh4nqtj7rQArggU7Ijrv6dbqT9fwpTmUQsthb84DQDPgTvayg6iuti"]
+bootstrap_nodes = []
 n3h_log_level = "t"
