@@ -56,8 +56,8 @@ dna_interface = "GraphiQl-http-interface"
 # exclude=true
 # pattern=".*"
 
-[network]
-n3h_path = "/path/to/n3h"
-n3h_persistence_path = "/tmp"
-bootstrap_nodes = []
-n3h_log_level = "t"
+# [network]
+# n3h_path = "/path/to/n3h"
+# n3h_persistence_path = "/tmp"
+# bootstrap_nodes = []
+# n3h_log_level = "t"

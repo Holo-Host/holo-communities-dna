@@ -12,6 +12,7 @@ dna
 tmp-storage
 target
 dist
+release
 
 # misc
 .DS_Store
