@@ -7,9 +7,6 @@ scenario.runTape('Check for a non existent thread and then create it', async (t,
       variables: {name: "wollum", avatarUrl: "//"}
     })
 
-    console.log('**************')
-    console.log('result:', result)
-
     const get_result = await alice.callSync("graphql", "graphql", {
       query: queries.getMessageThreadsQuery,
       variables: {first: 10, offset: 0}
