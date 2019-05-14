@@ -2,6 +2,7 @@
   "name": "holo-hylo-dna",
   "version": "0.0.3",
   "scripts": {
+    "start": "holochain -c ./conductor-config.toml",
     "start:agent1": "holochain -c ./conductor-config-agent1.toml",
     "start:agent2": "holochain -c ./conductor-config-agent2.toml",
     "start:agent3": "holochain -c ./conductor-config-agent3.toml",
