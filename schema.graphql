@@ -1,6 +1,9 @@
 # The currently logged-in person.
 type Me {
   id: ID
+  name: String
+  avatarUrl: String
+  isRegistered: Boolean
   messageThreads(first: Int, offset: Int, order: String, sortBy: String): MessageThreadQuerySet
 }
 
@@ -131,9 +134,5 @@ type Mutation {
   createMessage(data: MessageInput): Message
   createPost(data: PostInput): Post
   findOrCreateThread(data: MessageThreadInput): MessageThread
-  registerUser(id: ID, name: String, avatarUrl: String): GenericResult
-}
-
-type GenericResult {
-  success: Boolean
+  registerUser(name: String, avatarUrl: String): Person
 }

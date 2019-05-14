@@ -19,7 +19,7 @@ pub struct Person {
 graphql_object!(Person: Context |&self| {
 	field id() -> FieldResult<ID> {
 		// be careful. This field is the Hylo ID not the holochain ID
-		Ok(identity::get_identity(self.id.to_string().into())?.hylo_id.into())
+		Ok(self.id.to_string().into())
 	}
 
 	field name() -> FieldResult<String> {
@@ -71,7 +71,7 @@ pub struct Membership {
 graphql_object!(Membership: Context |&self| {
 	field id() -> FieldResult<ID> {
 		// be careful. This field is the Hylo ID not the holochain ID
-		Ok(identity::get_identity(self.id.to_string().into())?.hylo_id.into())
+		Ok(self.id.to_string().into())
 	}
 
 	field community() -> FieldResult<Community> {

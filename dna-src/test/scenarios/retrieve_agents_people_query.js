@@ -19,7 +19,7 @@ module.exports = (scenario) => {
 const register = async (agent, name) => {
   return agent.callSync("graphql", "graphql", {
     query: queries.registerQuery,
-    variables: {id: "001", name, avatarUrl: "//"}
+    variables: {name, avatarUrl: "//"}
   })
 }
 

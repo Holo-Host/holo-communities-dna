@@ -2,9 +2,9 @@ const queries = require('../queries')
 module.exports = (scenario) => {
 
 scenario.runTape('Check for a non existent thread and then create it', async (t, {alice}) => {
-    await alice.callSync("graphql", "graphql", {
+    const result = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
-      variables: {id: "000", name: "wollum", avatarUrl: "//"}
+      variables: {name: "wollum", avatarUrl: "//"}
     })
 
     const get_result = await alice.callSync("graphql", "graphql", {
@@ -18,19 +18,15 @@ scenario.runTape('Check for a non existent thread and then create it', async (t,
     // add a thread
     const add_result_str = await alice.callSync("graphql", "graphql", {
       query: queries.findOrCreateThreadQuery,
-      variables: {participantIds: ["Ringo"]}
+      variables: {participantIds: []}
     })
     console.log(add_result_str)
     const add_result = JSON.parse(add_result_str.Ok)
     t.equal(add_result.findOrCreateThread.id.length, 46) // thread was created and hash returned
-    t.equal(add_result.findOrCreateThread.participants.length, 2) // thread was created and hash returned
+    t.equal(add_result.findOrCreateThread.participants.length, 1) // thread was created and hash returned
     t.assert(add_result.findOrCreateThread.participants
       .map(person => person.id)
-      .includes("Ringo")
-    )
-    t.assert(add_result.findOrCreateThread.participants
-      .map(person => person.id)
-      .includes("000")
+      .includes(alice.agentId)
     )
 
     const get_result_post = await alice.callSync("graphql", "graphql", {

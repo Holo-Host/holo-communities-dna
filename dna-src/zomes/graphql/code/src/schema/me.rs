@@ -19,7 +19,25 @@ type Me {
 pub struct Me;
 graphql_object!(Me: Context |&self| {
 	field id() -> FieldResult<ID> {
-		Ok(identity::get_identity(AGENT_ADDRESS.to_string().into())?.hylo_id.into())
+		Ok(AGENT_ADDRESS.to_string().into())		
+	}
+
+	field name() -> FieldResult<Option<String>> {
+		match identity::get_identity(AGENT_ADDRESS.to_string().into()) {
+			Ok(identity) => {Ok(Some(identity.name))},
+			Err(err) => {Ok(None)}
+		}
+	}
+
+	field avatarUrl() -> FieldResult<Option<String>> {
+		match identity::get_identity(AGENT_ADDRESS.to_string().into()) {
+			Ok(identity) => {Ok(Some(identity.avatar_url))},
+			Err(err) => {Ok(None)}
+		}
+	}
+
+	field isRegistered() -> FieldResult<bool> {
+		Ok(identity::get_identity(AGENT_ADDRESS.to_string().into()).is_ok())
 	}
 
 	field messageThreads(first: Option<i32>, offset: Option<i32>, order: Option<String>, sort_by: Option<String>) -> FieldResult<MessageThreadQuerySet> {
