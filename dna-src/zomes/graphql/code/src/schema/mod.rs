@@ -20,6 +20,10 @@ use me::Me;
 use post::Post;
 use community::Community;
 
+use hdk::{
+    AGENT_ADDRESS,
+};
+
 /*=====================================
 =            Input Objects            =
 =====================================*/
@@ -159,20 +163,6 @@ graphql_object!(Query: Context |&self| {
  * such that the values can be retrieved again later
  */
 
- #[derive(GraphQLObject)]
-struct GenericResult {
-    success: bool,
-}
-
-impl GenericResult {
-    pub fn new() -> Self {
-        GenericResult{
-            success: true,
-        }
-    }
-}
-
-
 pub struct Mutation;
 graphql_object!(Mutation: Context |&self| {
 
@@ -189,13 +179,7 @@ graphql_object!(Mutation: Context |&self| {
     }
 
     field findOrCreateThread(data: Option<MessageThreadInput>) -> FieldResult<MessageThread> {
-    	let participant_hylo_ids: Vec<String> = data.unwrap().participant_ids.unwrap().into_iter().map(|elem| elem.unwrap()).collect();
-
-        let participant_agent_ids = participant_hylo_ids
-            .iter()
-            .map(|hylo_id| {
-                identity::agent_address_from_hylo_id(hylo_id.to_owned()).unwrap().to_string()
-            }).collect::<Vec<String>>().clone();
+    	let participant_agent_ids: Vec<String> = data.unwrap().participant_ids.unwrap().into_iter().map(|elem| elem.unwrap()).collect();
 
         let result_value = call_cached("chat", "get_or_create_thread", json!({"participant_ids": participant_agent_ids}).into())?;
         // hdk::debug(result_value.clone())?;
@@ -204,13 +188,12 @@ graphql_object!(Mutation: Context |&self| {
         })
     }
 
-    field registerUser(id: Option<ID>, name: Option<String>, avatar_url: Option<String>) -> FieldResult<GenericResult> {
+    field registerUser(name: Option<String>, avatar_url: Option<String>) -> FieldResult<Person> {
     	let id = identity::register_user(
     		name.unwrap_or("?".into()),
-    		avatar_url.unwrap_or("".into()),
-    		id.unwrap_or(juniper::ID::new("")).to_string(),
+    		avatar_url.unwrap_or("".into())
     	)?;
-    	Ok(GenericResult::new())
+    	Ok(Person { id: AGENT_ADDRESS.to_string().into() })
     }
 
     field createComment(data: Option<CommentInput>) -> FieldResult<Comment> {

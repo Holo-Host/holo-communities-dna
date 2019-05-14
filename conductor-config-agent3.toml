@@ -1,5 +1,5 @@
 [[agents]]
-id = "test_agent"
+id = "hylo_agent"
 name = "HoloTester3"
 public_address = "HcScIpNoy4Q5Xw76ggYWeMRcH5yxyitijRaREZHF9P6dau76aJygYS67G8Fcydi"
 keystore_file = "./agent3.keystore"
@@ -12,13 +12,15 @@ hash = "Qm328wyq38924y"
 [[instances]]
 id = "hylo-chat"
 dna = "chat_dna"
-agent = "test_agent1"
+agent = "hylo_agent"
 [instances.logger]
 type = "simple"
 file = "app_spec.log"
 [instances.storage]
 type = "memory"
 path = "tmp-storage"
+
+# -- WS-RPC interface to Hylo DNA
 
 [[interfaces]]
 id = "websocket_interface"
@@ -28,16 +30,27 @@ port = 3403
 [[interfaces.instances]]
 id = "hylo-chat"
 
+# # -- Hylo UI
+
+# [[ui_bundles]]
+# id = "hylo-ui"
+# root_dir = "./hylo-ui"
+# hash = "Qm000"
+
+# [[ui_interfaces]]
+# id = "hylo-interface"
+# bundle = "hylo-ui"
+# port = 8000
+
+# -- GraphiQl HTTP interface and UI
+
 [[interfaces]]
 id = "GraphiQl-http-interface"
 [interfaces.driver]
 type = "http"
-port = 4003
+port = 4002
 [[interfaces.instances]]
 id = "hylo-chat"
-
-
-#===================================================================
 
 [[ui_bundles]]
 id = "main"
@@ -47,17 +60,25 @@ hash = "Qm000"
 [[ui_interfaces]]
 id = "ui-interface"
 bundle = "main"
-port = 5003
+port = 5002
 dna_interface = "GraphiQl-http-interface"
+
+# -- Networking
+
+[network]
+n3h_path = "/path/to/n3h"
+n3h_persistence_path = "/tmp"
+n3h_log_level = "t"
+bootstrap_nodes = []
+# * For testing with a persistent n3h bootstrap node:
+# bootstrap_nodes = [
+#   "wss://holo-dna.hylo.com:38474/?a=HcSci3mbfjh4nqtj7rQArggU7Ijrv6dbqT9fwpTmUQsthb84DQDPgTvayg6iuti"
+# ]
+
+# -- Logger (settings below will disable most logging)
 
 # [logger]
 # type="debug"
 # [[logger.rules.rules]]
 # exclude=true
 # pattern=".*"
-
-[network]
-n3h_path = "/path/to/n3h"
-n3h_persistence_path = "/tmp"
-bootstrap_nodes = []
-n3h_log_level = "t"

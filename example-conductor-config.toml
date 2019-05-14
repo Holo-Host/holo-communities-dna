@@ -1,8 +1,17 @@
+# * Copy this file to conductor-config.toml and generate a unique agent key
+#   for your instance of Hylo DNA:
+#
+#    1. Run `hc keygen`
+#    2. Copy the public address hash and copy it into public_address below
+#    3. Point the path noted in "Keystore written to:" to keystore_file below
+
+# -- Hylo DNA registration and instance config
+
 [[agents]]
 id = "hylo_agent"
-name = "HoloTester1"
-public_address = "HcScjcgKqXC5pmfvka9DmtEJwVr548yd86UPtJGGoue9ynuikuRTN7oE5zcjgbi"
-keystore_file = "./agent1.keystore"
+name = "Holochain for Hylo agent"
+public_address = ""
+keystore_file = ""
 
 [[dnas]]
 id = "chat_dna"
@@ -26,7 +35,7 @@ path = "tmp-storage"
 id = "websocket_interface"
 [interfaces.driver]
 type = "websocket"
-port = 3401
+port = 3400
 [[interfaces.instances]]
 id = "hylo-chat"
 
@@ -65,8 +74,20 @@ dna_interface = "GraphiQl-http-interface"
 
 # -- Networking
 
-# [network]
-# n3h_path = "/path/to/n3h"
-# n3h_persistence_path = "/tmp"
-# bootstrap_nodes = []
-# n3h_log_level = "t"
+[network]
+n3h_path = "/path/to/n3h"
+n3h_persistence_path = "/tmp"
+n3h_log_level = "t"
+bootstrap_nodes = []
+# * For testing with a persistent n3h bootstrap node:
+# bootstrap_nodes = [
+#   "wss://holo-dna.hylo.com:38474/?a=HcSci3mbfjh4nqtj7rQArggU7Ijrv6dbqT9fwpTmUQsthb84DQDPgTvayg6iuti"
+# ]
+
+# -- Logger (settings below will disable most logging)
+
+# [logger]
+# type="debug"
+# [[logger.rules.rules]]
+# exclude=true
+# pattern=".*"

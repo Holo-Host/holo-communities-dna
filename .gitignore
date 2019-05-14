@@ -26,3 +26,4 @@ yarn-error.log
 .idea
 Cargo.lock
 package-lock.json
+conductor-config.toml

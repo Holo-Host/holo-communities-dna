@@ -1,7 +1,7 @@
 module.exports.registerQuery = `
-mutation ($id: ID, $name: String, $avatarUrl: String) {
-  registerUser(id: $id, name: $name, avatarUrl: $avatarUrl) {
-    success
+mutation ($name: String, $avatarUrl: String) {
+  registerUser(name: $name, avatarUrl: $avatarUrl) {
+    id
   }
 }
 `

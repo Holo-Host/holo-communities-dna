@@ -4,7 +4,7 @@ module.exports = (scenario) => {
 scenario.runTape('Can register a user and retrieve them again', async (t, {alice}) => {
     let register_response = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
-      variables: {id: "000", name: "wollum", avatarUrl: "//"}
+      variables: {name: "wollum", avatarUrl: "//"}
     })
     console.log(register_response)
 
