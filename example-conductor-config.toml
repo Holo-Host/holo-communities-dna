@@ -1,7 +1,7 @@
 # * Copy this file to conductor-config.toml and generate a unique agent key
 #   for your instance of Hylo DNA:
 #
-#    1. Run `hc keygen`
+#    1. Run `hc keygen -n`
 #    2. Copy the public address hash and copy it into public_address below
 #    3. Point the path noted in "Keystore written to:" to keystore_file below
 
