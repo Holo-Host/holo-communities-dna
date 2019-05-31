@@ -1,10 +1,3 @@
-# * Copy this file to conductor-config.toml and generate a unique agent key
-#   for your instance of Hylo DNA:
-#
-#    1. Run `hc keygen -n`
-#    2. Copy the public address hash and copy it into public_address below
-#    3. Point the path noted in "Keystore written to:" to keystore_file below
-
 # -- Hylo DNA, Agent and Instance config
 
 [[dnas]]
@@ -14,9 +7,9 @@ hash = "Qm328wyq38924y"
 
 [[agents]]
 id = "hylo_agent"
-name = "Holochain for Hylo agent"
-public_address = ""
-keystore_file = ""
+name = "HoloTester1"
+public_address = "HcScjcgKqXC5pmfvka9DmtEJwVr548yd86UPtJGGoue9ynuikuRTN7oE5zcjgbi"
+keystore_file = "./keystores/agent1.keystore"
 
 [[instances]]
 id = "hylo-chat"
@@ -41,7 +34,7 @@ id = "websocket_interface"
 
     [interfaces.driver]
     type = "websocket"
-    port = 3400
+    port = 3401
 
 # -- Hylo UI Bundle (location of files) and UI Interface (http)
 
@@ -53,7 +46,7 @@ root_dir = "./hylo-ui"
 bundle = "hylo-ui"
 dna_interface = "websocket_interface"
 id = "hylo-ui-interface"
-port = 8000
+port = 8001
 
 # -- GraphiQl UI Bundle (location of files) and UI Interface (http)
 
@@ -65,14 +58,14 @@ root_dir = "./graphiql-ui/build"
 bundle = "graphiql-ui"
 dna_interface = "websocket_interface"
 id = "graphiql-ui-interface"
-port = 5000
+port = 5001
 
 # -- Networking
 
 [network]
 n3h_persistence_path = "/tmp"
 n3h_log_level = "t"
-bootstrap_nodes = []
+bootstrap_nodes=[]
 # # For testing with a persistent n3h bootstrap node
 # bootstrap_nodes = [
 #   "wss://holo-dna.hylo.com:38474/?a=HcSCirG9ghgy9owfdiSmaibqwD5jz9tfb5iBd4QRXrqheadsviW8bw3W3qCrm3r"

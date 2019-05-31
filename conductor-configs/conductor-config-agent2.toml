@@ -9,7 +9,7 @@ hash = "Qm328wyq38924y"
 id = "hylo_agent"
 name = "HoloTester2"
 public_address = "HcScidPSdAT43q9qirJwt5rHJYjjsvougV3jgSBwdJujszw3bBu5Mktr74Rgnea"
-keystore_file = "./agent2.keystore"
+keystore_file = "./keystores/agent2.keystore"
 
 [[instances]]
 id = "hylo-chat"

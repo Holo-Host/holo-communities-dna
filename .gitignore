@@ -32,4 +32,5 @@ Cargo.lock
 package-lock.json
 dmg-mount
 conductor-config.toml
+keystores/myagent.keystore
 
