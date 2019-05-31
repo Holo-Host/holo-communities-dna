@@ -1,10 +1,15 @@
 use juniper::{FieldResult, ID};
 use hdk::AGENT_ADDRESS;
-
-use crate::identity;
+use hdk::error::ZomeApiResult;
+use hdk::holochain_core_types::{
+	error::HolochainError,
+	json::JsonString,
+};
 use crate::Context;
 use crate::holochain_juniper::call_cached;
 use serde_json::json;
+// use holochain_core_types_derive::{ DefaultJson };
+use std::convert::TryFrom;
 
 use super::message_thread::{MessageThread, MessageThreadQuerySet};
 
@@ -17,27 +22,38 @@ type Me {
 }
 */
 pub struct Me;
+
+#[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
+pub struct PersonEntry {
+	pub name: String,
+	pub avatar_url: String,
+}
+
+impl Me {
+	fn retrieve_entry(&self) -> ZomeApiResult<PersonEntry> {
+		let id: String = AGENT_ADDRESS.to_string().into();
+		let result = JsonString::from(call_cached("identity", "get_identity", json!({"agent_id": id}).into())?);
+		let person_entry = PersonEntry::try_from(result)?;
+		Ok(person_entry)
+	}
+}
+
 graphql_object!(Me: Context |&self| {
 	field id() -> FieldResult<ID> {
 		Ok(AGENT_ADDRESS.to_string().into())		
 	}
 
-	field name() -> FieldResult<Option<String>> {
-		match identity::get_identity(AGENT_ADDRESS.to_string().into()) {
-			Ok(identity) => {Ok(Some(identity.name))},
-			Err(err) => {Ok(None)}
-		}
+	field name() -> FieldResult<String> {
+  		Ok(self.retrieve_entry()?.name)
 	}
 
-	field avatarUrl() -> FieldResult<Option<String>> {
-		match identity::get_identity(AGENT_ADDRESS.to_string().into()) {
-			Ok(identity) => {Ok(Some(identity.avatar_url))},
-			Err(err) => {Ok(None)}
-		}
+	field avatarUrl() -> FieldResult<String> {
+  		Ok(self.retrieve_entry()?.avatar_url)
 	}
 
 	field isRegistered() -> FieldResult<bool> {
-		Ok(identity::get_identity(AGENT_ADDRESS.to_string().into()).is_ok())
+		// TODO: fix this
+		return Ok(true)
 	}
 
 	field messageThreads(first: Option<i32>, offset: Option<i32>, order: Option<String>, sort_by: Option<String>) -> FieldResult<MessageThreadQuerySet> {

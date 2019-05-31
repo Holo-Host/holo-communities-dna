@@ -101,15 +101,6 @@ graphql_object!(Query: Context |&self| {
         let result = call_cached("identity", "get_people", json!({}).into())?;
         let person_ids: Vec<serde_json::Value> = result.as_array().unwrap().to_vec();
 
-    	// let people: Vec<Person> = person_ids
-	    // 	.iter()
-	    // 	.map(|id| {
-        // 		Person {
-	    // 			id: id.into(),
-    	// 		}
-	    // 	})
-    	// 	.collect();
-
         let people: Vec<Person> = person_ids.iter().map(|id| Person{
           id: id.as_str().unwrap().to_string().into(),
         }).collect();
