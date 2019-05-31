@@ -37,12 +37,12 @@ graphql_object!(Community: Context |&self| {
 	}
 
 	field name() -> FieldResult<String> {
-  		Ok(self.retrieve_entry()?.name)
-  	}
+		Ok(self.retrieve_entry()?.name)
+	}
 
 	field slug() -> FieldResult<String> {
-  		Ok(self.retrieve_entry()?.slug)
-  	}
+		Ok(self.retrieve_entry()?.slug)
+	}
 
   	/// All parameters for this are ignored and it will return all the posts regardless
   	field posts(
