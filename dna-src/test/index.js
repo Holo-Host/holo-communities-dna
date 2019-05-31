@@ -49,6 +49,6 @@ require('./agent/gql_comments')(singleAgentScenario)
 require('./agent/gql_threads')(singleAgentScenario)
 require('./agent/gql_messages')(singleAgentScenario)
 require('./agent/gql_posts')(singleAgentScenario)
-require('./agent/gql_communitys')(singleAgentScenario)
+require('./agent/gql_communities')(singleAgentScenario)
 
 require('./scenarios/retrieve_agents_people_query')(twoAgentScenario)

@@ -44,10 +44,10 @@ define_zome! {
             outputs: |result: ZomeApiResult<Address>|,
             handler: community::create_community
         }
-        get_communitys: {
+        get_communities: {
             inputs: | |,
             outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: community::get_communitys
+            handler: community::get_communities
         }
     ]
 
@@ -55,7 +55,7 @@ define_zome! {
         hc_public [
             get_community,
             create_community,
-            get_communitys,
+            get_communities,
             get_community_address_by_slug
         ]
     }

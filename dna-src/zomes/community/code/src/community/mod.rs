@@ -67,7 +67,7 @@ pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
     Ok(community_address)
 }
 
-pub fn get_communitys() -> ZomeApiResult<Vec<Address>> {
+pub fn get_communities() -> ZomeApiResult<Vec<Address>> {
     let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into()))?;
     Ok(hdk::get_links(&address, COMMUNITY_LINK_TAG)?.addresses().to_vec())
 }

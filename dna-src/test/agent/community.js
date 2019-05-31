@@ -21,9 +21,9 @@ module.exports = (scenario) => {
     console.log(get_community_result_by_slug)
     t.equal(get_community_result_by_slug.Ok, address)
 
-    const get_communitys_result = await alice.callSync("community", "get_communitys", {
+    const get_communities_result = await alice.callSync("community", "get_communities", {
     })
-    console.log(get_communitys_result)
-    t.deepEqual(get_communitys_result.Ok, [address], "Could retrieve the added community from the base")
+    console.log(get_communities_result)
+    t.deepEqual(get_communities_result.Ok, [address], "Could retrieve the added community from the base")
   })
 }
