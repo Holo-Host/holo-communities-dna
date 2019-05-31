@@ -1,7 +1,6 @@
 use juniper::{FieldError, FieldResult, Value, ID};
 use serde_json::json;
 use crate::holochain_juniper::call_cached;
-use crate::identity;
 use crate::Context;
 
 mod person;
@@ -99,7 +98,7 @@ graphql_object!(Query: Context |&self| {
 	    autocomplete: Option<String>,
 	    filter: Option<String>
 	) -> FieldResult<PersonQuerySet> {
-    	let people: Vec<Person> = identity::get_people()?
+    	let people: Vec<Person> = call_cached("identity", "get_people")?
 	    	.into_iter()
 	    	.map(|id| {
         		Person {
@@ -189,10 +188,7 @@ graphql_object!(Mutation: Context |&self| {
     }
 
     field registerUser(name: Option<String>, avatar_url: Option<String>) -> FieldResult<Person> {
-    	let id = identity::register_user(
-    		name.unwrap_or("?".into()),
-    		avatar_url.unwrap_or("".into())
-    	)?;
+        let id = call_cached("identity", "register_user", json!({"name": name.unwrap_or("?".into()), "avatar_url": avatar_url.unwrap_or("".into())}).into())?;
     	Ok(Person { id: AGENT_ADDRESS.to_string().into() })
     }
 
