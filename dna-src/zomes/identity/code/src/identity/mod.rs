@@ -4,6 +4,7 @@ use hdk::{
     utils,
     entry_definition::ValidatingEntryType,
     error::{ZomeApiError, ZomeApiResult},
+    // error::ZomeApiResult,
     holochain_core_types::{
         cas::content::{Address, AddressableContent},
         dna::entry_types::Sharing,
@@ -21,12 +22,17 @@ pub struct Identity {
 }
 
 pub fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> {
+    env_logger::init();
+    hdk::debug("******************************************")?;
+    hdk::debug(format!("getting identity for agent_id {}", AGENT_ADDRESS.to_string()))?;
+
     utils::get_links_and_load_type::<_, Identity>(&agent_id, "registered")?
         .first()
         .map(|result| result.to_owned())
         .ok_or(ZomeApiError::Internal(
             "Agent has not been registered".into(),
         ))
+    // Ok(Identity {name: "joe".into(), avatar_url: "png".into()})
 }
 
 
