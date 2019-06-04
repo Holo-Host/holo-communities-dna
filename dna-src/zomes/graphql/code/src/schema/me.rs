@@ -43,17 +43,23 @@ graphql_object!(Me: Context |&self| {
 		Ok(AGENT_ADDRESS.to_string().into())		
 	}
 
-	field name() -> FieldResult<String> {
-  		Ok(self.retrieve_entry()?.name)
+field name() -> FieldResult<Option<String>> {
+		match self.retrieve_entry() {
+			Ok(identity) => {Ok(Some(identity.name))},
+			Err(err) => {Ok(None)}
+		}
 	}
 
-	field avatarUrl() -> FieldResult<String> {
-  		Ok(self.retrieve_entry()?.avatar_url)
+	field avatarUrl() -> FieldResult<Option<String>> {
+		match self.retrieve_entry() {
+			Ok(identity) => {Ok(Some(identity.avatar_url))},
+			Err(err) => {Ok(None)}
+		}
 	}
 
 	field isRegistered() -> FieldResult<bool> {
-		// TODO: fix this
-		return Ok(true)
+		let result = serde_json::from_value(call_cached("identity", "is_registered", json!({}).into())?).unwrap();
+		Ok(result)
 	}
 
 	field messageThreads(first: Option<i32>, offset: Option<i32>, order: Option<String>, sort_by: Option<String>) -> FieldResult<MessageThreadQuerySet> {

@@ -21,20 +21,21 @@ pub struct Identity {
     pub avatar_url: String
 }
 
-pub fn get_identity(_agent_id: Address) -> ZomeApiResult<Identity> {
-    env_logger::init();
+pub fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> {
     hdk::debug("******************************************")?;
     hdk::debug(format!("getting identity for agent_id {}", AGENT_ADDRESS.to_string()))?;
 
-    utils::get_links_and_load_type::<Identity>(&AGENT_ADDRESS, Some("registered".to_string()), None)?
+    utils::get_links_and_load_type::<Identity>(&agent_id, Some("registered".to_string()), None)?
         .first()
         .map(|result| result.to_owned())
         .ok_or(ZomeApiError::Internal(
             "Agent has not been registered".into(),
         ))
-    // Ok(Identity {name: "joe".into(), avatar_url: "png".into()})
 }
 
+pub fn is_registered() -> ZomeApiResult<bool> {
+    Ok(get_identity(AGENT_ADDRESS.to_string().into()).is_ok())
+}
 
 pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<Address> {
     let identity_entry = Entry::App("identity".into(), Identity { name, avatar_url }.into());

@@ -45,11 +45,11 @@ graphql_object!(Person: Context |&self| {
 	}
 
 	field name() -> FieldResult<String> {
-		Ok(self.retrieve_entry()?.name)
+  		Ok(self.retrieve_entry()?.name)
 	}
 
 	field avatarUrl() -> FieldResult<String> {
-		Ok(self.retrieve_entry()?.avatar_url)
+  		Ok(self.retrieve_entry()?.avatar_url)
 	}
 
 	field memberships(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Membership>> {
