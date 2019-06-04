@@ -28,7 +28,7 @@ pub struct Post {
 pub type Base = RawString;
 
 const POST_BASE_ENTRY: &str = "post_base";
-const POST_LINK_TAG: &str = "posted_in";
+const POST_LINK_TYPE: &str = "posted_in";
 
 pub fn get_post(address: Address) -> ZomeApiResult<Post> {
     utils::get_as_type(address)
@@ -58,7 +58,8 @@ pub fn create_post(base: String, title: String, details: String, post_type: Stri
     hdk::link_entries(
         &base_address,
         &post_address,
-        POST_LINK_TAG,
+        POST_LINK_TYPE,
+        ""
     )?;
 
     Ok(post_address)
@@ -66,7 +67,7 @@ pub fn create_post(base: String, title: String, details: String, post_type: Stri
 
 pub fn get_posts(base: String) -> ZomeApiResult<Vec<Address>> {
     let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
-    Ok(hdk::get_links(&address, POST_LINK_TAG)?.addresses().to_vec())
+    Ok(hdk::get_links(&address, Some(POST_LINK_TYPE.into()), None)?.addresses().to_vec())
 }
 
 pub fn post_def() -> ValidatingEntryType {
@@ -99,7 +100,7 @@ pub fn base_def() -> ValidatingEntryType {
         links: [
             to!(
                 "post",
-                tag: POST_LINK_TAG,
+                link_type: POST_LINK_TYPE,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },

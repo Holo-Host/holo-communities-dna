@@ -32,13 +32,13 @@ pub type Base = String;
 
 // tag for links from base to comment
 
-pub const COMMENT_LINK_TAG: &str = "commented_on";
+pub const COMMENT_LINK_TYPE: &str = "commented_on";
 
 // API methods
 
 pub fn handle_get_comments(base: String) -> ZomeApiResult<Vec<Address>> {
     let address = hdk::entry_address(&Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(base).into()))?;
-    Ok(hdk::get_links(&address, COMMENT_LINK_TAG)?.addresses().to_vec())
+    Ok(hdk::get_links(&address, Some(COMMENT_LINK_TYPE.into()), None)?.addresses().to_vec())
 }
 
 // Entry definition
@@ -57,7 +57,7 @@ pub fn base_def() -> ValidatingEntryType {
         links: [
             to!(
                 COMMENT_ENTRY_TYPE,
-                tag: COMMENT_LINK_TAG,
+                link_type: COMMENT_LINK_TYPE,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },

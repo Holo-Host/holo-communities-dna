@@ -28,7 +28,7 @@ pub fn def() -> ValidatingEntryType {
         links: [
             to!(
                 "%agent_id",
-                tag: "registered",
+                link_type: "registered",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
@@ -40,7 +40,7 @@ pub fn def() -> ValidatingEntryType {
             ),
             to!(// delete this later. This is just because test users are anchors and don't have a real agent_address
                 "anchor",
-                tag: "registered",
+                link_type: "registered",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
@@ -52,7 +52,7 @@ pub fn def() -> ValidatingEntryType {
             ),
             to!(
                 "%agent_id",
-                tag: "belongs_to",
+                link_type: "belongs_to",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
@@ -64,7 +64,7 @@ pub fn def() -> ValidatingEntryType {
             ),
             to!(// delete this later. This is just because test users are anchors and don't have a real agent_address
                 "anchor",
-                tag: "belongs_to",
+                link_type: "belongs_to",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

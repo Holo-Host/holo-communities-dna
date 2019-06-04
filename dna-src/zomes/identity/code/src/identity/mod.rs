@@ -21,12 +21,12 @@ pub struct Identity {
     pub avatar_url: String
 }
 
-pub fn get_identity(agent_id: Address) -> ZomeApiResult<Identity> {
+pub fn get_identity(_agent_id: Address) -> ZomeApiResult<Identity> {
     env_logger::init();
     hdk::debug("******************************************")?;
     hdk::debug(format!("getting identity for agent_id {}", AGENT_ADDRESS.to_string()))?;
 
-    utils::get_links_and_load_type::<_, Identity>(&agent_id, "registered")?
+    utils::get_links_and_load_type::<Identity>(&AGENT_ADDRESS, Some("registered".to_string()), None)?
         .first()
         .map(|result| result.to_owned())
         .ok_or(ZomeApiError::Internal(
@@ -40,7 +40,7 @@ pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<Address>
     let identity_entry = Entry::App("identity".into(), Identity { name, avatar_url }.into());
 
     let ident_addr = hdk::commit_entry(&identity_entry)?;
-    hdk::link_entries(&AGENT_ADDRESS, &ident_addr, "registered")?;
+    hdk::link_entries(&AGENT_ADDRESS, &ident_addr, "registered", "")?;
 
     let anchor_entry = Entry::App(
         "anchor".into(),
@@ -50,7 +50,7 @@ pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<Address>
         .into(),
     );
     let anchor_addr = hdk::commit_entry(&anchor_entry)?;
-    hdk::link_entries(&anchor_addr, &AGENT_ADDRESS, "registered")?;
+    hdk::link_entries(&anchor_addr, &AGENT_ADDRESS, "registered", "")?;
 
     Ok(ident_addr.to_string().into())
 }
@@ -63,7 +63,7 @@ pub fn get_people() -> ZomeApiResult<Vec<Address>> {
         }
         .into(),
     );
-    Ok(hdk::get_links(&anchor_entry.address(), "registered")?
+    Ok(hdk::get_links(&anchor_entry.address(), Some("registered".to_string()), None)?
         .addresses()
         .to_owned())
 }
@@ -133,7 +133,7 @@ pub fn def() -> ValidatingEntryType {
         links: [
             from!(
                 "%agent_id",
-                tag: "registered",
+                link_type: "registered",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

@@ -22,7 +22,7 @@ pub struct Community {
 pub type Base = RawString;
 
 const COMMUNITY_BASE_ENTRY: &str = "community_base";
-const COMMUNITY_LINK_TAG: &str = "member_of";
+const COMMUNITY_LINK_TYPE: &str = "member_of";
 
 pub fn get_community(address: Address) -> ZomeApiResult<Community> {
     utils::get_as_type(address)
@@ -30,7 +30,7 @@ pub fn get_community(address: Address) -> ZomeApiResult<Community> {
 
 pub fn get_community_address_by_slug(slug: String) -> ZomeApiResult<Address> {
     let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug).into()))?;
-    let all_communities = hdk::get_links(&address, COMMUNITY_LINK_TAG)?.addresses().clone();
+    let all_communities = hdk::get_links(&address, Some(COMMUNITY_LINK_TYPE.into()), None)?.addresses().clone();
     all_communities.to_owned().into_iter().next().ok_or(ZomeApiError::Internal("No communities for this slug".into()))
 }
 
@@ -55,12 +55,14 @@ pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
     hdk::link_entries(
         &base_address,
         &community_address,
-        COMMUNITY_LINK_TAG,
+        COMMUNITY_LINK_TYPE,
+        ""
     )?;
     hdk::link_entries(
         &slug_address,
         &community_address,
-        COMMUNITY_LINK_TAG,
+        COMMUNITY_LINK_TYPE,
+        ""
     )?;
 
 
@@ -69,7 +71,7 @@ pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
 
 pub fn get_communities() -> ZomeApiResult<Vec<Address>> {
     let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into()))?;
-    Ok(hdk::get_links(&address, COMMUNITY_LINK_TAG)?.addresses().to_vec())
+    Ok(hdk::get_links(&address, Some(COMMUNITY_LINK_TYPE.into()), None)?.addresses().to_vec())
 }
 
 pub fn community_def() -> ValidatingEntryType {
@@ -102,7 +104,7 @@ pub fn base_def() -> ValidatingEntryType {
         links: [
             to!(
                 "community",
-                tag: COMMUNITY_LINK_TAG,
+                link_type: COMMUNITY_LINK_TYPE,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },

@@ -30,7 +30,7 @@ pub fn post_message_to_thread(thread_addr: Address, text: String, timestamp: Str
         }.into()
     );
     let message_addr = hdk::commit_entry(&message_entry)?;
-    utils::link_entries_bidir(&message_addr, &thread_addr, "message_thread", "messages")?;
+    utils::link_entries_bidir(&message_addr, &thread_addr, "message_thread", "messages", "", "")?;
     Ok(message_addr)
 }
 
@@ -57,7 +57,7 @@ pub fn def() -> ValidatingEntryType {
         links: [
             to!(
                 "thread",
-                tag: "message_thread",
+                link_type: "message_thread",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

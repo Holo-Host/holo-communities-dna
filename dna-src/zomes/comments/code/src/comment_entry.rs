@@ -26,7 +26,7 @@ use hdk::holochain_core_types::{
 
 use super::base_entry::{
     BASE_ENTRY_TYPE,
-    COMMENT_LINK_TAG,
+    COMMENT_LINK_TYPE,
 };
 
 // comment type and entry format
@@ -81,7 +81,8 @@ pub fn handle_create_comment(comment: CommentData) -> ZomeApiResult<Address> {
     hdk::link_entries(
         &base_address,
         &address,
-        COMMENT_LINK_TAG,
+        COMMENT_LINK_TYPE,
+        ""
     )?;
 
     // return address
