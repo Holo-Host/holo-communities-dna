@@ -63,9 +63,11 @@ port = 5003
 # -- Networking
 
 [network]
-n3h_persistence_path = "/tmp"
+n3h_persistence_path = "tmp/agent3"
+n3h_mode = "REAL"
 n3h_log_level = "t"
-bootstrap_nodes=[]
+bootstrap_nodes = []
+
 # # For testing with a persistent n3h bootstrap node
 # bootstrap_nodes = [
 #   "wss://holo-dna.hylo.com:38474/?a=HcSCirG9ghgy9owfdiSmaibqwD5jz9tfb5iBd4QRXrqheadsviW8bw3W3qCrm3r"
