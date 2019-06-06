@@ -36,6 +36,11 @@ define_zome! {
             outputs: |result: ZomeApiResult<identity::Identity>|,
             handler: identity::get_identity
         }
+        get_me: {
+            inputs: | |,
+            outputs: |result: ZomeApiResult<Address>|,
+            handler: identity::get_me
+        }
         is_registered: {
             inputs: | |,
             outputs: |result: ZomeApiResult<bool>|,
@@ -55,6 +60,7 @@ define_zome! {
     traits: { 
         hc_public [
             get_identity,
+            get_me,
             is_registered,
             register_user,
             get_people
