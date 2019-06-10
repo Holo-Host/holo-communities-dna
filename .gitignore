@@ -34,4 +34,3 @@ dmg-mount
 conductor-config.toml
 keystores/myagent.keystore
 .cargo
-tmp
