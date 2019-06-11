@@ -1,5 +1,5 @@
 [package]
-name = "hylo_identity"
+name = "hylo_people"
 version = "0.1.0"
 authors = ["Robbie Carlton <robbie.carlton@gmail.com>"]
 edition = "2018"

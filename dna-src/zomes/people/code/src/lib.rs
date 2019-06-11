@@ -11,7 +11,7 @@ extern crate holochain_core_types_derive;
 extern crate derive_more;
 
 mod anchor;
-mod identity;
+mod people;
 
 use hdk::{
     error::ZomeApiResult,
@@ -25,45 +25,45 @@ use hdk::{
 define_zome! {
     entries: [
         anchor::def(),
-        identity::def()
+        people::def()
     ]
 
     genesis: || { Ok(()) }
 
     functions: [
-        get_identity: {
+        get: {
             inputs: |agent_id: Address|,
-            outputs: |result: ZomeApiResult<identity::IdentityResult>|,
-            handler: identity::get_identity
+            outputs: |result: ZomeApiResult<people::PersonResult>|,
+            handler: people::get
         }
         get_me: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<identity::IdentityResult>|,
-            handler: identity::get_me
+            outputs: |result: ZomeApiResult<people::PersonResult>|,
+            handler: people::get_me
         }
         is_registered: {
             inputs: | |,
             outputs: |result: ZomeApiResult<bool>|,
-            handler: identity::is_registered
+            handler: people::is_registered
         }
         register_user: {
             inputs: |name: String, avatar_url:String|,
-            outputs: |result: ZomeApiResult<identity::IdentityResult>|,
-            handler: identity::register_user
+            outputs: |result: ZomeApiResult<people::PersonResult>|,
+            handler: people::register_user
         }
-        get_people: {
+        all: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<Vec<identity::IdentityResult>>|,
-            handler: identity::get_people
+            outputs: |result: ZomeApiResult<Vec<people::PersonResult>>|,
+            handler: people::all
         }
     ]
     traits: { 
         hc_public [
-            get_identity,
+            get,
             get_me,
             is_registered,
             register_user,
-            get_people
+            all
         ] 
     }
 }
