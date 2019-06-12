@@ -11,7 +11,7 @@ use holochain_core_types_derive::{ DefaultJson };
 use hdk::{
     AGENT_ADDRESS,
     entry_definition::ValidatingEntryType,
-    error::ZomeApiResult,
+    error::{ZomeApiResult, ZomeApiError},
     utils::get_as_type,
 };
 use hdk::holochain_core_types::{
@@ -24,21 +24,17 @@ use hdk::holochain_core_types::{
     json::RawString,
 };
 
-use super::base_entry::{
-    BASE_ENTRY_TYPE,
-    COMMENT_LINK_TYPE,
-};
+// tag for links from base to comment
 
-// comment type and entry format
+pub type Base = String;
+
+pub const BASE_ENTRY_TYPE: &str = "base";
+
+pub const COMMENT_LINK_TYPE: &str = "commented_on";
 
 pub const COMMENT_ENTRY_TYPE: &str = "comment";
 
-#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-pub struct CommentData {
-    pub base: String,
-    pub text: String,
-    pub timestamp: Iso8601,
-}
+// comment type and result format
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct Comment {
@@ -48,33 +44,46 @@ pub struct Comment {
     timestamp: Iso8601,
 }
 
-/// Converts an input comment (without author) into a comment entry for saving to the DHT
-impl CommentData {
-    pub fn with_creator(&self, creator: Address) -> Comment {
-        Comment{
+/// Converts a comment (without address) into a comment result for returning from the api call
+impl Comment {
+    pub fn result(&self, address: Address) -> CommentResult {
+        CommentResult {
+            address,
             base: self.base.clone(),
             text: self.text.clone(),
             timestamp: self.timestamp.clone(),
-            creator,
+            creator: self.creator.clone(),
         }
     }
 }
 
 
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+pub struct CommentResult {
+    address: Address,
+    base: String,
+    creator: Address,
+    text: String,
+    timestamp: Iso8601
+}
+
 // API methods
 
-pub fn handle_create_comment(comment: CommentData) -> ZomeApiResult<Address> {
+pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<CommentResult> {
     // create and store the comment
     let entry = Entry::App(
         COMMENT_ENTRY_TYPE.into(),
-        comment.with_creator(
-            AGENT_ADDRESS.to_string().into()
-        ).into()
+        Comment {
+            base: base.clone(),
+            text: text.clone(),
+            timestamp: timestamp.clone(),
+            creator: AGENT_ADDRESS.to_string().into()
+        }.into()
     );
     let address = hdk::commit_entry(&entry)?;
 
     // store an entry for the ID of the base object the comment was made on
-    let base_entry = Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(comment.base).into());
+    let base_entry = Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(base.clone()).into());
     let base_address = hdk::commit_entry(&base_entry)?;
 
     // link the comment to its originating thing
@@ -85,13 +94,39 @@ pub fn handle_create_comment(comment: CommentData) -> ZomeApiResult<Address> {
         ""
     )?;
 
-    // return address
-    Ok(address)
+    // return Comment with address
+    Ok(CommentResult {
+        address,
+        base,
+        text,
+        timestamp,
+        creator: AGENT_ADDRESS.to_string().into()
+    })
 }
 
-pub fn handle_get_comment(address: Address) -> ZomeApiResult<Comment> {
-    get_as_type(address)
+pub fn get(address: Address) -> ZomeApiResult<CommentResult> {
+    let comment: Result<Comment, _> = get_as_type(address.clone());
+
+        match comment {
+        Ok(comment) => {
+            Ok(comment.result(address))
+        },
+        Err(_err) => {
+            Err(ZomeApiError::Internal("Comment not found".into()))
+        }
+    }
 }
+
+pub fn all_for_base(base: String) -> ZomeApiResult<Vec<CommentResult>> {
+    let address = hdk::entry_address(&Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(base).into()))?;
+    Ok(hdk::get_links(&address, Some(COMMENT_LINK_TYPE.into()), None)?
+        .addresses()
+        .iter()
+        .map(|address| get(address.to_string().into()).unwrap())
+        .collect()
+    )
+}
+
 
 // Entry definition
 
@@ -106,5 +141,31 @@ pub fn comment_def() -> ValidatingEntryType {
         validation: | _validation_data: hdk::EntryValidationData<Comment>| {
             Ok(())
         }
+    )
+}
+
+pub fn base_def() -> ValidatingEntryType {
+    entry!(
+        name: BASE_ENTRY_TYPE,
+        description: "Universally unique ID of something that is being commented on",
+        sharing: Sharing::Public,
+        validation_package: || {
+            hdk::ValidationPackageDefinition::Entry
+        },
+        validation: | _validation_data: hdk::EntryValidationData<Base>| {
+            Ok(())
+        },
+        links: [
+            to!(
+                COMMENT_ENTRY_TYPE,
+                link_type: COMMENT_LINK_TYPE,
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData| {
+                    Ok(())
+                }
+            )
+        ]
     )
 }
