@@ -7,5 +7,5 @@
       "--target-dir=target"
     ]
   },
-  "artifact": "target/wasm32-unknown-unknown/release/hylo_messenger.wasm"
+  "artifact": "target/wasm32-unknown-unknown/release/hylo_messages.wasm"
 }
