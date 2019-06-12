@@ -31,45 +31,45 @@ define_zome! {
 
     functions: [
         // message functions
-        post_message_to_thread: {
+        create: {
             inputs: |thread_addr: Address, text: String, timestamp: String|,
-            outputs: |result: ZomeApiResult<Address>|,
-            handler: message::post_message_to_thread
+            outputs: |result: ZomeApiResult<message::MessageResult>|,
+            handler: message::create
         } 
-        get_message: {
+        get: {
             inputs: |message_addr: Address|,
-            outputs: |result: ZomeApiResult<message::Message>|,
-            handler: message::get_message
+            outputs: |result: ZomeApiResult<message::MessageResult>|,
+            handler: message::get
         }    
         // thread functions
-        get_my_threads: {
+        get_threads: {
             inputs: | |,
             outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: thread::get_my_threads
+            handler: thread::get_threads
         }  
-        get_or_create_thread: {
+        create_thread: {
             inputs: |participant_ids: Vec<String>|,
             outputs: |result: ZomeApiResult<Address>|,
-            handler: thread::get_or_create_thread
+            handler: thread::create_thread
         }  
-        get_thread_participants: {
+        get_participants: {
             inputs: |thread_addr: Address|,
             outputs: |result: ZomeApiResult<Vec<Address>>|,
             handler: thread::get_thread_participants
         }          
         get_thread_messages: {
             inputs: |thread_addr: Address|,
-            outputs: |result: ZomeApiResult<Vec<Address>>|,
+            outputs: |result: ZomeApiResult<Vec<message::MessageResult>>|,
             handler: thread::get_thread_messages
         }   
     ]
     traits: { 
         hc_public [
-            post_message_to_thread,
-            get_message,
-            get_my_threads,
-            get_or_create_thread,
-            get_thread_participants,
+            create,
+            get,
+            get_threads,
+            create_thread,
+            get_participants,
             get_thread_messages
         ] 
     }

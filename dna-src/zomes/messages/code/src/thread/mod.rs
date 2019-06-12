@@ -11,20 +11,24 @@ use hdk::{
     AGENT_ADDRESS,
 };
 
+use super::message::{
+    get,
+    MessageResult
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Thread {
     pub participants: Vec<String>,
 }
 
-pub fn get_my_threads() -> ZomeApiResult<Vec<Address>> {
+pub fn get_threads() -> ZomeApiResult<Vec<Address>> {
     hdk::debug(AGENT_ADDRESS.to_string())?;
     Ok(hdk::get_links(&AGENT_ADDRESS, Some("message_threads".to_string()), None)?
         .addresses()
         .to_owned())
 }
 
-pub fn get_or_create_thread(participant_ids: Vec<String>) -> ZomeApiResult<Address> {
+pub fn create_thread(participant_ids: Vec<String>) -> ZomeApiResult<Address> {
     let mut participant_agent_ids = participant_ids.clone();
     participant_agent_ids.push(AGENT_ADDRESS.to_string()); // add this agent to the list
     let thread_entry = Entry::App(
@@ -51,10 +55,13 @@ pub fn get_thread_participants(thread_addr: Address) -> ZomeApiResult<Vec<Addres
         .collect())
 }
 
-pub fn get_thread_messages(thread_addr: Address) -> ZomeApiResult<Vec<Address>> {
+pub fn get_thread_messages(thread_addr: Address) -> ZomeApiResult<Vec<MessageResult>> {
     Ok(hdk::get_links(&thread_addr, Some("messages".to_string()), None)?
         .addresses()
-        .to_owned())
+        .iter()
+        .map(|address| get(address.to_string().into()).unwrap())
+        .collect()
+    )
 }
 
 pub fn def() -> ValidatingEntryType {

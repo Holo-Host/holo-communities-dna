@@ -44,7 +44,7 @@ pub struct Comment {
     timestamp: Iso8601,
 }
 
-/// Converts a comment (without address) into a comment result for returning from the api call
+// Converts a comment (without address) into a comment result for returning from the api call
 impl Comment {
     pub fn result(&self, address: Address) -> CommentResult {
         CommentResult {
@@ -56,7 +56,6 @@ impl Comment {
         }
     }
 }
-
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct CommentResult {
@@ -107,7 +106,7 @@ pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<C
 pub fn get(address: Address) -> ZomeApiResult<CommentResult> {
     let comment: Result<Comment, _> = get_as_type(address.clone());
 
-        match comment {
+    match comment {
         Ok(comment) => {
             Ok(comment.result(address))
         },
