@@ -19,22 +19,42 @@ pub struct Community {
     pub slug: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
+pub struct CommunityResult {
+    pub address: Address,
+    pub name: String,
+    pub slug: String
+}
+
 pub type Base = RawString;
 
 const COMMUNITY_BASE_ENTRY: &str = "community_base";
 const COMMUNITY_LINK_TYPE: &str = "member_of";
 
-pub fn get_community(address: Address) -> ZomeApiResult<Community> {
-    utils::get_as_type(address)
+pub fn get(address: Address) -> ZomeApiResult<CommunityResult> {
+    let community: Result<Community, _> = utils::get_as_type(address.clone());
+
+    match community {
+        Ok(community) => {
+            Ok(CommunityResult {
+                address,
+                name: community.name,
+                slug: community.slug})
+        },
+        Err(_err) => {
+            Err(ZomeApiError::Internal("Community not found".into()))
+        }
+    }
 }
 
-pub fn get_community_address_by_slug(slug: String) -> ZomeApiResult<Address> {
-    let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug).into()))?;
-    let all_communities = hdk::get_links(&address, Some(COMMUNITY_LINK_TYPE.into()), None)?.addresses().clone();
-    all_communities.to_owned().into_iter().next().ok_or(ZomeApiError::Internal("No communities for this slug".into()))
+pub fn get_by_slug(slug: String) -> ZomeApiResult<CommunityResult> {
+    let slug_address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug).into()))?;
+    let all_communities = hdk::get_links(&slug_address, Some(COMMUNITY_LINK_TYPE.into()), None)?.addresses().clone();
+    let community_address = all_communities.to_owned().into_iter().next().ok_or(ZomeApiError::Internal("No communities for this slug".into())).unwrap();
+    get(community_address)
 }
 
-pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
+pub fn create(name: String, slug: String) -> ZomeApiResult<CommunityResult> {
 
     let base_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into());
     let base_address = hdk::commit_entry(&base_entry)?;
@@ -46,8 +66,8 @@ pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
         &Entry::App (
             "community".into(),
             Community {
-                name,
-                slug
+                name: name.clone(),
+                slug: slug.clone()
             }.into()
         )
     )?;
@@ -65,13 +85,21 @@ pub fn create_community(name: String, slug: String) -> ZomeApiResult<Address> {
         ""
     )?;
 
-
-    Ok(community_address)
+    Ok(CommunityResult {
+        address: community_address,
+        name,
+        slug
+    })
 }
 
-pub fn get_communities() -> ZomeApiResult<Vec<Address>> {
+pub fn all() -> ZomeApiResult<Vec<CommunityResult>> {
     let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into()))?;
-    Ok(hdk::get_links(&address, Some(COMMUNITY_LINK_TYPE.into()), None)?.addresses().to_vec())
+    Ok(hdk::get_links(&address, Some(COMMUNITY_LINK_TYPE.into()), None)?
+        .addresses()
+        .iter()
+        .map(|address| get(address.to_string().into()).unwrap())
+        .collect()
+    )
 }
 
 pub fn community_def() -> ValidatingEntryType {
