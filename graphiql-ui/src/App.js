@@ -8,7 +8,7 @@ const WS_INTERFACE_URI = process.env.NODE_ENV === 'development'
   ? 'ws://localhost:3400'
   : null
 const GRAPHQL_ZOME_CALL_OBJECT = {
-  'instance_id': 'hylo-chat',
+  'instance_id': 'hylo',
   'zome': 'graphql',
   'function': 'graphql'
 }

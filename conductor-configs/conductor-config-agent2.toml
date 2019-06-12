@@ -12,7 +12,7 @@ public_address = "HcScidPSdAT43q9qirJwt5rHJYjjsvougV3jgSBwdJujszw3bBu5Mktr74Rgne
 keystore_file = "./keystores/agent2.keystore"
 
 [[instances]]
-id = "hylo-chat"
+id = "hylo"
 dna = "hylo_dna"
 agent = "hylo_agent"
 
@@ -30,7 +30,7 @@ agent = "hylo_agent"
 id = "websocket_interface"
 
     [[interfaces.instances]]
-    id = "hylo-chat"
+    id = "hylo"
 
     [interfaces.driver]
     type = "websocket"
