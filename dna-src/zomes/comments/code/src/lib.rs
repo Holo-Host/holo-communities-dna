@@ -29,17 +29,17 @@ define_zome! {
     functions: [
         create: {
             inputs: |base: String, text: String, timestamp: Iso8601|,
-            outputs: |result: ZomeApiResult<comment_entry::CommentResult>|,
+            outputs: |result: ZomeApiResult<comment_entry::CommentWithAddress>|,
             handler: comment_entry::create
         }
         get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<comment_entry::CommentResult>|,
+            outputs: |result: ZomeApiResult<comment_entry::CommentWithAddress>|,
             handler: comment_entry::get
         }
         all_for_base: {
             inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<comment_entry::CommentResult>>|,
+            outputs: |result: ZomeApiResult<Vec<comment_entry::CommentWithAddress>>|,
             handler: comment_entry::all_for_base
         }
     ]

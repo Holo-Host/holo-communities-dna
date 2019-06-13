@@ -20,8 +20,8 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn result(&self, address: Address) -> MessageResult {
-        MessageResult {
+    pub fn with_address(&self, address: Address) -> MessageWithAddress {
+        MessageWithAddress {
             address,
             thread_address: self.thread_address.clone(),
             text: self.text.clone(),
@@ -32,7 +32,7 @@ impl Message {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct MessageResult {
+pub struct MessageWithAddress {
     address: Address,
     pub timestamp: String,
     pub text: String,
@@ -40,7 +40,7 @@ pub struct MessageResult {
     pub creator: Address
 }
 
-pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeApiResult<MessageResult> {
+pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeApiResult<MessageWithAddress> {
     let message = Message { 
         text, 
         timestamp: timestamp, 
@@ -53,16 +53,16 @@ pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeA
     );
     let message_addr = hdk::commit_entry(&message_entry)?;
     utils::link_entries_bidir(&message_addr, &thread_address, "message_thread", "messages", "", "")?;
-    Ok(message.result(message_addr))
+    Ok(message.with_address(message_addr))
 }
 
 
-pub fn get(message_addr: Address) -> ZomeApiResult<MessageResult> {
+pub fn get(message_addr: Address) -> ZomeApiResult<MessageWithAddress> {
     let message: Result<Message, _> = utils::get_as_type(message_addr.clone());
 
     match message {
         Ok(message) => {
-            Ok(message.result(message_addr))
+            Ok(message.with_address(message_addr))
         },
         Err(_err) => {
             Err(ZomeApiError::Internal("Message not found".into()))

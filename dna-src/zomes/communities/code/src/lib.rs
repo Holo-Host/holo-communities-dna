@@ -31,22 +31,22 @@ define_zome! {
     functions: [
          get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<communities::CommunityResult>|,
+            outputs: |result: ZomeApiResult<communities::CommunityWithAddress>|,
             handler: communities::get
         }
         get_by_slug: {
             inputs: |slug: String|,
-            outputs: |result: ZomeApiResult<communities::CommunityResult>|,
+            outputs: |result: ZomeApiResult<communities::CommunityWithAddress>|,
             handler: communities::get_by_slug
         }
         create: {
             inputs: |name: String, slug: String|,
-            outputs: |result: ZomeApiResult<communities::CommunityResult>|,
+            outputs: |result: ZomeApiResult<communities::CommunityWithAddress>|,
             handler: communities::create
         }
         all: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<Vec<communities::CommunityResult>>|,
+            outputs: |result: ZomeApiResult<Vec<communities::CommunityWithAddress>>|,
             handler: communities::all
         }
     ]

@@ -20,8 +20,18 @@ pub struct Person {
     pub avatar_url: String
 }
 
+impl Person {
+    pub fn with_address(&self, address: Address) -> PersonWithAddress {
+        PersonWithAddress {
+            address,
+            name: self.name.clone(),
+            avatar_url: self.avatar_url.clone()
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct PersonResult {
+pub struct PersonWithAddress {
     pub address: Address,
     pub name: String,
     pub avatar_url: String
@@ -29,17 +39,14 @@ pub struct PersonResult {
 
 const PEOPLE_LINK_TYPE: &str = "registered";
 
-pub fn get(agent_id: Address) -> ZomeApiResult<PersonResult> {
+pub fn get(agent_id: Address) -> ZomeApiResult<PersonWithAddress> {
     let person = utils::get_links_and_load_type::<Person>(&agent_id, Some(PEOPLE_LINK_TYPE.to_string()), None)?
         .first()
         .map(|result| result.to_owned());
 
     match person {
         Some(person) => {
-            Ok(PersonResult {
-                address: agent_id,
-                name: person.name,
-                avatar_url: person.avatar_url})
+            Ok(person.with_address(agent_id))
         },
         None => {
             Err(ZomeApiError::Internal("Agent has not been registered".into()))
@@ -47,7 +54,7 @@ pub fn get(agent_id: Address) -> ZomeApiResult<PersonResult> {
     }
 }
 
-pub fn get_me() -> ZomeApiResult<PersonResult> {
+pub fn get_me() -> ZomeApiResult<PersonWithAddress> {
     get(AGENT_ADDRESS.to_string().into())
 }
 
@@ -55,13 +62,15 @@ pub fn is_registered() -> ZomeApiResult<bool> {
     Ok(get(AGENT_ADDRESS.to_string().into()).is_ok())
 }
 
-pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonResult> {
+pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonWithAddress> {
+    let person = Person { 
+        name: name.clone(), 
+        avatar_url: avatar_url.clone()
+    };
+
     let person_entry = Entry::App(
         "person".into(), 
-        Person { 
-            name: name.clone(), 
-            avatar_url: avatar_url.clone()
-        }.into()
+        person.clone().into()
     );
 
     let person_addr = hdk::commit_entry(&person_entry)?;
@@ -77,14 +86,10 @@ pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonRe
     let anchor_addr = hdk::commit_entry(&anchor_entry)?;
     hdk::link_entries(&anchor_addr, &AGENT_ADDRESS, PEOPLE_LINK_TYPE, "")?;
 
-    Ok(PersonResult {
-        address: AGENT_ADDRESS.to_string().into(),
-        name: name.to_string(), 
-        avatar_url: avatar_url.to_string()
-    })
+    Ok(person.with_address(AGENT_ADDRESS.to_string().into()))
 }
 
-pub fn all() -> ZomeApiResult<Vec<PersonResult>> {
+pub fn all() -> ZomeApiResult<Vec<PersonWithAddress>> {
     let anchor_entry = Entry::App(
         "anchor".into(),
         anchor::Anchor {

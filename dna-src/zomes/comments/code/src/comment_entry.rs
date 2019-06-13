@@ -46,8 +46,8 @@ pub struct Comment {
 
 // Converts a comment (without address) into a comment result for returning from the api call
 impl Comment {
-    pub fn result(&self, address: Address) -> CommentResult {
-        CommentResult {
+    pub fn with_address(&self, address: Address) -> CommentWithAddress {
+        CommentWithAddress {
             address,
             base: self.base.clone(),
             text: self.text.clone(),
@@ -58,7 +58,7 @@ impl Comment {
 }
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-pub struct CommentResult {
+pub struct CommentWithAddress {
     address: Address,
     base: String,
     creator: Address,
@@ -68,16 +68,17 @@ pub struct CommentResult {
 
 // API methods
 
-pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<CommentResult> {
+pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<CommentWithAddress> {
     // create and store the comment
+    let comment = Comment {
+        base: base.clone(),
+        text: text.clone(),
+        timestamp: timestamp.clone(),
+        creator: AGENT_ADDRESS.to_string().into()
+    };
     let entry = Entry::App(
         COMMENT_ENTRY_TYPE.into(),
-        Comment {
-            base: base.clone(),
-            text: text.clone(),
-            timestamp: timestamp.clone(),
-            creator: AGENT_ADDRESS.to_string().into()
-        }.into()
+        comment.clone().into()
     );
     let address = hdk::commit_entry(&entry)?;
 
@@ -93,22 +94,15 @@ pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<C
         ""
     )?;
 
-    // return Comment with address
-    Ok(CommentResult {
-        address,
-        base,
-        text,
-        timestamp,
-        creator: AGENT_ADDRESS.to_string().into()
-    })
+    Ok(comment.with_address(address))
 }
 
-pub fn get(address: Address) -> ZomeApiResult<CommentResult> {
+pub fn get(address: Address) -> ZomeApiResult<CommentWithAddress> {
     let comment: Result<Comment, _> = get_as_type(address.clone());
 
     match comment {
         Ok(comment) => {
-            Ok(comment.result(address))
+            Ok(comment.with_address(address))
         },
         Err(_err) => {
             Err(ZomeApiError::Internal("Comment not found".into()))
@@ -116,7 +110,7 @@ pub fn get(address: Address) -> ZomeApiResult<CommentResult> {
     }
 }
 
-pub fn all_for_base(base: String) -> ZomeApiResult<Vec<CommentResult>> {
+pub fn all_for_base(base: String) -> ZomeApiResult<Vec<CommentWithAddress>> {
     let address = hdk::entry_address(&Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(base).into()))?;
     Ok(hdk::get_links(&address, Some(COMMENT_LINK_TYPE.into()), None)?
         .addresses()

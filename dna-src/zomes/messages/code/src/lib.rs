@@ -33,12 +33,12 @@ define_zome! {
         // message functions
         create: {
             inputs: |thread_address: Address, text: String, timestamp: String|,
-            outputs: |result: ZomeApiResult<message::MessageResult>|,
+            outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
             handler: message::create
         } 
         get: {
             inputs: |message_addr: Address|,
-            outputs: |result: ZomeApiResult<message::MessageResult>|,
+            outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
             handler: message::get
         }    
         // thread functions
@@ -59,7 +59,7 @@ define_zome! {
         }          
         get_thread_messages: {
             inputs: |thread_address: Address|,
-            outputs: |result: ZomeApiResult<Vec<message::MessageResult>>|,
+            outputs: |result: ZomeApiResult<Vec<message::MessageWithAddress>>|,
             handler: thread::get_thread_messages
         }   
     ]

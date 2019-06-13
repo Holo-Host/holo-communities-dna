@@ -31,17 +31,17 @@ define_zome! {
     functions: [
          get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<post::PostResult>|,
+            outputs: |result: ZomeApiResult<post::PostWithAddress>|,
             handler: post::get
         }
         create: {
             inputs: |base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String|,
-            outputs: |result: ZomeApiResult<post::PostResult>|,
+            outputs: |result: ZomeApiResult<post::PostWithAddress>|,
             handler: post::create
         }
         all_for_base: {
             inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<post::PostResult>>|,
+            outputs: |result: ZomeApiResult<Vec<post::PostWithAddress>>|,
             handler: post::all_for_base
         }
     ]

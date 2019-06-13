@@ -13,7 +13,7 @@ use hdk::{
 
 use super::message::{
     get,
-    MessageResult
+    MessageWithAddress
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
@@ -55,7 +55,7 @@ pub fn get_thread_participants(thread_address: Address) -> ZomeApiResult<Vec<Add
         .collect())
 }
 
-pub fn get_thread_messages(thread_address: Address) -> ZomeApiResult<Vec<MessageResult>> {
+pub fn get_thread_messages(thread_address: Address) -> ZomeApiResult<Vec<MessageWithAddress>> {
     Ok(hdk::get_links(&thread_address, Some("messages".to_string()), None)?
         .addresses()
         .iter()

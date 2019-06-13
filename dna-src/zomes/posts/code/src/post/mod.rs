@@ -25,8 +25,23 @@ pub struct Post {
     pub base: String,
 }
 
+impl Post {
+    pub fn with_address(&self, address: Address) -> PostWithAddress {
+        PostWithAddress {
+            address,
+            title: self.title.clone(),
+            details: self.details.clone(),
+            post_type: self.post_type.clone(),
+            creator: self.creator.clone(),
+            announcement: self.announcement.clone(),
+            timestamp: self.timestamp.clone(),
+            base: self.base.clone()
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct PostResult {
+pub struct PostWithAddress {
     pub address: Address,
     pub title: String,
     pub details: String,
@@ -42,25 +57,12 @@ pub type Base = RawString;
 const POST_BASE_ENTRY: &str = "post_base";
 const POST_LINK_TYPE: &str = "posted_in";
 
-fn post_result(post: Post, address: Address) -> PostResult {
-    PostResult {
-        address,
-        title: post.title,
-        details: post.details,
-        post_type: post.post_type,
-        creator: post.creator,
-        announcement: post.announcement,
-        timestamp: post.timestamp,
-        base: post.base
-    }
-}
-
-pub fn get(address: Address) -> ZomeApiResult<PostResult> {
+pub fn get(address: Address) -> ZomeApiResult<PostWithAddress> {
     let post: Result<Post, _> = utils::get_as_type(address.clone());
 
         match post {
         Ok(post) => {
-            Ok(post_result(post, address))
+            Ok(post.with_address(address))
         },
         Err(_err) => {
             Err(ZomeApiError::Internal("Post not found".into()))
@@ -68,7 +70,7 @@ pub fn get(address: Address) -> ZomeApiResult<PostResult> {
     }
 }
 
-pub fn create(base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<PostResult> {
+pub fn create(base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<PostWithAddress> {
 
     let base_entry = Entry::App(POST_BASE_ENTRY.into(), RawString::from(base.clone()).into());
     let base_address = hdk::commit_entry(&base_entry)?;
@@ -98,10 +100,10 @@ pub fn create(base: String, title: String, details: String, post_type: String, a
         ""
     )?;
 
-    Ok(post_result(post, post_address))
+    Ok(post.with_address(post_address))
 }
 
-pub fn all_for_base(base: String) -> ZomeApiResult<Vec<PostResult>> {
+pub fn all_for_base(base: String) -> ZomeApiResult<Vec<PostWithAddress>> {
     let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
     Ok(hdk::get_links(&address, Some(POST_LINK_TYPE.into()), None)?
         .addresses()
