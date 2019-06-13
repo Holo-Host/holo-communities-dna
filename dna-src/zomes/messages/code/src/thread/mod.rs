@@ -47,16 +47,16 @@ pub fn create_thread(participant_ids: Vec<String>) -> ZomeApiResult<Address> {
     Ok(entry_addr)
 }
 
-pub fn get_thread_participants(thread_addr: Address) -> ZomeApiResult<Vec<Address>> {
-    Ok(utils::get_as_type::<Thread>(thread_addr)?
+pub fn get_thread_participants(thread_address: Address) -> ZomeApiResult<Vec<Address>> {
+    Ok(utils::get_as_type::<Thread>(thread_address)?
         .participants
         .iter()
         .map(|elem| elem.to_owned().into())
         .collect())
 }
 
-pub fn get_thread_messages(thread_addr: Address) -> ZomeApiResult<Vec<MessageResult>> {
-    Ok(hdk::get_links(&thread_addr, Some("messages".to_string()), None)?
+pub fn get_thread_messages(thread_address: Address) -> ZomeApiResult<Vec<MessageResult>> {
+    Ok(hdk::get_links(&thread_address, Some("messages".to_string()), None)?
         .addresses()
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())

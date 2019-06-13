@@ -35,7 +35,7 @@ struct MessageThreadInput {
 
 #[derive(GraphQLInputObject)]
 struct MessageInput {
-    message_thread_id: Option<String>,
+    message_thread_address: Option<String>,
     text: Option<String>,
 	created_at: Option<String>
 }
@@ -167,7 +167,7 @@ graphql_object!(Mutation: Context |&self| {
     field createMessage(data: Option<MessageInput>) -> FieldResult<Message> {
         let data = data.unwrap();
         let id = call_cached("chat", "post_message_to_thread", json!({
-            "thread_addr": data.message_thread_id.unwrap(),
+            "thread_address": data.message_thread_address.unwrap(),
             "text": data.text.unwrap_or("".into()),
             "timestamp": data.created_at.unwrap_or("".into())
         }).into())?;

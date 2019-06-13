@@ -8,11 +8,16 @@ const agentAlice = Config.agent('alice')
 const instanceAlice = Config.instance(agentAlice, dna)
 const singleAgentScenario = new Scenario([instanceAlice], { debugLog: true })
 
-require('./agent/community')(singleAgentScenario)
+const agentBob = Config.agent('bob')
+const instanceBob = Config.instance(agentBob, dna)
+const twoAgentScenario = new Scenario([instanceAlice, instanceBob], { debugLog: true })
+
+require('./agent/communities')(singleAgentScenario)
 require('./agent/posts')(singleAgentScenario)
 require('./agent/comments')(singleAgentScenario)
 require('./agent/threads')(singleAgentScenario)
 require('./agent/messages')(singleAgentScenario)
+require('./agent/people')(twoAgentScenario)
 
 // disabled graphql tests
 // require('./agent/register')(singleAgentScenario)
@@ -21,10 +26,6 @@ require('./agent/messages')(singleAgentScenario)
 // require('./agent/gql_messages')(singleAgentScenario)
 // require('./agent/gql_posts')(singleAgentScenario)
 // require('./agent/gql_communities')(singleAgentScenario)
-
-// const agentBob = Config.agent('bob')
-// const instanceBob = Config.instance(agentBob, dna)
-// const twoAgentScenario = new Scenario([instanceAlice, instanceBob], { debugLog: true })
 
 // singleAgentScenario.runTape('Reference GraphQL schema matches the implementation', async (t, {alice}) => {
 

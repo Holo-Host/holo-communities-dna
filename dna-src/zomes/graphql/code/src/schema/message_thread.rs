@@ -31,7 +31,7 @@ graphql_object!(MessageThread: Context |&self| {
 	}
 
   field participants(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Option<Person>>> {
-      let result = call_cached("chat", "get_thread_participants", json!({"thread_addr": self.id.to_string()}).into())?;
+      let result = call_cached("chat", "get_thread_participants", json!({"thread_address": self.id.to_string()}).into())?;
       let person_ids: Vec<serde_json::Value> = result.as_array().unwrap().to_vec();
 
       Ok(person_ids.iter().map(|id| Some(Person{
@@ -40,12 +40,12 @@ graphql_object!(MessageThread: Context |&self| {
   }
 
   field participantsTotal() -> FieldResult<i32> {
-    let result = call_cached("chat", "get_thread_participants", json!({"thread_addr": self.id.to_string()}).into())?;
+    let result = call_cached("chat", "get_thread_participants", json!({"thread_address": self.id.to_string()}).into())?;
     Ok(result.as_array().unwrap().to_vec().len() as i32)
   }
 
   field messages(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<MessageQuerySet> {
-  	let result = call_cached("chat", "get_thread_messages", json!({"thread_addr": self.id.to_string()}).into())?;
+  	let result = call_cached("chat", "get_thread_messages", json!({"thread_address": self.id.to_string()}).into())?;
     let message_ids: Vec<serde_json::Value> = result.as_array().unwrap().to_vec();
 
     Ok(MessageQuerySet{

@@ -1,48 +1,36 @@
 module.exports = (scenario) => {
 
+	const base = 'base1'
+
   const testComment1 = {
-  	base: "base1",
+  	base,
   	text: "comment1",
   	timestamp: "2019-03-29T01:58:10+00:00"
   }
   const testComment2 = {
-  	base: "base1",
+  	base,
   	text: "comment2",
   	timestamp: "2019-03-29T01:58:10+00:00"
   }
 
   scenario.runTape("Create and get single comment and all comments", async (t, { alice }) => {
       // define some helpers
-  	let results = []
-  	const lastResult = (back=0) => results[results.length-1-back]
-  	const callComments = async (func, params) => {
-  		const result = await alice.callSync("comments", func, params)
-  		results.push(result)
-  		return result
-  	}
+  	const callComments = (func, params) => alice.callSync("comments", func, params)
 
-  	await callComments('create_comment', {
-  		comment: testComment1
-  	})
-  	const address = lastResult().Ok
-  	t.equal(lastResult().Ok.length, 46)
+  	const createResult = await callComments('create', testComment1)
+		
+		await callComments('create', testComment2)
 
-  	await callComments('create_comment', {
-  		comment: testComment2
-  	})
-  	t.equal(lastResult().Ok.length, 46)
+  	const { address } = createResult.Ok
+		t.equal(address.length, 46)
+		t.deepEqual(createResult.Ok, { ...testComment1, address, creator: alice.agentId })
 
   	// get a single comment by its address
-  	await callComments('get_comment', { address })
-  	t.deepEqual(lastResult().Ok, { creator: alice.agentId, ...testComment1 })
+  	const getResult = await callComments('get', { address })
+  	t.deepEqual(getResult.Ok, { ...testComment1, address, creator: alice.agentId })
 
   	// get all the comments on a base
-  	await callComments('get_comments', { base: 'base1' })
-  	t.deepEqual(lastResult().Ok.length, 2)
-
-  	results.forEach((r, i) => {
-    		console.log(i, r)
-  	})
-
+  	const allResult = await callComments('all_for_base', { base })
+  	t.deepEqual(allResult.Ok.length, 2)
   })
 }

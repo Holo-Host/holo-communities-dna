@@ -21,7 +21,7 @@ pub struct Message {
 pub struct MessageEntry {
     pub timestamp: String,
     pub text: String,
-    pub thread_id: String,
+    pub thread_address: String,
     pub creator: String,
 }
 
@@ -49,7 +49,7 @@ graphql_object!(Message: Context |&self| {
 	}
 
 	field messageThread() -> FieldResult<MessageThread> {
-		Ok(MessageThread{id: self.retrieve_entry()?.thread_id.into()})
+		Ok(MessageThread{id: self.retrieve_entry()?.thread_address.into()})
 	}
 
 	field createdAt() -> FieldResult<String> {

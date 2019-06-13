@@ -15,7 +15,7 @@ use hdk::{
 pub struct Message {
     pub timestamp: String,
     pub text: String,
-    pub thread_id: Address,
+    pub thread_address: Address,
     pub creator: Address,
 }
 
@@ -23,7 +23,7 @@ impl Message {
     pub fn result(&self, address: Address) -> MessageResult {
         MessageResult {
             address,
-            thread_id: self.thread_id.clone(),
+            thread_address: self.thread_address.clone(),
             text: self.text.clone(),
             timestamp: self.timestamp.clone(),
             creator: self.creator.clone(),
@@ -36,15 +36,15 @@ pub struct MessageResult {
     address: Address,
     pub timestamp: String,
     pub text: String,
-    pub thread_id: Address,
+    pub thread_address: Address,
     pub creator: Address
 }
 
-pub fn create(thread_addr: Address, text: String, timestamp: String) -> ZomeApiResult<MessageResult> {
+pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeApiResult<MessageResult> {
     let message = Message { 
         text, 
         timestamp: timestamp, 
-        thread_id: thread_addr.to_owned(), 
+        thread_address: thread_address.to_owned(), 
         creator: AGENT_ADDRESS.to_string().into() 
     };
     let message_entry = Entry::App(
@@ -52,7 +52,7 @@ pub fn create(thread_addr: Address, text: String, timestamp: String) -> ZomeApiR
         message.clone().into()
     );
     let message_addr = hdk::commit_entry(&message_entry)?;
-    utils::link_entries_bidir(&message_addr, &thread_addr, "message_thread", "messages", "", "")?;
+    utils::link_entries_bidir(&message_addr, &thread_address, "message_thread", "messages", "", "")?;
     Ok(message.result(message_addr))
 }
 
