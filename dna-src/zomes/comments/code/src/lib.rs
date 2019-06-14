@@ -6,7 +6,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-mod comment_entry;
+mod comments;
 
 use hdk::{
     error::ZomeApiResult,
@@ -20,8 +20,8 @@ use hdk::holochain_core_types::{
 
 define_zome! {
     entries: [
-       comment_entry::comment_def(),
-       comment_entry::base_def()
+       comments::comment_def(),
+       comments::base_def()
     ]
 
     genesis: || { Ok(()) }
@@ -29,18 +29,18 @@ define_zome! {
     functions: [
         create: {
             inputs: |base: String, text: String, timestamp: Iso8601|,
-            outputs: |result: ZomeApiResult<comment_entry::CommentWithAddress>|,
-            handler: comment_entry::create
+            outputs: |result: ZomeApiResult<comments::CommentWithAddress>|,
+            handler: comments::create
         }
         get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<comment_entry::CommentWithAddress>|,
-            handler: comment_entry::get
+            outputs: |result: ZomeApiResult<comments::CommentWithAddress>|,
+            handler: comments::get
         }
         all_for_base: {
             inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<comment_entry::CommentWithAddress>>|,
-            handler: comment_entry::all_for_base
+            outputs: |result: ZomeApiResult<Vec<comments::CommentWithAddress>>|,
+            handler: comments::all_for_base
         }
     ]
 
