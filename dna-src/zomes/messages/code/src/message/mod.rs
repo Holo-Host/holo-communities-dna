@@ -2,7 +2,7 @@ use hdk::{
     self,
     utils,
     entry_definition::ValidatingEntryType,
-    error::{ZomeApiResult, ZomeApiError},
+    error::ZomeApiResult,
     holochain_core_types::{
         cas::content::Address, dna::entry_types::Sharing, entry::Entry, error::HolochainError,
         json::JsonString,
@@ -58,16 +58,10 @@ pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeA
 
 
 pub fn get(message_addr: Address) -> ZomeApiResult<MessageWithAddress> {
-    let message: Result<Message, _> = utils::get_as_type(message_addr.clone());
-
-    match message {
-        Ok(message) => {
-            Ok(message.with_address(message_addr))
-        },
-        Err(_err) => {
-            Err(ZomeApiError::Internal("Message not found".into()))
-        }
-    }
+    utils::get_as_type::<Message>(message_addr.clone())
+        .map(|message| {
+            message.with_address(message_addr)
+        })
 }
 
 

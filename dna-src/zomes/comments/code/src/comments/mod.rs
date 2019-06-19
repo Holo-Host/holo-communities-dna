@@ -11,8 +11,8 @@ use holochain_core_types_derive::{ DefaultJson };
 use hdk::{
     AGENT_ADDRESS,
     entry_definition::ValidatingEntryType,
-    error::{ZomeApiResult, ZomeApiError},
-    utils::get_as_type,
+    error::ZomeApiResult,
+    utils,
 };
 use hdk::holochain_core_types::{
     cas::content::Address,
@@ -98,16 +98,10 @@ pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<C
 }
 
 pub fn get(address: Address) -> ZomeApiResult<CommentWithAddress> {
-    let comment: Result<Comment, _> = get_as_type(address.clone());
-
-    match comment {
-        Ok(comment) => {
-            Ok(comment.with_address(address))
-        },
-        Err(_err) => {
-            Err(ZomeApiError::Internal("Comment not found".into()))
-        }
-    }
+    utils::get_as_type::<Comment>(address.clone())
+        .map(|comment| {
+            comment.with_address(address)
+        })
 }
 
 pub fn all_for_base(base: String) -> ZomeApiResult<Vec<CommentWithAddress>> {

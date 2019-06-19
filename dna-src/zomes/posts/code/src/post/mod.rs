@@ -2,7 +2,7 @@
 use hdk::{
     self,
     utils,
-    error::{ZomeApiError, ZomeApiResult},
+    error::ZomeApiResult,
     AGENT_ADDRESS,
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
@@ -58,16 +58,10 @@ const POST_BASE_ENTRY: &str = "post_base";
 const POST_LINK_TYPE: &str = "posted_in";
 
 pub fn get(address: Address) -> ZomeApiResult<PostWithAddress> {
-    let post: Result<Post, _> = utils::get_as_type(address.clone());
-
-        match post {
-        Ok(post) => {
-            Ok(post.with_address(address))
-        },
-        Err(_err) => {
-            Err(ZomeApiError::Internal("Post not found".into()))
-        }
-    }
+    utils::get_as_type::<Post>(address.clone())
+        .map(|post| {
+            post.with_address(address)
+        })
 }
 
 pub fn create(base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String) -> ZomeApiResult<PostWithAddress> {

@@ -42,16 +42,10 @@ const COMMUNITY_BASE_ENTRY: &str = "community_base";
 const COMMUNITY_LINK_TYPE: &str = "member_of";
 
 pub fn get(address: Address) -> ZomeApiResult<CommunityWithAddress> {
-    let community: Result<Community, _> = utils::get_as_type(address.clone());
-
-    match community {
-        Ok(community) => {
-            Ok(community.with_address(address))
-        },
-        Err(_err) => {
-            Err(ZomeApiError::Internal("Community not found".into()))
-        }
-    }
+    utils::get_as_type::<Community>(address.clone())
+        .map(|community| {
+            community.with_address(address)
+        })
 }
 
 pub fn get_by_slug(slug: String) -> ZomeApiResult<CommunityWithAddress> {
