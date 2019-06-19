@@ -11,7 +11,7 @@ scenario.runTape('Can create a new post', async (t, {alice}) => {
     const slug = "/test_community"
 
     // create a community to post in
-    const addCommunityResult = await alice.callSync("graphql", "graphql", {
+    const addCommunityWithAddress = await alice.callSync("graphql", "graphql", {
       query: queries.createCommunityQuery,
       variables: {
         name: "new graphql community",

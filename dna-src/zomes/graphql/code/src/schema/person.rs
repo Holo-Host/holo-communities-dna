@@ -1,8 +1,14 @@
 use crate::schema::community::Community;
-use crate::holochain_juniper::HID;
+use crate::holochain_juniper::{call_cached, HID};
 use juniper::{FieldResult, ID};
 use crate::Context;
-use crate::identity;
+use serde_json::json;
+use hdk::holochain_core_types::{
+	error::HolochainError,
+	json::JsonString,
+};
+use hdk::error::ZomeApiResult;
+use std::convert::TryFrom;
 
 /*
 type Person {
@@ -16,6 +22,22 @@ type Person {
 pub struct Person {
     pub id: HID,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
+pub struct PersonEntry {
+	pub name: String,
+	pub avatar_url: String,
+}
+
+impl Person {
+	fn retrieve_entry(&self) -> ZomeApiResult<PersonEntry> {
+		let id: String = self.id.clone().into();
+		let result = JsonString::from(call_cached("identity", "get_identity", json!({"agent_id": id}).into())?);
+		let person_entry = PersonEntry::try_from(result)?;
+		Ok(person_entry)
+	}
+}
+
 graphql_object!(Person: Context |&self| {
 	field id() -> FieldResult<ID> {
 		// be careful. This field is the Hylo ID not the holochain ID
@@ -23,11 +45,11 @@ graphql_object!(Person: Context |&self| {
 	}
 
 	field name() -> FieldResult<String> {
-		Ok(identity::get_identity(self.id.to_string().into())?.name)
+  		Ok(self.retrieve_entry()?.name)
 	}
 
 	field avatarUrl() -> FieldResult<String> {
-		Ok(identity::get_identity(self.id.to_string().into())?.avatar_url)
+  		Ok(self.retrieve_entry()?.avatar_url)
 	}
 
 	field memberships(first: Option<i32>, cursor: Option<ID>, order: Option<String>) -> FieldResult<Vec<Membership>> {

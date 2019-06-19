@@ -6,8 +6,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-mod comment_entry;
-mod base_entry;
+mod comments;
 
 use hdk::{
     error::ZomeApiResult,
@@ -16,51 +15,40 @@ use hdk::holochain_core_types::{
     cas::content::Address,
     error::HolochainError,
     json::JsonString,
-};
-
-use comment_entry::{
-    Comment,
-    CommentData,
-    comment_def,
-    handle_create_comment,
-    handle_get_comment,
-};
-use base_entry::{
-    base_def,
-    handle_get_comments,
+    time::Iso8601,
 };
 
 define_zome! {
     entries: [
-       comment_def(),
-       base_def()
+       comments::comment_def(),
+       comments::base_def()
     ]
 
     genesis: || { Ok(()) }
 
     functions: [
-        create_comment: {
-            inputs: |comment: CommentData|,
-            outputs: |result: ZomeApiResult<Address>|,
-            handler: handle_create_comment
+        create: {
+            inputs: |base: String, text: String, timestamp: Iso8601|,
+            outputs: |result: ZomeApiResult<comments::CommentWithAddress>|,
+            handler: comments::create
         }
-        get_comment: {
+        get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<Comment>|,
-            handler: handle_get_comment
+            outputs: |result: ZomeApiResult<comments::CommentWithAddress>|,
+            handler: comments::get
         }
-        get_comments: {
+        all_for_base: {
             inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: handle_get_comments
+            outputs: |result: ZomeApiResult<Vec<comments::CommentWithAddress>>|,
+            handler: comments::all_for_base
         }
     ]
 
     traits: {
         hc_public [
-            create_comment,
-            get_comment,
-            get_comments
+            create,
+            get,
+            all_for_base
         ]
     }
 }

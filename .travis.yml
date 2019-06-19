@@ -1,7 +1,7 @@
 dist: trusty
 language: nix
 script:
-- nix-shell --run 'npm run test && npm run build' https://github.com/holochain/holochain-rust/archive/3b42375dc31442b62855cff8c339a6422c447176.tar.gz
+- nix-shell --run 'npm run test && npm run build' https://github.com/holochain/holochain-rust/archive/2fd6a9fe780420a0a07339575fc9cb6efcc535ee.tar.gz
 - PACKAGE_NAME=$(node -p -e "require('./package.json').name")
 - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
 - cd dna

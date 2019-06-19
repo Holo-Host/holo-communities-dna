@@ -10,7 +10,7 @@ function graphQLFetcher(graphQLParams) {
   graphQLParams.variables = graphQLParams.variables || {}
 
   const payload = {
-    instance_id: 'hylo-chat',
+    instance_id: 'hylo',
     zome: 'graphql',
     function: 'graphql',
     params: graphQLParams,

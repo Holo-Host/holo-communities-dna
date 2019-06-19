@@ -29,28 +29,28 @@ define_zome! {
     genesis: || { Ok(()) }
 
     functions: [
-         get_post: {
+         get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<post::Post>|,
-            handler: post::get_post
+            outputs: |result: ZomeApiResult<post::PostWithAddress>|,
+            handler: post::get
         }
-        create_post: {
+        create: {
             inputs: |base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String|,
-            outputs: |result: ZomeApiResult<Address>|,
-            handler: post::create_post
+            outputs: |result: ZomeApiResult<post::PostWithAddress>|,
+            handler: post::create
         }
-        get_posts: {
+        all_for_base: {
             inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: post::get_posts
+            outputs: |result: ZomeApiResult<Vec<post::PostWithAddress>>|,
+            handler: post::all_for_base
         }
     ]
 
     traits: {
         hc_public [
-            get_post,
-            create_post,
-            get_posts
+            get,
+            create,
+            all_for_base
         ]
     }
 }

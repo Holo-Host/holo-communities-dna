@@ -22,8 +22,6 @@ use hdk::{
     }
 };
 
-mod anchor;
-mod identity;
 mod schema;
 mod holochain_juniper;
 
@@ -31,10 +29,7 @@ use crate::schema::{Mutation, Query, Schema};
 
 
 define_zome! {
-    entries: [
-        anchor::def(),
-        identity::def()
-    ]
+    entries: []
 
     genesis: || { Ok(()) }
 

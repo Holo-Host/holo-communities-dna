@@ -1,7 +1,6 @@
 use juniper::{FieldError, FieldResult, Value, ID};
 use serde_json::json;
 use crate::holochain_juniper::call_cached;
-use crate::identity;
 use crate::Context;
 
 mod person;
@@ -36,7 +35,7 @@ struct MessageThreadInput {
 
 #[derive(GraphQLInputObject)]
 struct MessageInput {
-    message_thread_id: Option<String>,
+    message_thread_address: Option<String>,
     text: Option<String>,
 	created_at: Option<String>
 }
@@ -99,14 +98,13 @@ graphql_object!(Query: Context |&self| {
 	    autocomplete: Option<String>,
 	    filter: Option<String>
 	) -> FieldResult<PersonQuerySet> {
-    	let people: Vec<Person> = identity::get_people()?
-	    	.into_iter()
-	    	.map(|id| {
-        		Person {
-	    			id: id.into(),
-    			}
-	    	})
-    		.collect();
+        let result = call_cached("identity", "get_people", json!({}).into())?;
+        let person_ids: Vec<serde_json::Value> = result.as_array().unwrap().to_vec();
+
+        let people: Vec<Person> = person_ids.iter().map(|id| Person{
+          id: id.as_str().unwrap().to_string().into(),
+        }).collect();
+
     	Ok(
     		PersonQuerySet{
     			total: people.len() as i32,
@@ -169,7 +167,7 @@ graphql_object!(Mutation: Context |&self| {
     field createMessage(data: Option<MessageInput>) -> FieldResult<Message> {
         let data = data.unwrap();
         let id = call_cached("chat", "post_message_to_thread", json!({
-            "thread_addr": data.message_thread_id.unwrap(),
+            "thread_address": data.message_thread_address.unwrap(),
             "text": data.text.unwrap_or("".into()),
             "timestamp": data.created_at.unwrap_or("".into())
         }).into())?;
@@ -189,10 +187,7 @@ graphql_object!(Mutation: Context |&self| {
     }
 
     field registerUser(name: Option<String>, avatar_url: Option<String>) -> FieldResult<Person> {
-    	let id = identity::register_user(
-    		name.unwrap_or("?".into()),
-    		avatar_url.unwrap_or("".into())
-    	)?;
+        let id = call_cached("identity", "register_user", json!({"name": name.unwrap_or("?".into()), "avatar_url": avatar_url.unwrap_or("".into())}).into())?;
     	Ok(Person { id: AGENT_ADDRESS.to_string().into() })
     }
 
