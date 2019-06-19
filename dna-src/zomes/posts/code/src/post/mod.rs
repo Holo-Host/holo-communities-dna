@@ -54,8 +54,10 @@ pub struct PostWithAddress {
 
 pub type Base = RawString;
 
+const POST_ENTRY_TYPE: &str = "post";
 const POST_BASE_ENTRY: &str = "post_base";
 const POST_LINK_TYPE: &str = "posted_in";
+
 
 pub fn get(address: Address) -> ZomeApiResult<PostWithAddress> {
     utils::get_as_type::<Post>(address.clone())
@@ -81,7 +83,7 @@ pub fn create(base: String, title: String, details: String, post_type: String, a
 
     let post_address = hdk::commit_entry(
         &Entry::App (
-            "post".into(),
+            POST_ENTRY_TYPE.into(),
             post.clone().into()
         )
     )?;
@@ -109,7 +111,7 @@ pub fn all_for_base(base: String) -> ZomeApiResult<Vec<PostWithAddress>> {
 
 pub fn post_def() -> ValidatingEntryType {
     entry!(
-        name: "post",
+        name: POST_ENTRY_TYPE,
         description: "",
         sharing: Sharing::Public,
 
@@ -136,7 +138,7 @@ pub fn base_def() -> ValidatingEntryType {
         },
         links: [
             to!(
-                "post",
+                POST_ENTRY_TYPE,
                 link_type: POST_LINK_TYPE,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

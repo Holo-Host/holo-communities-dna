@@ -6,6 +6,9 @@ use hdk::{
     },
 };
 
+pub const ANCHOR_ENTRY_TYPE: &str = "anchor";
+pub const ANCHOR_PERSON_LINK_TYPE: &str = "registered";
+
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Anchor {
     pub name: String,
@@ -13,7 +16,7 @@ pub struct Anchor {
 
 pub fn def() -> ValidatingEntryType {
     entry!(
-        name: "anchor",
+        name: ANCHOR_ENTRY_TYPE,
         description: "",
         sharing: Sharing::Public,
 
@@ -28,43 +31,7 @@ pub fn def() -> ValidatingEntryType {
         links: [
             to!(
                 "%agent_id",
-                link_type: "registered",
-
-                validation_package: || {
-                    hdk::ValidationPackageDefinition::Entry
-                },
-
-                validation: |_validation_data: hdk::LinkValidationData| {
-                    Ok(())
-                }
-            ),
-            to!(// delete this later. This is just because test users are anchors and don't have a real agent_address
-                "anchor",
-                link_type: "registered",
-
-                validation_package: || {
-                    hdk::ValidationPackageDefinition::Entry
-                },
-
-                validation: |_validation_data: hdk::LinkValidationData| {
-                    Ok(())
-                }
-            ),
-            to!(
-                "%agent_id",
-                link_type: "belongs_to",
-
-                validation_package: || {
-                    hdk::ValidationPackageDefinition::Entry
-                },
-
-                validation: |_validation_data: hdk::LinkValidationData| {
-                    Ok(())
-                }
-            ),
-            to!(// delete this later. This is just because test users are anchors and don't have a real agent_address
-                "anchor",
-                link_type: "belongs_to",
+                link_type: ANCHOR_PERSON_LINK_TYPE,
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

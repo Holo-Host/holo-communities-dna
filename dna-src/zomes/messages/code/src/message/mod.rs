@@ -10,6 +10,14 @@ use hdk::{
     AGENT_ADDRESS,
 };
 
+use super::thread::{
+    THREAD_ENTRY_TYPE,
+    MESSAGE_LINK_TYPE
+};
+
+pub const MESSAGE_ENTRY_TYPE: &str = "message";
+
+pub const MESSAGE_MESSAGE_THREAD_LINK_TYPE: &str = "message_threads";
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Message {
@@ -48,11 +56,11 @@ pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeA
         creator: AGENT_ADDRESS.to_string().into() 
     };
     let message_entry = Entry::App(
-        "message".into(), 
+        MESSAGE_ENTRY_TYPE.into(), 
         message.clone().into()
     );
     let message_addr = hdk::commit_entry(&message_entry)?;
-    utils::link_entries_bidir(&message_addr, &thread_address, "message_thread", "messages", "", "")?;
+    utils::link_entries_bidir(&message_addr, &thread_address, MESSAGE_MESSAGE_THREAD_LINK_TYPE, MESSAGE_LINK_TYPE, "", "")?;
     Ok(message.with_address(message_addr))
 }
 
@@ -67,7 +75,7 @@ pub fn get(message_addr: Address) -> ZomeApiResult<MessageWithAddress> {
 
 pub fn def() -> ValidatingEntryType {
     entry!(
-        name: "message",
+        name: MESSAGE_ENTRY_TYPE,
         description: "A generic message entry",
         sharing: Sharing::Public,
 
@@ -81,8 +89,8 @@ pub fn def() -> ValidatingEntryType {
 
         links: [
             to!(
-                "thread",
-                link_type: "message_thread",
+                THREAD_ENTRY_TYPE,
+                link_type: MESSAGE_MESSAGE_THREAD_LINK_TYPE,
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

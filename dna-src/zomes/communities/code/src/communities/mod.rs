@@ -38,6 +38,7 @@ pub struct CommunityWithAddress {
 
 pub type Base = RawString;
 
+const COMMUNITY_ENTRY_TYPE: &str = "community";
 const COMMUNITY_BASE_ENTRY: &str = "community_base";
 const COMMUNITY_LINK_TYPE: &str = "member_of";
 
@@ -70,7 +71,7 @@ pub fn create(name: String, slug: String) -> ZomeApiResult<CommunityWithAddress>
 
     let community_address = hdk::commit_entry(
         &Entry::App (
-            "community".into(),
+            COMMUNITY_ENTRY_TYPE.into(),
             community.clone().into()
         )
     )?;
@@ -103,7 +104,7 @@ pub fn all() -> ZomeApiResult<Vec<CommunityWithAddress>> {
 
 pub fn community_def() -> ValidatingEntryType {
     entry!(
-        name: "community",
+        name: COMMUNITY_ENTRY_TYPE,
         description: "",
         sharing: Sharing::Public,
 
@@ -130,7 +131,7 @@ pub fn base_def() -> ValidatingEntryType {
         },
         links: [
             to!(
-                "community",
+                COMMUNITY_ENTRY_TYPE,
                 link_type: COMMUNITY_LINK_TYPE,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

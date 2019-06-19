@@ -12,9 +12,15 @@ use hdk::{
 };
 
 use super::message::{
+    MESSAGE_ENTRY_TYPE,
     get,
     MessageWithAddress
 };
+
+pub const THREAD_ENTRY_TYPE: &str = "thread";
+pub const MESSAGE_LINK_TYPE: &str = "thread";
+pub const AGENT_MESSAGE_THREAD_LINK_TYPE: &str = "thread";
+
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Thread {
@@ -23,7 +29,7 @@ pub struct Thread {
 
 pub fn get_threads() -> ZomeApiResult<Vec<Address>> {
     hdk::debug(AGENT_ADDRESS.to_string())?;
-    Ok(hdk::get_links(&AGENT_ADDRESS, Some("message_threads".to_string()), None)?
+    Ok(hdk::get_links(&AGENT_ADDRESS, Some(AGENT_MESSAGE_THREAD_LINK_TYPE.to_string()), None)?
         .addresses()
         .to_owned())
 }
@@ -32,7 +38,7 @@ pub fn create_thread(participant_ids: Vec<String>) -> ZomeApiResult<Address> {
     let mut participant_agent_ids = participant_ids.clone();
     participant_agent_ids.push(AGENT_ADDRESS.to_string()); // add this agent to the list
     let thread_entry = Entry::App(
-        "thread".into(),
+        THREAD_ENTRY_TYPE.into(),
         Thread {
             participants: participant_agent_ids.clone(),
         }
@@ -41,7 +47,7 @@ pub fn create_thread(participant_ids: Vec<String>) -> ZomeApiResult<Address> {
     let entry_addr = hdk::commit_entry(&thread_entry)?;
 
     for participant_id in participant_agent_ids {
-        hdk::link_entries(&participant_id.into(), &entry_addr, "message_threads", "")?;
+        hdk::link_entries(&participant_id.into(), &entry_addr, AGENT_MESSAGE_THREAD_LINK_TYPE, "")?;
     }
 
     Ok(entry_addr)
@@ -56,7 +62,7 @@ pub fn get_thread_participants(thread_address: Address) -> ZomeApiResult<Vec<Add
 }
 
 pub fn get_thread_messages(thread_address: Address) -> ZomeApiResult<Vec<MessageWithAddress>> {
-    Ok(hdk::get_links(&thread_address, Some("messages".to_string()), None)?
+    Ok(hdk::get_links(&thread_address, Some(MESSAGE_LINK_TYPE.to_string()), None)?
         .addresses()
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())
@@ -66,7 +72,7 @@ pub fn get_thread_messages(thread_address: Address) -> ZomeApiResult<Vec<Message
 
 pub fn def() -> ValidatingEntryType {
     entry!(
-        name: "thread",
+        name: THREAD_ENTRY_TYPE,
         description: "A thread in which messages are posted",
         sharing: Sharing::Public,
 
@@ -81,19 +87,7 @@ pub fn def() -> ValidatingEntryType {
         links: [
             from!(
                 "%agent_id",
-                link_type: "message_threads",
-
-                validation_package: || {
-                    hdk::ValidationPackageDefinition::Entry
-                },
-
-                validation: |_validation_data: hdk::LinkValidationData| {
-                    Ok(())
-                }
-            ),
-            from!(// delete this later. This is just because test users are anchors and don't have a real agent_address
-                "anchor",
-                link_type: "message_threads",
+                link_type: AGENT_MESSAGE_THREAD_LINK_TYPE,
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
@@ -104,8 +98,8 @@ pub fn def() -> ValidatingEntryType {
                 }
             ),
             to!(
-                "message",
-                link_type: "messages",
+                MESSAGE_ENTRY_TYPE,
+                link_type: MESSAGE_LINK_TYPE,
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

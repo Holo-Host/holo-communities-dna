@@ -28,11 +28,9 @@ use hdk::holochain_core_types::{
 
 pub type Base = String;
 
-pub const BASE_ENTRY_TYPE: &str = "base";
-
-pub const COMMENT_LINK_TYPE: &str = "commented_on";
-
 pub const COMMENT_ENTRY_TYPE: &str = "comment";
+pub const BASE_ENTRY_TYPE: &str = "base";
+pub const COMMENT_LINK_TYPE: &str = "commented_on";
 
 // comment type and result format
 
