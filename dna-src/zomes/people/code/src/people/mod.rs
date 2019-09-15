@@ -9,13 +9,18 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     error::{ZomeApiError, ZomeApiResult},
     holochain_core_types::{
-        cas::content::{Address, AddressableContent},
         dna::entry_types::Sharing,
         entry::Entry,
-        error::HolochainError,
-        json::JsonString,
+        link::LinkMatch,
     },
     AGENT_ADDRESS,
+};
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+    holochain_persistence_api::{cas::content::{Address,AddressableContent}},
 };
 
 pub const PERSON_ENTRY_TYPE: &str = "person";
@@ -44,7 +49,7 @@ pub struct PersonWithAddress {
 }
 
 pub fn get(agent_id: Address) -> ZomeApiResult<PersonWithAddress> {
-    let person = utils::get_links_and_load_type::<Person>(&agent_id, Some(ANCHOR_PERSON_LINK_TYPE.to_string()), None)?
+    let person = utils::get_links_and_load_type::<Person>(&agent_id, LinkMatch::Exactly(ANCHOR_PERSON_LINK_TYPE.into()), LinkMatch::Any)?
         .first()
         .map(|result| result.to_owned());
 
@@ -67,13 +72,13 @@ pub fn is_registered() -> ZomeApiResult<bool> {
 }
 
 pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonWithAddress> {
-    let person = Person { 
-        name: name.clone(), 
+    let person = Person {
+        name: name.clone(),
         avatar_url: avatar_url.clone()
     };
 
     let person_entry = Entry::App(
-        PERSON_ENTRY_TYPE.into(), 
+        PERSON_ENTRY_TYPE.into(),
         person.clone().into()
     );
 
@@ -101,7 +106,7 @@ pub fn all() -> ZomeApiResult<Vec<PersonWithAddress>> {
         }
         .into(),
     );
-    Ok(hdk::get_links(&anchor_entry.address(), Some(ANCHOR_PERSON_LINK_TYPE.to_string()), None)?
+    Ok(hdk::get_links(&anchor_entry.address(),  LinkMatch::Exactly(ANCHOR_PERSON_LINK_TYPE.into()), LinkMatch::Any)?
         .addresses()
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())

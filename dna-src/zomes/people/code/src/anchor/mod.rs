@@ -2,10 +2,15 @@ use hdk::{
     self,
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
-        dna::entry_types::Sharing, error::HolochainError, json::JsonString,
+        dna::entry_types::Sharing,
     },
 };
-
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+};
 pub const ANCHOR_ENTRY_TYPE: &str = "anchor";
 pub const ANCHOR_PERSON_LINK_TYPE: &str = "registered";
 
