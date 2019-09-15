@@ -5,10 +5,18 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
     holochain_core_types::{
-        cas::content::Address, dna::entry_types::Sharing, entry::Entry, error::HolochainError,
-        json::JsonString,
+        dna::entry_types::Sharing,
+        entry::Entry,
+        link::LinkMatch,
     },
     AGENT_ADDRESS,
+};
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
 
 use super::message::{
@@ -29,7 +37,7 @@ pub struct Thread {
 
 pub fn get_threads() -> ZomeApiResult<Vec<Address>> {
     hdk::debug(AGENT_ADDRESS.to_string())?;
-    Ok(hdk::get_links(&AGENT_ADDRESS, Some(AGENT_MESSAGE_THREAD_LINK_TYPE.to_string()), None)?
+    Ok(hdk::get_links(&AGENT_ADDRESS, LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.into()), LinkMatch::Any)?
         .addresses()
         .to_owned())
 }
@@ -62,7 +70,7 @@ pub fn get_thread_participants(thread_address: Address) -> ZomeApiResult<Vec<Add
 }
 
 pub fn get_thread_messages(thread_address: Address) -> ZomeApiResult<Vec<MessageWithAddress>> {
-    Ok(hdk::get_links(&thread_address, Some(MESSAGE_LINK_TYPE.to_string()), None)?
+    Ok(hdk::get_links(&thread_address, LinkMatch::Exactly(MESSAGE_LINK_TYPE.into()), LinkMatch::Any)?
         .addresses()
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())

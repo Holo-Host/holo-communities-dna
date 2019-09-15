@@ -4,10 +4,18 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
     holochain_core_types::{
-        cas::content::Address, dna::entry_types::Sharing, entry::Entry, error::HolochainError,
-        json::JsonString,
+        dna::entry_types::Sharing,
+        entry::Entry,
     },
     AGENT_ADDRESS,
+};
+
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
 
 use super::thread::{
@@ -49,14 +57,14 @@ pub struct MessageWithAddress {
 }
 
 pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeApiResult<MessageWithAddress> {
-    let message = Message { 
-        text, 
-        timestamp: timestamp, 
-        thread_address: thread_address.to_owned(), 
-        creator: AGENT_ADDRESS.to_string().into() 
+    let message = Message {
+        text,
+        timestamp: timestamp,
+        thread_address: thread_address.to_owned(),
+        creator: AGENT_ADDRESS.to_string().into()
     };
     let message_entry = Entry::App(
-        MESSAGE_ENTRY_TYPE.into(), 
+        MESSAGE_ENTRY_TYPE.into(),
         message.clone().into()
     );
     let message_addr = hdk::commit_entry(&message_entry)?;
