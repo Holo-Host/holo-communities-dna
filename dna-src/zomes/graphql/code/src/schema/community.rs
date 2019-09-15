@@ -4,10 +4,13 @@ use juniper::{FieldResult, ID};
 use crate::schema::post::PostQuerySet;
 use serde_json::json;
 use crate::Context;
-use hdk::holochain_core_types::{
-	error::HolochainError,
-	json::JsonString,
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
 };
+
 use hdk::error::ZomeApiResult;
 use std::convert::TryFrom;
 

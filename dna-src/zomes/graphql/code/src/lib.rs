@@ -1,5 +1,3 @@
-#![feature(try_from)]
-
 #[macro_use]
 extern crate hdk;
 extern crate serde;
@@ -7,7 +5,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 #[macro_use]
-extern crate holochain_core_types_derive;
+extern crate holochain_json_derive;
 #[macro_use]
 extern crate juniper;
 #[macro_use]
@@ -17,11 +15,17 @@ extern crate derive_more;
 use hdk::{
     error::{ZomeApiError, ZomeApiResult},
     holochain_core_types::{
-        json::{JsonString, RawString},
-        error::HolochainError,
+        agent::AgentId,
+        validation::EntryValidationData,
     }
 };
 
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString,RawString},
+    },
+};
 mod schema;
 mod holochain_juniper;
 
@@ -32,6 +36,19 @@ define_zome! {
     entries: []
 
     init: || { Ok(()) }
+
+    validate_agent: |validation_data : EntryValidationData::<AgentId>| {{
+         if let EntryValidationData::Create{entry, ..} = validation_data {
+             let agent = entry as AgentId;
+             if agent.nick == "reject_agent::app" {
+                 Err("This agent will always be rejected".into())
+             } else {
+                 Ok(())
+             }
+         } else {
+             Err("Cannot update or delete an agent at this time".into())
+         }
+     }}
 
     functions: [
         graphql: {
