@@ -6,8 +6,6 @@
  * @since:   2019-03-26
  */
 
-use holochain_core_types_derive::{ DefaultJson };
-
 use hdk::{
     AGENT_ADDRESS,
     entry_definition::ValidatingEntryType,
@@ -15,13 +13,17 @@ use hdk::{
     utils,
 };
 use hdk::holochain_core_types::{
-    cas::content::Address,
     entry::Entry,
     time::Iso8601,
     dna::entry_types::Sharing,
-    error::HolochainError,
-    json::JsonString,
-    json::RawString,
+};
+
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString, RawString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
 
 // tag for links from base to comment

@@ -27,7 +27,7 @@ define_zome! {
         thread::def()
     ]
 
-    genesis: || { Ok(()) }
+    init: || { Ok(()) }
 
     functions: [
         // message functions

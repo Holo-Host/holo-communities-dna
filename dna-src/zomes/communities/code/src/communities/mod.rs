@@ -6,12 +6,18 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
         dna::entry_types::Sharing, error::HolochainError,
-        json::JsonString,
-        json::RawString,
         cas::content::{Address},
         entry::Entry,
     },
 };
+
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString, RawString},
+    },
+};
+
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Community {

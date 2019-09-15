@@ -5,6 +5,8 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+#[macro_use]
+extern crate holochain_json_derive;
 
 mod comments;
 
@@ -12,10 +14,16 @@ use hdk::{
     error::ZomeApiResult,
 };
 use hdk::holochain_core_types::{
-    cas::content::Address,
-    error::HolochainError,
-    json::JsonString,
+    agent::AgentId,
     time::Iso8601,
+    validation::EntryValidationData,
+};
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
 
 define_zome! {
@@ -24,7 +32,20 @@ define_zome! {
        comments::base_def()
     ]
 
-    genesis: || { Ok(()) }
+    init: || { Ok(()) }
+
+    validate_agent: |validation_data : EntryValidationData::<AgentId>| {{
+         if let EntryValidationData::Create{entry, ..} = validation_data {
+             let agent = entry as AgentId;
+             if agent.nick == "reject_agent::app" {
+                 Err("This agent will always be rejected".into())
+             } else {
+                 Ok(())
+             }
+         } else {
+             Err("Cannot update or delete an agent at this time".into())
+         }
+     }}
 
     functions: [
         create: {

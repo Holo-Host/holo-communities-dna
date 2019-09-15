@@ -31,7 +31,7 @@ use crate::schema::{Mutation, Query, Schema};
 define_zome! {
     entries: []
 
-    genesis: || { Ok(()) }
+    init: || { Ok(()) }
 
     functions: [
         graphql: {

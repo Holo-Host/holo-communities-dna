@@ -26,7 +26,7 @@ define_zome! {
         communities::community_def()
     ]
 
-    genesis: || { Ok(()) }
+    init: || { Ok(()) }
 
     functions: [
          get: {

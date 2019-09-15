@@ -26,7 +26,7 @@ define_zome! {
         post::base_def()
     ]
 
-    genesis: || { Ok(()) }
+    init: || { Ok(()) }
 
     functions: [
          get: {

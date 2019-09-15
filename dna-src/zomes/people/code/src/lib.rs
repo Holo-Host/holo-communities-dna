@@ -28,7 +28,7 @@ define_zome! {
         people::def()
     ]
 
-    genesis: || { Ok(()) }
+    init: || { Ok(()) }
 
     functions: [
         get: {
