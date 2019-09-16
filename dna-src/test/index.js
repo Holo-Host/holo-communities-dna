@@ -23,19 +23,19 @@ const singleInstance = new Diorama({
 const multiInstance = new Diorama({
   instances: {
     alice: dna,
-    bob: dna,
+    bob: dna
   },
   debugLog: false,
   executor: tapeExecutor(require('tape')),
   middleware: backwardCompatibilityMiddleware,
 })
 
-// require('./agent/communities')(singleInstance.registerScenario)
-// require('./agent/posts')(singleInstance.registerScenario)
-// require('./agent/comments')(singleInstance.registerScenario)
+require('./agent/communities')(singleInstance.registerScenario)
+require('./agent/posts')(singleInstance.registerScenario)
+require('./agent/comments')(singleInstance.registerScenario)
 require('./agent/threads')(singleInstance.registerScenario)
-// require('./agent/messages')(singleInstance.registerScenario)
-// require('./agent/people')(multiInstance.registerScenario)
+require('./agent/messages')(singleInstance.registerScenario)
+require('./agent/people')(multiInstance.registerScenario)
 
 singleInstance.run()
 multiInstance.run()

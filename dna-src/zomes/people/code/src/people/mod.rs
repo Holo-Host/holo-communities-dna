@@ -24,6 +24,7 @@ use hdk::{
 };
 
 pub const PERSON_ENTRY_TYPE: &str = "person";
+pub const PERSON_AGENT_LINK_TYPE:&str = "person_to_agent_link";
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Person {
@@ -49,7 +50,7 @@ pub struct PersonWithAddress {
 }
 
 pub fn get(agent_id: Address) -> ZomeApiResult<PersonWithAddress> {
-    let person = utils::get_links_and_load_type::<Person>(&agent_id, LinkMatch::Exactly(ANCHOR_PERSON_LINK_TYPE.into()), LinkMatch::Any)?
+    let person = utils::get_links_and_load_type::<Person>(&agent_id, LinkMatch::Exactly(PERSON_AGENT_LINK_TYPE.into()), LinkMatch::Any)?
         .first()
         .map(|result| result.to_owned());
 
@@ -83,7 +84,7 @@ pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonWi
     );
 
     let person_addr = hdk::commit_entry(&person_entry)?;
-    hdk::link_entries(&AGENT_ADDRESS, &person_addr, ANCHOR_PERSON_LINK_TYPE, "")?;
+    hdk::link_entries(&AGENT_ADDRESS, &person_addr, PERSON_AGENT_LINK_TYPE, "")?;
 
     let anchor_entry = Entry::App(
         ANCHOR_ENTRY_TYPE.into(),
@@ -131,7 +132,7 @@ pub fn def() -> ValidatingEntryType {
         links: [
             from!(
                 "%agent_id",
-                link_type: ANCHOR_PERSON_LINK_TYPE,
+                link_type: PERSON_AGENT_LINK_TYPE,
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
