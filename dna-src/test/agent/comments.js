@@ -13,12 +13,12 @@ module.exports = (scenario) => {
   	timestamp: "2019-03-29T01:58:10+00:00"
   }
 
-  scenario.runTape("Create and get single comment and all comments", async (t, { alice }) => {
+  scenario("Create and get single comment and all comments", async (s, t, { alice }) => {
       // define some helpers
   	const callComments = (func, params) => alice.callSync("comments", func, params)
 
   	const createResult = await callComments('create', testComment1)
-		
+
 		await callComments('create', testComment2)
 
   	const { address } = createResult.Ok

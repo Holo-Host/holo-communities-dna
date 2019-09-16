@@ -1,7 +1,7 @@
 const queries = require('../queries')
 module.exports = (scenario) => {
 
-scenario.runTape('Check for a non existent thread and then create it', async (t, {alice}) => {
+scenario('Check for a non existent thread and then create it', async (s, t, { alice }) => {
     const result = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
       variables: {name: "wollum", avatarUrl: "//"}

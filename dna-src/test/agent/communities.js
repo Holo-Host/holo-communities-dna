@@ -1,6 +1,6 @@
 module.exports = (scenario) => {
 
-  scenario.runTape("Create and get single community", async (t, { alice }) => {
+  scenario("Create and get single community", async (s, t, { alice }) => {
     const name = "Test Community 1"
     const slug = "test1"
     const add_community_result = await alice.callSync("communities", "create", {
@@ -11,7 +11,7 @@ module.exports = (scenario) => {
     const { address } = add_community_result.Ok
     t.equal(address.length, 46)
     t.equal(add_community_result.Ok.name, name)
-    t.equal(add_community_result.Ok.slug, slug)    
+    t.equal(add_community_result.Ok.slug, slug)
 
     const communityResult = {address, name, slug}
 

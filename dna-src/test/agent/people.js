@@ -1,5 +1,5 @@
 module.exports = (scenario) => {
-  scenario.runTape('Can create a message and retrieve it', async (t, { alice, bob }) => {
+  scenario('Can create a message and retrieve it', async (s, t, { alice, bob }) => {
     const aliceUser = {
       name: 'Alice',
       avatar_url: 'alice.png'

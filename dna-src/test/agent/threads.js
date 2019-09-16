@@ -1,7 +1,7 @@
 module.exports = (scenario) => {
 
-scenario.runTape('Check for a non existent thread and then create it', async (t, {alice}) => {
-    
+scenario('Check for a non existent thread and then create it', async (s, t, { alice }) => {
+
     // add a thread
     const add_result_str = await alice.callSync("messages", "create_thread", {
       participant_ids: []
@@ -13,6 +13,6 @@ scenario.runTape('Check for a non existent thread and then create it', async (t,
     const get_result_post = await alice.callSync("messages", "get_threads", {})
 
     console.log(get_result_post)
-    t.equal(get_result_post.Ok.length, 1) // created a single thread    
+    t.equal(get_result_post.Ok.length, 1) // created a single thread
   })
 }

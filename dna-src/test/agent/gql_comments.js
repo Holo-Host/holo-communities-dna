@@ -1,7 +1,7 @@
 const queries = require('../queries')
 module.exports = (scenario) => {
 
-scenario.runTape('Can add a comment to a post via graphql', async (t, {alice}) => {
+scenario('Can add a comment to a post via graphql', async (s, t, { alice }) => {
     let register_response = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
       variables: {name: "wollum", avatarUrl: "//"}

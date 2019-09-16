@@ -3,7 +3,7 @@ module.exports = (scenario) => {
 
   const slug = "/community1"
 
-  scenario.runTape('Can create a new community via graphql', async (t, {alice}) => {
+  scenario('Can create a new community via graphql', async (s, t, { alice }) => {
     let register_response = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
       variables: {name: "wollum", avatarUrl: "//"}

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@holochain/holochain-nodejs": "0.4.17-alpha1",
+    "@holochain/diorama": "0.2.0-rc.1",
     "graphql": "^14.2.1",
     "graphql-schema-utils": "^0.6.7",
     "json3": "*",
