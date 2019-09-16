@@ -14,7 +14,7 @@ and started using
 `npm run start`
 
 If you plan to develop the DNA code further the automated tests can be run using
-`npm run test`
+`nix-shell --run 'npm run test'`
 
 At the current time the container config does not include configuration of the network. This is because at the time of writing you must hard code the IPs in the local network. Defauls about this can be found at [developer.holochain](https://developer.holochain.org/start.html) and will likely be updated soon.
 
@@ -139,3 +139,5 @@ const findOrCreateThreadQuery =
   }
 }`
 ```
+## Built With
+* [Holochain v0.0.28-alpha1](https://github.com/holochain/holochain-rust)
