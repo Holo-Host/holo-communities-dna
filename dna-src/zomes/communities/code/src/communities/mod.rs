@@ -9,14 +9,12 @@ use hdk::{
         entry::Entry,
         link::LinkMatch,
     },
-};
-
-use hdk::{
     holochain_json_api::{
         error::JsonError,
         json::{JsonString, RawString},
     },
     holochain_persistence_api::{cas::content::Address},
+
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]

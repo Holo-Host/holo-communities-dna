@@ -17,15 +17,13 @@ use hdk::{
     holochain_core_types::{
         agent::AgentId,
         validation::EntryValidationData,
-    }
-};
-
-use hdk::{
+    },
     holochain_json_api::{
         error::JsonError,
         json::{JsonString,RawString},
-    },
+    }
 };
+
 mod schema;
 mod holochain_juniper;
 

@@ -10,8 +10,6 @@ use hdk::{
         entry::Entry,
         link::LinkMatch,
     },
-};
-use hdk::{
     holochain_json_api::{
         error::JsonError,
         json::{JsonString,RawString},

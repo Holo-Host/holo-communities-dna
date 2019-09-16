@@ -19,7 +19,7 @@ module.exports = (scenario) => {
 
     const isRegisteredResult2 = await alice.call('people', 'is_registered', {})
     t.deepEqual(isRegisteredResult2.Ok, true)
-    //
+
     await bob.call('people', 'register_user', bobUser)
     const getResult = await alice.call('people', 'get', {agent_id: bob.agentId})
     t.deepEqual(getResult.Ok, { ...bobUser, address: bob.agentId })

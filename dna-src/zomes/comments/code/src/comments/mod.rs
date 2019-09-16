@@ -11,15 +11,12 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
     utils,
-};
-use hdk::holochain_core_types::{
-    entry::Entry,
-    time::Iso8601,
-    dna::entry_types::Sharing,
-    link::LinkMatch,
-};
-
-use hdk::{
+    holochain_core_types::{
+        entry::Entry,
+        time::Iso8601,
+        dna::entry_types::Sharing,
+        link::LinkMatch,
+    },
     holochain_json_api::{
         error::JsonError,
         json::{JsonString, RawString},
