@@ -4,11 +4,14 @@ use crate::holochain_juniper::{call_cached, HID};
 use juniper::{FieldResult, ID};
 use serde_json::json;
 use crate::Context;
-use hdk::holochain_core_types::{
-	error::HolochainError,
-	json::JsonString,
-	cas::content::Address,
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
+
 use hdk::error::{ZomeApiResult, ZomeApiError};
 use std::convert::TryFrom;
 use super::person::Person;
@@ -39,7 +42,7 @@ pub struct PostEntry {
 
 impl Post {
 	fn retrieve_entry(&self) -> ZomeApiResult<PostEntry> {
-		let result = JsonString::from(call_cached("posts", "get_post", 
+		let result = JsonString::from(call_cached("posts", "get_post",
 			json!({
 				"address": self.id.to_string()
 			}).into())?

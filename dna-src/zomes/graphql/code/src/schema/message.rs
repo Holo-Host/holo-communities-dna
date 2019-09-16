@@ -1,5 +1,10 @@
-use hdk::holochain_core_types::error::HolochainError;
-use hdk::holochain_core_types::json::JsonString;
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+};
+
 use hdk::error::ZomeApiResult;
 use juniper::{FieldResult, ID};
 use serde_json::json;

@@ -3,8 +3,12 @@ use serde_json::{
   self,
   json,
 };
-use hdk::holochain_core_types::error::HolochainError;
-use hdk::holochain_core_types::json::JsonString;
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
+};
 use hdk::error::ZomeApiResult;
 use std::convert::TryFrom;
 use crate::holochain_juniper::call_cached;

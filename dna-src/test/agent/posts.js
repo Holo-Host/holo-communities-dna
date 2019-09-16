@@ -9,7 +9,7 @@ const testPost = {
   base: "community1",
 }
 
-scenario.runTape('Can create a post', async (t, {alice}) => {
+scenario('Can create a post', async (s, t, { alice }) => {
     const add_post_result = await alice.callSync("posts", "create", testPost )
     const { address } = add_post_result.Ok
     t.equal(address.length, 46)

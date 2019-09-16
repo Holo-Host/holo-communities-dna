@@ -1,23 +1,46 @@
 const path = require('path')
-const { Config, Scenario } = require('@holochain/holochain-nodejs')
-Scenario.setTape(require('tape'))
+const tape = require('tape')
+
+const { Diorama, tapeExecutor, backwardCompatibilityMiddleware } = require('@holochain/diorama')
+
+process.on('unhandledRejection', error => {
+  // Will print "unhandledRejection err is not defined"
+  console.error('got unhandledRejection:', error);
+});
+
 const dnaPath = path.join(__dirname, "../dist/dna-src.dna.json")
-const dna = Config.dna(dnaPath, 'hylo-messenger')
+const dna = Diorama.dna(dnaPath, 'hylo')
 
-const agentAlice = Config.agent('alice')
-const instanceAlice = Config.instance(agentAlice, dna)
-const singleAgentScenario = new Scenario([instanceAlice], { debugLog: true })
+const singleInstance = new Diorama({
+  instances: {
+    alice: dna,
+  },
+  debugLog: false,
+  executor: tapeExecutor(require('tape')),
+  middleware: backwardCompatibilityMiddleware,
+})
 
-const agentBob = Config.agent('bob')
-const instanceBob = Config.instance(agentBob, dna)
-const twoAgentScenario = new Scenario([instanceAlice, instanceBob], { debugLog: true })
+const multiInstance = new Diorama({
+  instances: {
+    alice: dna,
+    bob: dna
+  },
+  debugLog: false,
+  executor: tapeExecutor(require('tape')),
+  middleware: backwardCompatibilityMiddleware,
+})
 
-require('./agent/communities')(singleAgentScenario)
-require('./agent/posts')(singleAgentScenario)
-require('./agent/comments')(singleAgentScenario)
-require('./agent/threads')(singleAgentScenario)
-require('./agent/messages')(singleAgentScenario)
-require('./agent/people')(twoAgentScenario)
+require('./agent/communities')(singleInstance.registerScenario)
+require('./agent/posts')(singleInstance.registerScenario)
+require('./agent/comments')(singleInstance.registerScenario)
+require('./agent/threads')(singleInstance.registerScenario)
+require('./agent/messages')(singleInstance.registerScenario)
+require('./agent/people')(multiInstance.registerScenario)
+
+singleInstance.run()
+multiInstance.run()
+
+
 
 // disabled graphql tests
 // require('./agent/register')(singleAgentScenario)
@@ -27,7 +50,7 @@ require('./agent/people')(twoAgentScenario)
 // require('./agent/gql_posts')(singleAgentScenario)
 // require('./agent/gql_communities')(singleAgentScenario)
 
-// singleAgentScenario.runTape('Reference GraphQL schema matches the implementation', async (t, {alice}) => {
+// singleAgentscenario('Reference GraphQL schema matches the implementation', async (s, t, { alice }) => {
 
 // 	const fs = require('fs');
 // 	const { buildSchema, buildClientSchema, introspectionQuery } = require('graphql');

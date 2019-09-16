@@ -6,12 +6,15 @@ use hdk::{
     AGENT_ADDRESS,
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
-        dna::entry_types::Sharing, error::HolochainError,
-        json::JsonString,
-        json::RawString,
-        cas::content::Address,
+        dna::entry_types::Sharing,
         entry::Entry,
+        link::LinkMatch,
     },
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString,RawString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
@@ -101,7 +104,7 @@ pub fn create(base: String, title: String, details: String, post_type: String, a
 
 pub fn all_for_base(base: String) -> ZomeApiResult<Vec<PostWithAddress>> {
     let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
-    Ok(hdk::get_links(&address, Some(POST_LINK_TYPE.into()), None)?
+    Ok(hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
         .addresses()
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())

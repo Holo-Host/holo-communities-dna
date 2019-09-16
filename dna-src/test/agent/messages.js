@@ -1,6 +1,6 @@
 module.exports = (scenario) => {
 
-scenario.runTape('Can create a message and retrieve it', async (t, {alice}) => {
+scenario('Can create a message and retrieve it', async (s, t, { alice }) => {
 
     // add a thread
     const addResult = await alice.callSync("messages", "create_thread", {

@@ -6,22 +6,22 @@
  * @since:   2019-03-26
  */
 
-use holochain_core_types_derive::{ DefaultJson };
-
 use hdk::{
     AGENT_ADDRESS,
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
     utils,
-};
-use hdk::holochain_core_types::{
-    cas::content::Address,
-    entry::Entry,
-    time::Iso8601,
-    dna::entry_types::Sharing,
-    error::HolochainError,
-    json::JsonString,
-    json::RawString,
+    holochain_core_types::{
+        entry::Entry,
+        time::Iso8601,
+        dna::entry_types::Sharing,
+        link::LinkMatch,
+    },
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString, RawString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
 
 // tag for links from base to comment
@@ -104,7 +104,7 @@ pub fn get(address: Address) -> ZomeApiResult<CommentWithAddress> {
 
 pub fn all_for_base(base: String) -> ZomeApiResult<Vec<CommentWithAddress>> {
     let address = hdk::entry_address(&Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(base).into()))?;
-    Ok(hdk::get_links(&address, Some(COMMENT_LINK_TYPE.into()), None)?
+    Ok(hdk::get_links(&address, LinkMatch::Exactly(COMMENT_LINK_TYPE.into()), LinkMatch::Any)?
         .addresses()
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())

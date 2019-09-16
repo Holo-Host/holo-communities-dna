@@ -1,8 +1,8 @@
 const queries = require('../queries')
 
 module.exports = (scenario) => {
-  scenario.runTape('Check for a non existent thread and then create it', async (t, {alice, bob}) => {
-    
+  scenario('Check for a non existent thread and then create it', async (t, {alice, bob}) => {
+
     register(alice, 'alice')
     register(bob, 'bob')
 
@@ -17,14 +17,14 @@ module.exports = (scenario) => {
 
 
 const register = async (agent, name) => {
-  return agent.callSync("graphql", "graphql", {
+  return agent.app.callSync("graphql", "graphql", {
     query: queries.registerQuery,
     variables: {name, avatarUrl: "//"}
   })
 }
 
 const checkFor = async (agent, name) => {
-    const result = await agent.callSync("graphql", "graphql", {
+    const result = await agent.app.callSync("graphql", "graphql", {
       query: queries.getPeopleQuery,
       variables: {}
     })

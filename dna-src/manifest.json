@@ -3,11 +3,12 @@
   "description": "A Social Network running on Holochain",
   "authors": [
     {
-      "identifier": "Author Name <author@name.com>",
+      "identifier": "Holochain <holo@holochain.org>",
       "public_key_source": "",
       "signature": ""
     }
   ],
+  "uuid": "00000000-0000-0000-0000-000000000000",
   "version": "0.1.0",
   "dht": {},
   "properties": null

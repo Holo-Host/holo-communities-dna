@@ -3,11 +3,12 @@ use hdk::holochain_core_types::error::HolochainError;
 use std::fmt;
 
 use juniper::ID;
-use hdk::holochain_core_types:: {
-    cas::content::Address,
-    json::JsonString,
+use hdk::{
+    holochain_json_api::{
+        json::{JsonString},
+    },
+    holochain_persistence_api::{cas::content::Address},
 };
-
 /*
  * a wrapper for the hdk::call function that routes it to other zomes in this DNA
  * and deals with deserializing the ZomeApiResult from string.Default

@@ -1,7 +1,7 @@
 const queries = require('../queries')
 module.exports = (scenario) => {
 
-scenario.runTape('Can register a user and retrieve them again', async (t, {alice}) => {
+scenario('Can register a user and retrieve them again', async (s, t, { alice }) => {
     let register_response = await alice.callSync("graphql", "graphql", {
       query: queries.registerQuery,
       variables: {name: "wollum", avatarUrl: "//"}

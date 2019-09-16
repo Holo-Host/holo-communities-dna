@@ -1,9 +1,11 @@
 use juniper::{FieldResult, ID};
 use hdk::AGENT_ADDRESS;
 use hdk::error::ZomeApiResult;
-use hdk::holochain_core_types::{
-	error::HolochainError,
-	json::JsonString,
+use hdk::{
+    holochain_json_api::{
+        error::JsonError,
+        json::{JsonString},
+    },
 };
 use crate::Context;
 use crate::holochain_juniper::call_cached;
@@ -40,7 +42,7 @@ impl Me {
 
 graphql_object!(Me: Context |&self| {
 	field id() -> FieldResult<ID> {
-		Ok(AGENT_ADDRESS.to_string().into())		
+		Ok(AGENT_ADDRESS.to_string().into())
 	}
 
 field name() -> FieldResult<Option<String>> {
