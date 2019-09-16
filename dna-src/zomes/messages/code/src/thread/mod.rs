@@ -26,9 +26,8 @@ use super::message::{
 };
 
 pub const THREAD_ENTRY_TYPE: &str = "thread";
-pub const MESSAGE_LINK_TYPE: &str = "thread";
-pub const AGENT_MESSAGE_THREAD_LINK_TYPE: &str = "thread";
-
+pub const MESSAGE_LINK_TYPE: &str = "message_link_thread";
+pub const AGENT_MESSAGE_THREAD_LINK_TYPE: &str = "agent_message_thread";
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Thread {
