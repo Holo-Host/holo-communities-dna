@@ -3,7 +3,7 @@
 [[dnas]]
 id = "hylo_dna"
 file = "./dna/hylo.dna.json"
-hash = "Qm328wyq38924y"
+hash = "QmQRJWnaTCQG44qdWvxSQck33UfjF1yzs4mfogX7MHmSPC"
 
 [[agents]]
 id = "hylo_agent"
@@ -38,15 +38,15 @@ id = "websocket_interface"
 
 # -- Hylo UI Bundle (location of files) and UI Interface (http)
 
-[[ui_bundles]]
-id = "hylo-ui"
-root_dir = "./hylo-ui"
+# [[ui_bundles]]
+# id = "hylo-ui"
+# root_dir = "./hylo-ui"
 
-[[ui_interfaces]]
-bundle = "hylo-ui"
-dna_interface = "websocket_interface"
-id = "hylo-ui-interface"
-port = 8001
+# [[ui_interfaces]]
+# bundle = "hylo-ui"
+# dna_interface = "websocket_interface"
+# id = "hylo-ui-interface"
+# port = 8001
 
 # -- GraphiQl UI Bundle (location of files) and UI Interface (http)
 
@@ -62,11 +62,11 @@ port = 5001
 
 # -- Networking
 
-[network]
-n3h_persistence_path = "tmp/agent1"
-n3h_mode = "REAL"
-n3h_log_level = "t"
-bootstrap_nodes = []
+# [network]
+# n3h_persistence_path = "tmp/agent1"
+# n3h_mode = "REAL"
+# n3h_log_level = "t"
+# bootstrap_nodes = []
 
 # # For testing with a persistent n3h bootstrap node
 # bootstrap_nodes = [
