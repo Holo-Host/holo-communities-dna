@@ -1,3 +1,4 @@
+const { one } = require('../config')
 module.exports = (scenario) => {
 
 const testPost = {
@@ -9,21 +10,23 @@ const testPost = {
   base: "community1",
 }
 
-scenario('Can create a post', async (s, t, { alice }) => {
-    const add_post_result = await alice.callSync("posts", "create", testPost )
+scenario('Can create a post', async (s, t) => {
+  const { alice } = await s.players({alice: one('alice')}, true)
+
+    const add_post_result = await alice.callSync("app", "posts", "create", testPost )
     const { address } = add_post_result.Ok
     t.equal(address.length, 46)
-    t.deepEqual(add_post_result.Ok, { ...testPost, creator: alice.agentId, address })
+    t.deepEqual(add_post_result.Ok, { ...testPost, creator: alice.info('app').agentAddress, address })
 
-    const get_post_result = await alice.callSync("posts", "get", {
+    const get_post_result = await alice.callSync("app", "posts", "get", {
       address
     })
-    t.deepEqual(get_post_result.Ok, { ...testPost, creator: alice.agentId, address }, "Could retrieve the added post by address")
+    t.deepEqual(get_post_result.Ok, { ...testPost, creator: alice.info('app').agentAddress, address }, "Could retrieve the added post by address")
 
-    const get_posts_result = await alice.callSync("posts", "all_for_base", {
+    const get_posts_result = await alice.callSync("app", "posts", "all_for_base", {
       base: testPost.base
     })
     console.log(get_posts_result.Ok)
-    t.deepEqual(get_posts_result.Ok, [{ ...testPost, creator: alice.agentId, address }], "Could retrieve the added post from the base")
+    t.deepEqual(get_posts_result.Ok, [{ ...testPost, creator: alice.info('app').agentAddress, address }], "Could retrieve the added post from the base")
   })
 }

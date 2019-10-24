@@ -5,38 +5,9 @@
       "arguments": [
         "build",
         "--release",
-        "--target=wasm32-unknown-unknown",
-        "--target-dir=/tmp/holochain/target"
-      ]
-    },
-    {
-      "command": "wasm-gc",
-      "arguments": ["/tmp/holochain/target/wasm32-unknown-unknown/release/hylo_communities.wasm"]
-    },
-    {
-      "command": "wasm-opt",
-      "arguments": [
-        "-Oz",
-        "--vacuum",
-        "/tmp/holochain/target/wasm32-unknown-unknown/release/hylo_communities.wasm"
-      ]
-    },
-    {
-      "command": "wasm2wat",
-      "arguments": [
-        "/tmp/holochain/target/wasm32-unknown-unknown/release/hylo_communities.wasm",
-        "-o",
-        "/tmp/holochain/target/wasm32-unknown-unknown/release/hylo_communities.wat"
-      ]
-    },
-    {
-      "command": "wat2wasm",
-      "arguments": [
-        "/tmp/holochain/target/wasm32-unknown-unknown/release/hylo_communities.wat",
-        "-o",
-        "/tmp/holochain/target/wasm32-unknown-unknown/release/hylo_communities.wasm"
+        "--target=wasm32-unknown-unknown"
       ]
     }
   ],
-  "artifact": "/tmp/holochain/target/wasm32-unknown-unknown/release/hylo_communities.wasm"
+  "artifact": "target/wasm32-unknown-unknown/release/hylo_communities.wasm"
 }

@@ -1,3 +1,4 @@
+const { one } = require('../config')
 module.exports = (scenario) => {
 
 	const base = 'base1'
@@ -13,9 +14,10 @@ module.exports = (scenario) => {
   	timestamp: "2019-03-29T01:58:10+00:00"
   }
 
-  scenario("Create and get single comment and all comments", async (s, t, { alice }) => {
-      // define some helpers
-  	const callComments = (func, params) => alice.callSync("comments", func, params)
+  scenario("Create and get single comment and all comments", async (s, t) => {
+		const { alice } = await s.players({alice: one('alice')}, true)
+    // define some helpers
+  	const callComments = (func, params) => alice.callSync("app", "comments", func, params)
 
   	const createResult = await callComments('create', testComment1)
 
@@ -23,11 +25,11 @@ module.exports = (scenario) => {
 
   	const { address } = createResult.Ok
 		t.equal(address.length, 46)
-		t.deepEqual(createResult.Ok, { ...testComment1, address, creator: alice.agentId })
+		t.deepEqual(createResult.Ok, { ...testComment1, address, creator: alice.info('app').agentAddress })
 
   	// get a single comment by its address
   	const getResult = await callComments('get', { address })
-  	t.deepEqual(getResult.Ok, { ...testComment1, address, creator: alice.agentId })
+  	t.deepEqual(getResult.Ok, { ...testComment1, address, creator: alice.info('app').agentAddress })
 
   	// get all the comments on a base
   	const allResult = await callComments('all_for_base', { base })
