@@ -1,17 +1,20 @@
 const queries = require('../queries')
+const { one } = require('../config')
 module.exports = (scenario) => {
 
   const slug = "/community1"
 
-  scenario('Can create a new community via graphql', async (s, t, { alice }) => {
-    let register_response = await alice.callSync("graphql", "graphql", {
+  scenario('Can create a new community via graphql', async (s, t) => {
+    const { alice } = await s.players({alice: one('alice')}, true)
+
+    let register_response = await alice.callSync("app", "graphql", "graphql", {
       query: queries.registerQuery,
       variables: {name: "wollum", avatarUrl: "//"}
     })
     console.log(register_response)
 
     // create a community
-    const addResult = await alice.callSync("graphql", "graphql", {
+    const addResult = await alice.callSync("app", "graphql", "graphql", {
       query: queries.createCommunityQuery,
       variables: {
         name: "new graphql community",
@@ -23,7 +26,7 @@ module.exports = (scenario) => {
     t.equal(communityId.length, 46) // thread was created and hash returned
 
     // retrieve community
-    const getResult = await alice.callSync("graphql", "graphql", {
+    const getResult = await alice.callSync("app", "graphql", "graphql", {
       query: queries.getCommunityQuery,
       variables: {id: communityId}
     })
@@ -33,7 +36,7 @@ module.exports = (scenario) => {
 
 
     // retrieve community by slug
-    const getResultSlug = await alice.callSync("graphql", "graphql", {
+    const getResultSlug = await alice.callSync("app", "graphql", "graphql", {
       query: queries.getCommunityQuery,
       variables: {slug}
     })
@@ -42,7 +45,7 @@ module.exports = (scenario) => {
     t.equal(communityNameSlug, "new graphql community") // thread was created and hash returned
 
     // add a post with the community as the base
-    const addPostResult = await alice.callSync("graphql", "graphql", {
+    const addPostResult = await alice.callSync("app", "graphql", "graphql", {
       query: queries.createPostQuery,
       variables: {
         communitySlug: slug,
@@ -54,7 +57,7 @@ module.exports = (scenario) => {
     console.log(addPostResult)
 
     // retrieve all the posts from the community
-    const getPostsResult = await alice.callSync("graphql", "graphql", {
+    const getPostsResult = await alice.callSync("app", "graphql", "graphql", {
       query: queries.getCommunityPostsQuery,
       variables: {id: communityId}
     })

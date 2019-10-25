@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@holochain/diorama": "0.2.0-rc.1",
-    "graphql": "^14.2.1",
-    "graphql-schema-utils": "^0.6.7",
-    "json3": "*",
-    "tape": "^4.9.1"
+    "@holochain/try-o-rama": "^0.1.1-beta.1",
+    "faucet": "0.0.1",
+    "json3": "^3.3.3",
+    "sleep": "^5.2.3",
+    "tape": "^4.11.0"
   }
 }

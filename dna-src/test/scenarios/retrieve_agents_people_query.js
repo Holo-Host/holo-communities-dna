@@ -1,7 +1,9 @@
 const queries = require('../queries')
+const { one } = require('../config')
 
 module.exports = (scenario) => {
-  scenario('Check for a non existent thread and then create it', async (t, {alice, bob}) => {
+  scenario('Check for a non existent thread and then create it', async (s, t) => {
+    const { alice, bob } = await s.players({alice: one('alice'), bob:one('bob')}, true)
 
     register(alice, 'alice')
     register(bob, 'bob')
@@ -17,14 +19,14 @@ module.exports = (scenario) => {
 
 
 const register = async (agent, name) => {
-  return agent.app.callSync("graphql", "graphql", {
+  return agent.app.callSync("app", "graphql", "graphql", {
     query: queries.registerQuery,
     variables: {name, avatarUrl: "//"}
   })
 }
 
 const checkFor = async (agent, name) => {
-    const result = await agent.app.callSync("graphql", "graphql", {
+    const result = await agent.app.callSync("app", "graphql", "graphql", {
       query: queries.getPeopleQuery,
       variables: {}
     })

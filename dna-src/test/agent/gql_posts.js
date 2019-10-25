@@ -1,8 +1,11 @@
 const queries = require('../queries')
+const { one } = require('../config')
 module.exports = (scenario) => {
 
-scenario('Can create a new post', async (s, t, { alice }) => {
-    let register_response = await alice.callSync("graphql", "graphql", {
+scenario('Can create a new post', async (s, t) => {
+  const { alice } = await s.players({alice: one('alice')}, true)
+
+    let register_response = await alice.callSync("app", "graphql", "graphql", {
       query: queries.registerQuery,
       variables: {name: "wollum", avatarUrl: "//"}
     })
@@ -11,7 +14,7 @@ scenario('Can create a new post', async (s, t, { alice }) => {
     const slug = "/test_community"
 
     // create a community to post in
-    const addCommunityWithAddress = await alice.callSync("graphql", "graphql", {
+    const addCommunityWithAddress = await alice.callSync("app", "graphql", "graphql", {
       query: queries.createCommunityQuery,
       variables: {
         name: "new graphql community",
@@ -20,7 +23,7 @@ scenario('Can create a new post', async (s, t, { alice }) => {
     })
 
     // create a post
-    const addResult = await alice.callSync("graphql", "graphql", {
+    const addResult = await alice.callSync("app", "graphql", "graphql", {
       query: queries.createPostQuery,
       variables: {
         communitySlug: slug,
@@ -35,7 +38,7 @@ scenario('Can create a new post', async (s, t, { alice }) => {
     t.equal(postId.length, 46) // thread was created and hash returned
 
     // retrieve post
-    const getResult = await alice.callSync("graphql", "graphql", {
+    const getResult = await alice.callSync("app", "graphql", "graphql", {
       query: queries.getPostQuery,
       variables: {id: postId}
     })
@@ -52,23 +55,23 @@ scenario('Can create a new post', async (s, t, { alice }) => {
 
 
     // come a comments
-    await alice.callSync("graphql", "graphql", {
+    await alice.callSync("app", "graphql", "graphql", {
       query: queries.createCommentQuery,
       variables: {postId, text: 'first comment'}
     })
-    await alice.callSync("graphql", "graphql", {
+    await alice.callSync("app", "graphql", "graphql", {
       query: queries.createCommentQuery,
       variables: {postId, text: 'another comment'}
     })
 
     // retrieve post after comment
-    const getResult2 = await alice.callSync("graphql", "graphql", {
+    const getResult2 = await alice.callSync("app", "graphql", "graphql", {
       query: queries.getPostQuery,
       variables: {id: postId}
     })
     console.log(getResult2)
     let post2 = JSON.parse(getResult2.Ok).post
     t.equal(post2.commentersTotal, 1)
-    t.deepEqual(post2.commenters, [{id: alice.agentId, name: "wollum"}])
+    t.deepEqual(post2.commenters, [{id: alice.info('app').agentAddress, name: "wollum"}])
   })
 }
