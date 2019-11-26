@@ -2,7 +2,7 @@ const _ = require('lodash')
 const path = require('path')
 const { Config } = require('@holochain/tryorama')
 
-const dnaPath = path.join(__dirname, '../dist/dna-src.dna.json')
+const dnaPath = path.join(__dirname, '../dist/hylo-holo-dnas.dna.json')
 const dna = Config.dna(dnaPath, 'app')
 
 const networkType = process.env.NETWORK_TYPE

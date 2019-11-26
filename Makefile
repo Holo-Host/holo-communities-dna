@@ -2,8 +2,8 @@
 # Test and build hApp-store Project
 #
 SHELL		= bash
-DNANAME		= dna-src
-DNA		= dist/$(DNANAME).dna.json
+DNANAME		= .
+DNA		= dist/hylo-holo-dnas.dna.json
 
 # External targets; Uses a nix-shell environment to obtain Holochain runtimes, run tests, etc.
 .PHONY: all
@@ -53,19 +53,13 @@ test-unit:
 	    -- --nocapture
 
 
-# test-e2e -- Uses dist/hApp-store.dna.json; install test JS dependencies, and run end-to-end Diorama tests
-#
-# Depends on dynamodb, if using sim1h DHT.
-test-e2e: export AWS_ACCESS_KEY_ID     ?= HoloCentral
-test-e2e: export AWS_SECRET_ACCESS_KEY ?= ...
 test-e2e:	$(DNANAME)/$(DNA)
-	export |grep AWS
 	@echo "Setting up Scenario test Javascript..."; \
-	    ( cd dna-src/test && npm install );
-	@echo "Starting dynamodb-memory..."; \
-	    dynamodb-memory &
-	@echo "Starting HoloFuel Scenario tests..."; \
-	    RUST_BACKTRACE=1 cd dna-src && hc test \
+	    ( cd test && npm install );
+	@echo "Starting sim2h server..."; \
+	    sim2h_server &
+	@echo "Starting Communities Scenario tests..."; \
+	    RUST_BACKTRACE=1 NETWORK_TYPE=sim2h hc test \
 
 
 # Generic targets; does not require a Nix environment
@@ -76,9 +70,8 @@ clean:
 	    test/node_modules \
 	    .cargo \
 	    target \
-	    $(DNANAME)/zomes/comments/code/target \
-			$(DNANAME)/zomes/graphql/code/target \
-			$(DNANAME)/zomes/messages/code/target \
-			$(DNANAME)/zomes/people/code/target \
-			$(DNANAME)/zomes/posts/code/target \
-	    $(DNANAME)/zomes/communities/code/target
+	    zomes/comments/code/target \
+		zomes/messages/code/target \
+		zomes/people/code/target \
+		zomes/posts/code/target \
+	    zomes/communities/code/target
