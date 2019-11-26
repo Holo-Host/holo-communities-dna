@@ -1,8 +1,8 @@
 const { one } = require('../config')
-module.exports = (scenario) => {
+module.exports = scenario => {
 
   scenario("Create and get single community", async (s, t) => {
-    const { alice } = await s.players({alice: one('alice')}, true)
+    const { alice } = await s.players({alice: one}, true)
 
     const name = "Test Community 1"
     const slug = "test1"

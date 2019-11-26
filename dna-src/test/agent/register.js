@@ -3,7 +3,7 @@ const { one } = require('../config')
 module.exports = (scenario) => {
 
 scenario('Can register a user and retrieve them again', async (s, t) => {
-  const { alice } = await s.players({alice: one('alice')}, true)
+    const { alice } = await s.players({alice: one}, true)
 
     const result_ = await alice.callSync("app", "graphql", "graphql", {
       query: "query { apiVersion }",

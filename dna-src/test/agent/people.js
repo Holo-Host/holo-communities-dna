@@ -1,7 +1,7 @@
 const { one } = require('../config')
 module.exports = (scenario) => {
   scenario('Can create a message and retrieve it', async (s, t) => {
-    const { alice, bob } = await s.players({alice: one('alice'), bob:one('bob')}, true)
+    const { alice, bob } = await s.players({alice: one, bob: one}, true)
 
     const aliceUser = {
       name: 'Alice',
@@ -22,6 +22,8 @@ module.exports = (scenario) => {
 
     const isRegisteredResult2 = await alice.call("app", 'people', 'is_registered', {})
     t.deepEqual(isRegisteredResult2.Ok, true)
+
+    await s.consistency()
 
     await bob.call("app", 'people', 'register_user', bobUser)
     const getResult = await alice.call("app", 'people', 'get', {agent_id: bob.info('app').agentAddress})

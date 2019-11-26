@@ -11,7 +11,7 @@ const testPost = {
 }
 
 scenario('Can create a post', async (s, t) => {
-  const { alice } = await s.players({alice: one('alice')}, true)
+    const { alice } = await s.players({alice: one}, true)
 
     const add_post_result = await alice.callSync("app", "posts", "create", testPost )
     const { address } = add_post_result.Ok

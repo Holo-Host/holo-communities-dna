@@ -2,7 +2,7 @@ const { one } = require('../config')
 module.exports = (scenario) => {
 
 scenario('Check for a non existent thread and then create it', async (s, t) => {
-  const { alice } = await s.players({alice: one('alice')}, true)
+    const { alice } = await s.players({alice: one}, true)
 
     // add a thread
     const add_result_str = await alice.callSync("app", "messages", "create_thread", {

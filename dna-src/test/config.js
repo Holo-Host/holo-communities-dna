@@ -1,46 +1,76 @@
 const _ = require('lodash')
 const path = require('path')
-const { Config } = require('@holochain/try-o-rama')
+const { Config } = require('@holochain/tryorama')
 
-const dnaPath = path.join(__dirname, "../dist/dna-src.dna.json")
-const dna = Config.dna(dnaPath, 'dna-src')
+const dnaPath = path.join(__dirname, '../dist/dna-src.dna.json')
+const dna = Config.dna(dnaPath, 'app')
 
-const one = (agent) => ({
-    instances: [{
-	id: 'app',
-	agent: {
-	    id: agent,
-	    name: `${agent}`,
-	    test_agent: true,
-	    public_address: "",
-	    keystore_file: ""
-	},
-	dna: {
-	    id: 'dna-src',
-	    file: dnaPath,
-	}
-    }]
-})
+const networkType = process.env.APP_SPEC_NETWORK_TYPE
+const network = 
+  ( networkType === 'websocket'
+  ? Config.network('websocket')
 
-const callSyncMiddleware = (run, f) => run(s => {
-  const s_ = Object.assign({}, s, {
-    players: async (...a) => {
-      const players = await s.players(...a)
-      const players_ = _.mapValues(
-        players,
-        api => Object.assign(api, {
-          callSync: async (...b) => {
-            const result = await api.call(...b)
-            await s.consistency()
-            return result
-          }
-        })
-      )
-      return players_
-    }
-  })
-  return f(s_)
-})
+  : networkType === 'memory'
+  ? Config.network('memory')
 
+  : networkType === 'sim1h'
+  ? {
+    type: 'sim1h',
+    dynamo_url: 'http://localhost:8000'
+  }
 
-module.exports = { one, callSyncMiddleware }
+  : networkType === 'sim2h'
+  ? {
+    type: 'sim2h',
+    sim2h_url: 'wss://localhost:9000'
+  }
+
+  : (() => {throw new Error(`Unsupported network type: ${networkType}`)})()
+)
+
+const logger = {
+  type: 'debug',
+  rules: {
+    rules: [
+      {
+        exclude: true,
+        pattern: '.*parity.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*mio.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*tokio.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*hyper.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*rusoto_core.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*want.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*rpc.*'
+      }
+    ]
+  },
+  state_dump: false
+}
+
+const commonConfig = { logger, network }
+
+module.exports = {
+  one: Config.gen({
+      app: dna
+    },
+    commonConfig
+  )
+}

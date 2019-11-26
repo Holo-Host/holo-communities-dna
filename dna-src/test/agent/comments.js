@@ -15,7 +15,7 @@ module.exports = (scenario) => {
   }
 
   scenario("Create and get single comment and all comments", async (s, t) => {
-		const { alice } = await s.players({alice: one('alice')}, true)
+    const { alice } = await s.players({alice: one}, true)
     // define some helpers
   	const callComments = (func, params) => alice.callSync("app", "comments", func, params)
 
