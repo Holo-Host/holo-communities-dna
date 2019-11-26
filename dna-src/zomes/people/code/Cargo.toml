@@ -11,7 +11,7 @@ serde_derive = "=1.0.89"
 derive_more = "0.9.0"
 log = "0.4.6"
 env_logger = "0.6.1"
-hdk = { path = "../../../../holochain-rust/hdk-rust" }
+hdk = "0.0.39-alpha4"
 holochain_json_derive = "=0.0.17"
 
 [lib]
