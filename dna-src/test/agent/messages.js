@@ -2,7 +2,7 @@ const { one } = require('../config')
 module.exports = (scenario) => {
 
 scenario('Can create a message and retrieve it', async (s, t) => {
-  const { alice } = await s.players({alice: one('alice')}, true)
+  const { alice } = await s.players({alice: one}, true)
 
     // add a thread
     const addResult = await alice.callSync("app", "messages", "create_thread", {

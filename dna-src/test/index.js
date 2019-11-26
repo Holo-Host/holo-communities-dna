@@ -1,16 +1,11 @@
 const { Orchestrator, tapeExecutor, singleConductor, localOnly, combine, callSync  } = require('@holochain/tryorama')
 
-// This constant serves as a check that we haven't accidentally disabled scenario tests.
-// Try to keep this number as close as possible to the actual number of scenario tests.
-// (But never over)
-const MIN_EXPECTED_SCENARIOS = 1
-
 process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
 });
 
 
-const networkType = process.env.APP_SPEC_NETWORK_TYPE
+const networkType = process.env.NETWORK_TYPE
 const middleware = 
   ( networkType === 'websocket'
   ? combine(tapeExecutor(require('tape')), localOnly, callSync)

@@ -5,7 +5,7 @@ const { Config } = require('@holochain/tryorama')
 const dnaPath = path.join(__dirname, '../dist/dna-src.dna.json')
 const dna = Config.dna(dnaPath, 'app')
 
-const networkType = process.env.APP_SPEC_NETWORK_TYPE
+const networkType = process.env.NETWORK_TYPE
 const network = 
   ( networkType === 'websocket'
   ? Config.network('websocket')
