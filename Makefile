@@ -39,9 +39,6 @@ test-unit:
 	  && RUST_BACKTRACE=1 cargo test \
 	    --manifest-path zomes/comments/code/Cargo.toml \
 	    -- --nocapture \
-	  && RUST_BACKTRACE=1 cargo test \
-	    --manifest-path zomes/graphql/code/Cargo.toml \
-	    -- --nocapture \
 		&& RUST_BACKTRACE=1 cargo test \
 	    --manifest-path zomes/messages/code/Cargo.toml \
 	    -- --nocapture \
