@@ -1,35 +1,30 @@
-{ pkgs ? import ./pkgs.nix {} }:
-
-with pkgs;
-
+# This is an example of what downstream consumers of holonix should do
+# This is also used to dogfood as many commands as possible for holonix
+# For example the release process for holonix uses this file
 let
-  emacs-with-htmlize = emacsWithPackages (epkgs: with epkgs; [
-    htmlize
-  ]);
-  inherit (darwin.apple_sdk.frameworks) CoreServices Security;
+
+ # point this to your local config.nix file for this project
+ # example.config.nix shows and documents a lot of the options
+ config = import ./config.nix;
+
+ # START HOLONIX IMPORT BOILERPLATE
+ holonix = import (
+  if ! config.holonix.use-github
+  then config.holonix.local.path
+  else fetchTarball {
+   url = "https://github.com/${config.holonix.github.owner}/${config.holonix.github.repo}/tarball/${config.holonix.github.ref}";
+   sha256 = config.holonix.github.sha256;
+  }
+ ) { config = config; };
+ # END HOLONIX IMPORT BOILERPLATE
+
 in
-
+with holonix.pkgs;
 {
-  hylo = buildDNA {
-    name = "hylo";
-    src = gitignoreSource ./.;
+ dev-shell = stdenv.mkDerivation (holonix.shell // {
+  name = "dev-shell";
 
-    nativeBuildInputs = []
-    ++ (callPackage ./dynamodb {}).buildInputs
-    ++ lib.optionals stdenv.isDarwin [ CoreServices ];
-  };
-
-  hylo-docs = stdenv.mkDerivation {
-    name = "hylo-docs";
-    src = gitignoreSource ./.;
-
-    nativeBuildInputs = [ emacs-with-htmlize ];
-    makeFlags = [ "doc-all" ];
-
-    installPhase = ''
-      mkdir -p $out/nix-support
-      echo "doc manual $out" > $out/nix-support/hydra-build-products
-      mv doc/*.html $out
-    '';
-  };
+  buildInputs = [ pkgs.libiconv ]
+   ++ holonix.shell.buildInputs;
+ });
 }

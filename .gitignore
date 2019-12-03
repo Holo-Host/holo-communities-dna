@@ -14,10 +14,6 @@ target
 dist
 release
 
-# ui builds
-hylo-ui
-graphiql-ui/build
-
 # misc
 .DS_Store
 npm-debug.log
