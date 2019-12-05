@@ -13,9 +13,10 @@ use hdk::{
         error::JsonError,
         json::{JsonString, RawString},
     },
-    holochain_persistence_api::{cas::content::Address},
+    holochain_persistence_api::{cas::content::{Address, AddressableContent}},
 
 };
+use super::DEFAULT_COMMUNITIES;
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Community {
@@ -33,6 +34,12 @@ impl Community {
     }
 }
 
+impl From<&(&str, &str)> for Community {
+    fn from(tuple: &(&str, &str)) -> Self {
+        Community{name: tuple.0.to_string(), slug: tuple.1.to_string()}
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct CommunityWithAddress {
     pub address: Address,
@@ -40,9 +47,20 @@ pub struct CommunityWithAddress {
     pub slug: String
 }
 
+impl From<Community> for CommunityWithAddress {
+    fn from(community: Community) -> Self {
+        let address = Entry::App(COMMUNITY_ENTRY_TYPE.into(), community.clone().into()).address();
+        CommunityWithAddress{
+            address,
+            name: community.name,
+            slug: community.slug,
+        }
+    }
+}
+
 pub type Base = RawString;
 
-const COMMUNITY_ENTRY_TYPE: &str = "community";
+pub const COMMUNITY_ENTRY_TYPE: &str = "community";
 const COMMUNITY_BASE_ENTRY: &str = "community_base";
 const COMMUNITY_LINK_TYPE: &str = "member_of";
 
@@ -54,6 +72,11 @@ pub fn get(address: Address) -> ZomeApiResult<CommunityWithAddress> {
 }
 
 pub fn get_by_slug(slug: String) -> ZomeApiResult<CommunityWithAddress> {
+    // first check the default communities and return early if one of those is found
+    if let Some(t) = DEFAULT_COMMUNITIES.iter().find(|(_, test_slug)| *test_slug == slug) {
+        return Ok(CommunityWithAddress::from(Community::from(t)))
+    }
+    // otherwise go to the DHT
     let slug_address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug).into()))?;
     let all_communities = hdk::get_links(&slug_address, LinkMatch::Exactly(COMMUNITY_LINK_TYPE.into()), LinkMatch::Any)?.addresses().clone();
     let community_address = all_communities.to_owned().into_iter().next().ok_or(ZomeApiError::Internal("No communities for this slug".into())).unwrap();
@@ -102,6 +125,7 @@ pub fn all() -> ZomeApiResult<Vec<CommunityWithAddress>> {
         .addresses()
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())
+        .chain(DEFAULT_COMMUNITIES.iter().map(|t| CommunityWithAddress::from(Community::from(t)))) // include the defaults also
         .collect()
     )
 }

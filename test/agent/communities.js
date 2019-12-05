@@ -33,6 +33,6 @@ module.exports = scenario => {
 
     const get_communities_result = await alice.callSync("app", "communities", "all", {
     })
-    t.deepEqual(get_communities_result.Ok, [communityResult], "Could retrieve the added community from the base")
+    t.ok(get_communities_result.Ok.some(community => community.name === communityResult.name), "Could retrieve the added community from the base")
   })
 }
