@@ -5,7 +5,7 @@ process.on('unhandledRejection', error => {
 });
 
 
-const networkType = process.env.NETWORK_TYPE
+const networkType = process.env.NETWORK_TYPE || 'memory'
 const middleware = 
   ( networkType === 'websocket'
   ? combine(tapeExecutor(require('tape')), localOnly, callSync)
@@ -19,7 +19,7 @@ const middleware =
   : networkType === 'memory'
   ? combine(tapeExecutor(require('tape')), localOnly, singleConductor, callSync)
 
-  : (() => {throw new Error(`Unsupported memory type: ${networkType}`)})()
+  : (() => {throw new Error(`Unsupported network type: ${networkType}`)})()
 )
 
 const orchestrator = new Orchestrator({

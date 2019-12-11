@@ -11,6 +11,7 @@ use hdk::{
     error::ZomeApiResult,
     holochain_core_types::{
         agent::AgentId,
+        entry::Entry,
         validation::EntryValidationData,
     },
     holochain_json_api::{
@@ -21,6 +22,14 @@ use hdk::{
 };
 
 mod communities;
+use communities::{Community, COMMUNITY_ENTRY_TYPE};
+
+// I'll put this here for now but really it should live in the .dna.json properties
+const DEFAULT_COMMUNITIES: &[(&str, &str)] = &[
+    ("Hylo Holochain", "hylo-holochain"),
+    ("HoloPort Owners", "holoport-owners"),
+    ("HoloPort Support", "holoport-support"),
+];
 
 define_zome! {
     entries: [
@@ -28,7 +37,19 @@ define_zome! {
         communities::community_def()
     ]
 
-    init: || { Ok(()) }
+    init: || {{
+        // create the default communities that every DNA has.
+        // Don't use the create function because it is important we don't link them to anything
+        for tuple in DEFAULT_COMMUNITIES {
+            hdk::commit_entry(
+                &Entry::App (
+                    COMMUNITY_ENTRY_TYPE.into(),
+                    Community::from(tuple).into(),
+                )
+            )?;
+        }
+        Ok(()) 
+    }}
 
     validate_agent: |validation_data : EntryValidationData::<AgentId>| {{
          if let EntryValidationData::Create{entry, ..} = validation_data {
