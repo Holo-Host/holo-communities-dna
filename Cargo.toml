@@ -1,0 +1,13 @@
+[workspace]
+
+exclude = [
+"holochain-rust",
+]
+
+members = [
+  "zomes/comments/code",
+  "zomes/communities/code",
+  "zomes/messages/code",
+  "zomes/people/code",
+  "zomes/posts/code",
+]

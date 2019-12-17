@@ -1,18 +1,16 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-node_modules
+node_modules/
 
 # testing
 coverage
 
 # holochain
-holochain
-dna
-tmp-storage
-target
-dist
-release
+/dist
+/holochain-rust
+/target
+result
 
 # misc
 .DS_Store
@@ -28,4 +26,4 @@ dmg-mount
 conductor-config.toml
 keystores/myagent.keystore
 .cargo
-holochain-rust
+
