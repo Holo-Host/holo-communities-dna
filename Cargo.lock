@@ -330,6 +330,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "hdk-helpers"
+version = "0.1.0"
+dependencies = [
+ "hdk 0.0.40-alpha1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "hermit-abi"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -502,6 +509,7 @@ name = "hylo_comments"
 version = "0.0.3"
 dependencies = [
  "hdk 0.0.40-alpha1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hdk-helpers 0.1.0",
  "holochain_json_derive 0.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -513,6 +521,7 @@ name = "hylo_communities"
 version = "0.0.3"
 dependencies = [
  "hdk 0.0.40-alpha1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hdk-helpers 0.1.0",
  "holochain_json_derive 0.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -538,6 +547,7 @@ dependencies = [
  "derive_more 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "hdk 0.0.40-alpha1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hdk-helpers 0.1.0",
  "holochain_json_derive 0.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
