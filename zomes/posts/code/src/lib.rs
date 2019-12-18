@@ -44,7 +44,7 @@ define_zome! {
      }}
 
     functions: [
-         get: {
+        get: {
             inputs: |address: Address|,
             outputs: |result: ZomeApiResult<post::PostWithAddress>|,
             handler: post::get
@@ -55,8 +55,8 @@ define_zome! {
             handler: post::create
         }
         all_for_base: {
-            inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<post::PostWithAddress>>|,
+            inputs: |base: String, since: Option<Address>, limit: Option<usize>, backsteps: Option<usize>|,
+            outputs: |result: ZomeApiResult<post::GetPostsResult>|,
             handler: post::all_for_base
         }
     ]
