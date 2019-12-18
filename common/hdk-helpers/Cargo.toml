@@ -1,0 +1,10 @@
+[package]
+name = "hdk-helpers"
+version = "0.1.0"
+authors = ["Willem Olding <willemolding@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hdk = "0.0.40-alpha1"

@@ -23,6 +23,7 @@ use hdk::{
     },
     holochain_persistence_api::{cas::content::Address},
 };
+use hdk_helpers::commit_if_not_in_chain;
 
 // tag for links from base to comment
 
@@ -82,7 +83,7 @@ pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<C
 
     // store an entry for the ID of the base object the comment was made on
     let base_entry = Entry::App(BASE_ENTRY_TYPE.into(), RawString::from(base.clone()).into());
-    let base_address = hdk::commit_entry(&base_entry)?;
+    let base_address = commit_if_not_in_chain(&base_entry)?;
 
     // link the comment to its originating thing
     hdk::link_entries(

@@ -16,6 +16,8 @@ use hdk::{
     holochain_persistence_api::{cas::content::{Address, AddressableContent}},
 
 };
+use hdk_helpers::commit_if_not_in_chain;
+
 use super::DEFAULT_COMMUNITIES;
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
@@ -86,7 +88,7 @@ pub fn get_by_slug(slug: String) -> ZomeApiResult<CommunityWithAddress> {
 pub fn create(name: String, slug: String) -> ZomeApiResult<CommunityWithAddress> {
 
     let base_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into());
-    let base_address = hdk::commit_entry(&base_entry)?;
+    let base_address = commit_if_not_in_chain(&base_entry)?;
 
     let slug_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug.clone()).into());
     let slug_address = hdk::commit_entry(&slug_entry)?;

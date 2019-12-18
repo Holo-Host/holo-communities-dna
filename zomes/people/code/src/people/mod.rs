@@ -19,8 +19,8 @@ use hdk::{
         json::{JsonString},
     },
     holochain_persistence_api::{cas::content::{Address,AddressableContent}},
-
 };
+use hdk_helpers::commit_if_not_in_chain;
 
 pub const PERSON_ENTRY_TYPE: &str = "person";
 pub const PERSON_AGENT_LINK_TYPE:&str = "person_to_agent_link";
@@ -92,7 +92,7 @@ pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonWi
         }
         .into(),
     );
-    let anchor_addr = hdk::commit_entry(&anchor_entry)?;
+    let anchor_addr = commit_if_not_in_chain(&anchor_entry)?;
     hdk::link_entries(&anchor_addr, &AGENT_ADDRESS, ANCHOR_PERSON_LINK_TYPE, "")?;
 
     Ok(person.with_address(AGENT_ADDRESS.to_string().into()))

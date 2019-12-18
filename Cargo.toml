@@ -10,4 +10,6 @@ members = [
   "zomes/messages/code",
   "zomes/people/code",
   "zomes/posts/code",
+
+  "common/hdk-helpers",
 ]
