@@ -11,7 +11,7 @@ use hdk::{
     prelude::{QueryArgsOptions, QueryResult},
     utils, AGENT_ADDRESS,
 };
-use hdk_helpers::DagList;
+use hdk_helpers::{DagList, DagListDebug};
 use std::convert::TryFrom;
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
@@ -138,6 +138,17 @@ pub fn all_for_base(
     Ok(GetPostsResult { posts, more })
 }
 
+pub fn adjacency_list_for_base(
+    base: String,
+    root: Option<Address>,
+) -> ZomeApiResult<Vec<(Address, Address)>> {
+    let root = root.unwrap_or_else(|| {
+        Entry::App(POST_BASE_ENTRY.into(), RawString::from(base.clone()).into()).address()
+    });
+    let store = PostDagList::new();
+    store.adjacency_list(&base, &root)
+}
+
 pub struct PostDagList {}
 
 impl PostDagList {
@@ -220,7 +231,7 @@ impl DagList<Post> for PostDagList {
                 })
                 .map(|(addr, _entry)| addr.clone())
                 .collect::<Vec<_>>()
-                .last()
+                .first()
                 .cloned()),
             _ => unreachable!(),
         }
@@ -235,6 +246,8 @@ impl DagList<Post> for PostDagList {
         .map(|results| results.addresses())
     }
 }
+
+impl DagListDebug<Post> for PostDagList {}
 
 pub fn post_def() -> ValidatingEntryType {
     entry!(

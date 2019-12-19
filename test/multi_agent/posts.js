@@ -27,6 +27,20 @@ scenario('Can create multiple posts and paginate with two agents', async (s, t) 
 
     await s.consistency()
 
+    // print the adjacancy list from both agents perspective
+    const adj_alice = await alice.call("app", "posts", "adjacency_list_for_base", {base: postFactory("").base} )
+    const adj_bob = await bob.call("app", "posts", "adjacency_list_for_base", {base: postFactory("").base} )
+    t.ok(adj_alice.Ok, "alice could get adjacency list")
+    t.ok(adj_bob.Ok, "bob could get adjacency list")
+    t.deepEqual(adj_alice.Ok, adj_bob.Ok, "Alice and Bob see the same graph structure")
+    
+    // optinally prettyify it for mermaid.js displaying
+    let edges = adj_alice.Ok
+    for (let i=0; i<edges.length; i++) {
+      let edge = edges[i];
+      console.log(`${postAddrs.indexOf(edge[0])} --> ${postAddrs.indexOf(edge[1])}`)
+    }
+
     let agents = [alice, bob];
     // where is my for..in loop javascript!
     for(let i=0; i<agents.length; i++) {

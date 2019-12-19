@@ -53,13 +53,19 @@ define_zome! {
             outputs: |result: ZomeApiResult<post::GetPostsResult>|,
             handler: post::all_for_base
         }
+        adjacency_list_for_base: {
+            inputs: |base: String, since: Option<Address>|,
+            outputs: |result: ZomeApiResult<Vec<(Address, Address)>>|,
+            handler: post::adjacency_list_for_base
+        }
     ]
 
     traits: {
         hc_public [
             get,
             create,
-            all_for_base
+            all_for_base,
+            adjacency_list_for_base
         ]
     }
 }
