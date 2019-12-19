@@ -62,7 +62,7 @@ scenario('Can create multiple posts and paginate', async (s, t) => {
     // try getting the rest
     const get_posts_result_since = await alice.callSync("app", "posts", "all_for_base", {
       base: postFactory("").base,
-      since: postAddrs[3]
+      since: postAddrs[slicePoint-1]
     })
     t.deepEqual(get_posts_result_since.Ok.posts.length, nTestPosts - slicePoint)  
     t.deepEqual(get_posts_result_since.Ok.more, false)  
