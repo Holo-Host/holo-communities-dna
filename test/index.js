@@ -30,12 +30,12 @@ const orchestrator = new Orchestrator({
   }
 })
 
-// require('./single_agent/communities')(orchestrator.registerScenario)
-// require('./single_agent/posts')(orchestrator.registerScenario)
-// require('./single_agent/comments')(orchestrator.registerScenario)
-// require('./single_agent/threads')(orchestrator.registerScenario)
-// require('./single_agent/messages')(orchestrator.registerScenario)
-// require('./single_agent/people')(orchestrator.registerScenario)
+require('./single_agent/communities')(orchestrator.registerScenario)
+require('./single_agent/posts')(orchestrator.registerScenario)
+require('./single_agent/comments')(orchestrator.registerScenario)
+require('./single_agent/threads')(orchestrator.registerScenario)
+require('./single_agent/messages')(orchestrator.registerScenario)
+require('./single_agent/people')(orchestrator.registerScenario)
 
 require('./multi_agent/posts')(orchestrator.registerScenario)
 
