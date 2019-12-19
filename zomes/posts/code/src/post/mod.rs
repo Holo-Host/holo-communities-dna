@@ -15,7 +15,7 @@ use hdk::{
         error::JsonError,
         json::{JsonString,RawString},
     },
-    holochain_persistence_api::{cas::content::Address},
+    holochain_persistence_api::{cas::content::{Address, AddressableContent}},
 };
 use hdk_helpers::DagList;
 use std::convert::TryFrom;
@@ -92,23 +92,13 @@ pub fn create(base: String, title: String, details: String, post_type: String, a
         creator: AGENT_ADDRESS.to_string().into(),
         announcement,
         timestamp,
-        base
+        base: base.clone(),
+        prev_authored: Address::new(), // these will get overwritten
+        prev_foreign: Address::new(),
     };
 
-    let post_address = hdk::commit_entry(
-        &Entry::App (
-            POST_ENTRY_TYPE.into(),
-            post.clone().into()
-        )
-    )?;
-
-    // link the post to its originating thing
-    hdk::link_entries(
-        &base_address,
-        &post_address,
-        POST_LINK_TYPE,
-        ""
-    )?;
+    let mut store = PostDagList::new();
+    let post_address = store.add_content_dag(&base, post.clone(), &base_address)?;
 
     Ok(post.with_address(post_address))
 }
@@ -129,36 +119,52 @@ pub fn create(base: String, title: String, details: String, post_type: String, a
  *
  * @return     Returns a tuple of the returned entries/addresses and a bool which is true if there are more posts available
  */
-pub fn all_for_base(base: String, _since: Option<Address>, _limit: Option<usize>, _backsteps: Option<usize>) -> ZomeApiResult<GetPostsResult> {
-    let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
+pub fn all_for_base(base: String, since: Option<Address>, limit: Option<usize>, backsteps: Option<usize>) -> ZomeApiResult<GetPostsResult> {
+    let since = since.unwrap_or_else(|| {
+        Entry::App(POST_BASE_ENTRY.into(), RawString::from(base.clone()).into()).address()
+    });
+    let store = PostDagList::new();
+    let (addrs, more) = store.get_content_dag(&base, &since, limit, backsteps)?;
+    let posts = addrs.iter().map(|addr| {
+        match hdk::get_entry(addr).unwrap().unwrap() {
+            Entry::App(_, content) => {
+                Post::try_from(content).unwrap().with_address(addr.clone())
+            },
+            _ => unreachable!()
+        }
+    }).collect();
+    
     Ok(GetPostsResult{
-        posts: hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
-            .addresses()
-            .iter()
-            .map(|address| get(address.to_string().into()).unwrap())
-            .collect(),
-        more: false 
+        posts, 
+        more
     })
 }
 
 pub struct PostDagList {}
 
-impl DagList for PostDagList {
-    fn author<E: Into<JsonString> + Clone>(
+impl PostDagList {
+    pub fn new() -> Self {
+        Self{}
+    }
+}
+
+impl DagList<Post> for PostDagList {
+    fn author(
         &mut self,
         table: &str,
-        content: E,
+        content: Post,
         prev_authored: Option<Address>,
         prev_foreign: Option<Address>,
     ) -> ZomeApiResult<Address> {
+
+        let post = Post {
+            prev_authored: prev_authored.clone().unwrap(),
+            prev_foreign: prev_foreign.clone().unwrap(),
+            ..content
+        };
         let entry = Entry::App(
-            "dag_entry_item".into(),
-            Post {
-                prev_authored: prev_authored.clone().unwrap(),
-                prev_foreign: prev_foreign.clone().unwrap(),
-                base: String::from(table),
-                content: content.into(),
-            }.into()
+            POST_ENTRY_TYPE.into(),
+            post.into()
         );
         let entry_addr = hdk::commit_entry(&entry)?;
         if let Some(prev_authored) = prev_authored {
@@ -197,7 +203,7 @@ impl DagList for PostDagList {
     }
 
     fn most_recent_authored(&self, table: &str) -> ZomeApiResult<Option<Address>> {
-        match hdk::query_result("dag_entry_item".into(), QueryArgsOptions{ entries: true, ..Default::default()})? {
+        match hdk::query_result(POST_ENTRY_TYPE.into(), QueryArgsOptions{ entries: true, ..Default::default()})? {
             QueryResult::Entries(entries) => {
                 Ok(entries.iter()
                 .filter(|(_addr, entry)| {
@@ -235,7 +241,39 @@ pub fn post_def() -> ValidatingEntryType {
 
         validation: |_validation_data: hdk::EntryValidationData<Post>| {
             Ok(())
-        }
+        },
+        links: [
+            to!(
+                POST_ENTRY_TYPE,
+                link_type: "dag/next",
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData| {
+                    Ok(())
+                }
+            ),
+            from!(
+                "%agent_id",
+                link_type: "dag/author_root",
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData| {
+                    Ok(())
+                }
+            ),
+            from!(
+                POST_BASE_ENTRY,
+                link_type: "dag/foreign_root",
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData| {
+                    Ok(())
+                }
+            )
+        ]
     )
 }
 
