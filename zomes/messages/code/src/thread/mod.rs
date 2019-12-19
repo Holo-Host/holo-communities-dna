@@ -1,28 +1,14 @@
-
 use hdk::{
     self,
-    utils,
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
-    holochain_core_types::{
-        dna::entry_types::Sharing,
-        entry::Entry,
-        link::LinkMatch,
-    },
-    AGENT_ADDRESS,
-    holochain_json_api::{
-        error::JsonError,
-        json::{JsonString},
-    },
-    holochain_persistence_api::{cas::content::Address},
-
+    holochain_core_types::{dna::entry_types::Sharing, entry::Entry, link::LinkMatch},
+    holochain_json_api::{error::JsonError, json::JsonString},
+    holochain_persistence_api::cas::content::Address,
+    utils, AGENT_ADDRESS,
 };
 
-use super::message::{
-    MESSAGE_ENTRY_TYPE,
-    get,
-    MessageWithAddress
-};
+use super::message::{get, MessageWithAddress, MESSAGE_ENTRY_TYPE};
 
 pub const THREAD_ENTRY_TYPE: &str = "thread";
 pub const MESSAGE_LINK_TYPE: &str = "message_link_thread";
@@ -35,9 +21,13 @@ pub struct Thread {
 
 pub fn get_threads() -> ZomeApiResult<Vec<Address>> {
     hdk::debug(AGENT_ADDRESS.to_string())?;
-    Ok(hdk::get_links(&AGENT_ADDRESS, LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.into()), LinkMatch::Any)?
-        .addresses()
-        .to_owned())
+    Ok(hdk::get_links(
+        &AGENT_ADDRESS,
+        LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.into()),
+        LinkMatch::Any,
+    )?
+    .addresses()
+    .to_owned())
 }
 
 pub fn create_thread(participant_ids: Vec<String>) -> ZomeApiResult<Address> {
@@ -53,7 +43,12 @@ pub fn create_thread(participant_ids: Vec<String>) -> ZomeApiResult<Address> {
     let entry_addr = hdk::commit_entry(&thread_entry)?;
 
     for participant_id in participant_agent_ids {
-        hdk::link_entries(&participant_id.into(), &entry_addr, AGENT_MESSAGE_THREAD_LINK_TYPE, "")?;
+        hdk::link_entries(
+            &participant_id.into(),
+            &entry_addr,
+            AGENT_MESSAGE_THREAD_LINK_TYPE,
+            "",
+        )?;
     }
 
     Ok(entry_addr)
@@ -68,12 +63,15 @@ pub fn get_thread_participants(thread_address: Address) -> ZomeApiResult<Vec<Add
 }
 
 pub fn get_thread_messages(thread_address: Address) -> ZomeApiResult<Vec<MessageWithAddress>> {
-    Ok(hdk::get_links(&thread_address, LinkMatch::Exactly(MESSAGE_LINK_TYPE.into()), LinkMatch::Any)?
-        .addresses()
-        .iter()
-        .map(|address| get(address.to_string().into()).unwrap())
-        .collect()
-    )
+    Ok(hdk::get_links(
+        &thread_address,
+        LinkMatch::Exactly(MESSAGE_LINK_TYPE.into()),
+        LinkMatch::Any,
+    )?
+    .addresses()
+    .iter()
+    .map(|address| get(address.to_string().into()).unwrap())
+    .collect())
 }
 
 pub fn def() -> ValidatingEntryType {

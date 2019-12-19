@@ -1,20 +1,14 @@
-
 use hdk::{
     self,
-    utils,
-    error::{ZomeApiError, ZomeApiResult},
     entry_definition::ValidatingEntryType,
-    holochain_core_types::{
-        dna::entry_types::Sharing,
-        entry::Entry,
-        link::LinkMatch,
-    },
+    error::{ZomeApiError, ZomeApiResult},
+    holochain_core_types::{dna::entry_types::Sharing, entry::Entry, link::LinkMatch},
     holochain_json_api::{
         error::JsonError,
         json::{JsonString, RawString},
     },
-    holochain_persistence_api::{cas::content::{Address, AddressableContent}},
-
+    holochain_persistence_api::cas::content::{Address, AddressableContent},
+    utils,
 };
 use hdk_helpers::commit_if_not_in_chain;
 
@@ -31,14 +25,17 @@ impl Community {
         CommunityWithAddress {
             address,
             name: self.name.clone(),
-            slug: self.slug.clone()
+            slug: self.slug.clone(),
         }
     }
 }
 
 impl From<&(&str, &str)> for Community {
     fn from(tuple: &(&str, &str)) -> Self {
-        Community{name: tuple.0.to_string(), slug: tuple.1.to_string()}
+        Community {
+            name: tuple.0.to_string(),
+            slug: tuple.1.to_string(),
+        }
     }
 }
 
@@ -46,13 +43,13 @@ impl From<&(&str, &str)> for Community {
 pub struct CommunityWithAddress {
     pub address: Address,
     pub name: String,
-    pub slug: String
+    pub slug: String,
 }
 
 impl From<Community> for CommunityWithAddress {
     fn from(community: Community) -> Self {
         let address = Entry::App(COMMUNITY_ENTRY_TYPE.into(), community.clone().into()).address();
-        CommunityWithAddress{
+        CommunityWithAddress {
             address,
             name: community.name,
             slug: community.slug,
@@ -68,68 +65,88 @@ const COMMUNITY_LINK_TYPE: &str = "member_of";
 
 pub fn get(address: Address) -> ZomeApiResult<CommunityWithAddress> {
     utils::get_as_type::<Community>(address.clone())
-        .map(|community| {
-            community.with_address(address)
-        })
+        .map(|community| community.with_address(address))
 }
 
 pub fn get_by_slug(slug: String) -> ZomeApiResult<CommunityWithAddress> {
     // first check the default communities and return early if one of those is found
-    if let Some(t) = DEFAULT_COMMUNITIES.iter().find(|(_, test_slug)| *test_slug == slug) {
-        return Ok(CommunityWithAddress::from(Community::from(t)))
+    if let Some(t) = DEFAULT_COMMUNITIES
+        .iter()
+        .find(|(_, test_slug)| *test_slug == slug)
+    {
+        return Ok(CommunityWithAddress::from(Community::from(t)));
     }
     // otherwise go to the DHT
-    let slug_address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug).into()))?;
-    let all_communities = hdk::get_links(&slug_address, LinkMatch::Exactly(COMMUNITY_LINK_TYPE.into()), LinkMatch::Any)?.addresses().clone();
-    let community_address = all_communities.to_owned().into_iter().next().ok_or(ZomeApiError::Internal("No communities for this slug".into())).unwrap();
+    let slug_address = hdk::entry_address(&Entry::App(
+        COMMUNITY_BASE_ENTRY.into(),
+        RawString::from(slug).into(),
+    ))?;
+    let all_communities = hdk::get_links(
+        &slug_address,
+        LinkMatch::Exactly(COMMUNITY_LINK_TYPE.into()),
+        LinkMatch::Any,
+    )?
+    .addresses()
+    .clone();
+    let community_address = all_communities
+        .to_owned()
+        .into_iter()
+        .next()
+        .ok_or(ZomeApiError::Internal(
+            "No communities for this slug".into(),
+        ))
+        .unwrap();
     get(community_address)
 }
 
 pub fn create(name: String, slug: String) -> ZomeApiResult<CommunityWithAddress> {
-
-    let base_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into());
+    let base_entry = Entry::App(
+        COMMUNITY_BASE_ENTRY.into(),
+        RawString::from(COMMUNITY_BASE_ENTRY).into(),
+    );
     let base_address = commit_if_not_in_chain(&base_entry)?;
 
-    let slug_entry = Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(slug.clone()).into());
+    let slug_entry = Entry::App(
+        COMMUNITY_BASE_ENTRY.into(),
+        RawString::from(slug.clone()).into(),
+    );
     let slug_address = hdk::commit_entry(&slug_entry)?;
 
     let community = Community {
         name: name.clone(),
-        slug: slug.clone()
+        slug: slug.clone(),
     };
 
-    let community_address = hdk::commit_entry(
-        &Entry::App (
-            COMMUNITY_ENTRY_TYPE.into(),
-            community.clone().into()
-        )
-    )?;
+    let community_address = hdk::commit_entry(&Entry::App(
+        COMMUNITY_ENTRY_TYPE.into(),
+        community.clone().into(),
+    ))?;
 
-    hdk::link_entries(
-        &base_address,
-        &community_address,
-        COMMUNITY_LINK_TYPE,
-        ""
-    )?;
-    hdk::link_entries(
-        &slug_address,
-        &community_address,
-        COMMUNITY_LINK_TYPE,
-        ""
-    )?;
+    hdk::link_entries(&base_address, &community_address, COMMUNITY_LINK_TYPE, "")?;
+    hdk::link_entries(&slug_address, &community_address, COMMUNITY_LINK_TYPE, "")?;
 
     Ok(community.with_address(community_address))
 }
 
 pub fn all() -> ZomeApiResult<Vec<CommunityWithAddress>> {
-    let address = hdk::entry_address(&Entry::App(COMMUNITY_BASE_ENTRY.into(), RawString::from(COMMUNITY_BASE_ENTRY).into()))?;
-    Ok(hdk::get_links(&address, LinkMatch::Exactly(COMMUNITY_LINK_TYPE.into()), LinkMatch::Any)?
-        .addresses()
-        .iter()
-        .map(|address| get(address.to_string().into()).unwrap())
-        .chain(DEFAULT_COMMUNITIES.iter().map(|t| CommunityWithAddress::from(Community::from(t)))) // include the defaults also
-        .collect()
-    )
+    let address = hdk::entry_address(&Entry::App(
+        COMMUNITY_BASE_ENTRY.into(),
+        RawString::from(COMMUNITY_BASE_ENTRY).into(),
+    ))?;
+    Ok(hdk::get_links(
+        &address,
+        LinkMatch::Exactly(COMMUNITY_LINK_TYPE.into()),
+        LinkMatch::Any,
+    )?
+    .addresses()
+    .iter()
+    .map(|address| get(address.to_string().into()).unwrap())
+    .chain(
+        DEFAULT_COMMUNITIES
+            .iter()
+            .map(|t| CommunityWithAddress::from(Community::from(t))),
+    ) // include the defaults also
+    .collect())
 }
 
 pub fn community_def() -> ValidatingEntryType {
