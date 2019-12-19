@@ -1,1 +1,1 @@
-(import ./. {}).hylo-holo-dnas.override { shell = true; }
+(import ./. {}).holo-communities-dna.override { shell = true; }

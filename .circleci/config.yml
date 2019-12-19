@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: nixos/nix
     # Required because hc package default DNA name is working directory name
-    working_directory: ~/hylo-holo-dnas
+    working_directory: ~/holo-communities-dna
     steps:
       - checkout
       - run:

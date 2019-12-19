@@ -3,10 +3,10 @@
 #
 # This Makefile is primarily instructional; you can simply enter the Nix environment for
 # holochain-rust development (supplied by holo=nixpkgs; see pkgs.nix) via `nix-shell` and run `hc
-# test` directly, or build a target directly (see default.nix), eg. `nix-build -A hylo-holo-dnas`.
+# test` directly, or build a target directly (see default.nix), eg. `nix-build -A holo-communities-dna`.
 #
 SHELL		= bash
-DNANAME		= hylo-holo-dnas
+DNANAME		= holo-communities-dna
 DNA		= dist/$(DNANAME).dna.json
 
 # External targets; Uses a nix-shell environment to obtain Holochain runtimes, run tests, etc.
@@ -55,7 +55,7 @@ test-node:
 
 test-sim2h:
 	@echo "Starting sim2h_server on localhost:9000 (may already be running)..."; \
-	    sim2h_server -p 9000 >sim2h_server.out 2>&1 &
+	    sim2h_server -p 9000 >sim2h_server.log 2>&1 &
 
 
 # Generic targets; does not require a Nix environment
