@@ -7,4 +7,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hdk = "0.0.40-alpha1"
+hdk = { path = "../../../holochain-rust/crates/hdk" }
