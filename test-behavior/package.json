@@ -1,0 +1,21 @@
+{
+  "name": "test-behavior",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ts-node ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@holochain/tryorama": "^0.3.1-rc.2",
+    "@holochain/tryorama-stress-utils": "0.0.9",
+    "@types/node": "^13.1.0",
+    "async-mutex": "^0.1.4",
+    "random": "^2.1.1",
+    "tape": "^4.12.0",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4"
+  }
+}
