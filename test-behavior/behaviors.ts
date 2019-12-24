@@ -5,7 +5,8 @@
  */
 
 import {Mutex} from 'async-mutex'
-import { Player } from '@holochain/tryorama'
+import { Player, Instance } from '@holochain/tryorama'
+import { Batch } from '@holochain/tryorama-stress-utils'
 
 const random = require('random')
 const seed = '0'
@@ -15,6 +16,10 @@ type Players = Array<Player>
 
 const randomElement = <D>(coll: Array<D>): D => {
   return coll[random.int(0, coll.length - 1)]
+}
+
+const randomInstance = (players: Array<Player>): Instance => {
+  return randomElement(randomElement(players).instances())
 }
 
 let _nonce = 0
@@ -35,11 +40,11 @@ const comments = async (s, t, players: Players) => {
   	timestamp: "2019-03-29T01:58:10+00:00"
   }
 
-  const player = randomElement(players)
-  const authorAddress = player.instance('app').agentAddress
+  const instance = randomInstance(players)
+  const authorAddress = instance.agentAddress
 
   // define some helpers
-  const callComments = (func, params) => player.call("app", "comments", func, params)
+  const callComments = (func, params) => instance.call("comments", func, params)
   const createResult = await callComments('create', testComment1)
   await s.consistency()
   await callComments('create', testComment2)
@@ -60,11 +65,11 @@ const comments = async (s, t, players: Players) => {
 
 const communities = async (s, t, players: Players) => {
 
-  const player = randomElement(players)
+  const instance = randomInstance(players)
   const r = await nonce()
   const name = "Test Community " + r
   const slug = "test-" + r
-  const add_community_result = await player.call("app", "communities", "create", {
+  const add_community_result = await instance.call("communities", "create", {
     name,
     slug
   })
@@ -77,31 +82,31 @@ const communities = async (s, t, players: Players) => {
 
   const communityResult = {address, name, slug}
 
-  const get_community_result = await player.call("app", "communities", "get", {
+  const get_community_result = await instance.call("communities", "get", {
     address
   })
   t.equal(get_community_result.Ok.address, address)
   t.equal(get_community_result.Ok.name, name)
   t.equal(get_community_result.Ok.slug, slug)
 
-  const get_by_slug_result = await player.call("app", "communities", "get_by_slug", {
+  const get_by_slug_result = await instance.call("communities", "get_by_slug", {
     slug
   })
   t.equal(get_by_slug_result.Ok.address, address)
   t.equal(get_by_slug_result.Ok.name, name)
 
-  const get_communities_result = await player.call("app", "communities", "all", {})
+  const get_communities_result = await instance.call("communities", "all", {})
   t.ok(get_communities_result.Ok.some(community => community.name === communityResult.name), "Could retrieve the added community from the base")
 }
 
 const messages = async (s, t, players: Players) => {
 
   const num = await nonce()
-  const player = randomElement(players)
-  const authorAddress = player.instance('app').agentAddress
+  const instance = randomInstance(players)
+  const authorAddress = instance.agentAddress
 
   // add a thread
-  const addResult = await player.call("app", "messages", "create_thread", {
+  const addResult = await instance.call("messages", "create_thread", {
     participant_ids: []
   })
   await s.consistency()
@@ -117,7 +122,7 @@ const messages = async (s, t, players: Players) => {
     text,
     timestamp: String(num),
   }
-  const postResult = await player.call("app", "messages", "create", testMessage)
+  const postResult = await instance.call("messages", "create", testMessage)
   await s.consistency()
 
   const { address } = postResult.Ok
@@ -125,37 +130,33 @@ const messages = async (s, t, players: Players) => {
   t.deepEqual(postResult.Ok, {...testMessage, creator: authorAddress, address})
 
   // retrieve message from channel
-  const get_result = await player.call("app", "messages", "get_thread_messages", {
+  const get_result = await instance.call("messages", "get_thread_messages", {
     thread_address: threadAddress,
   })
   const texts = get_result.Ok.map(msg => msg.text)
   t.ok(texts.includes(text))
 
-  const get_message_result = await player.call("app", "messages", "get", {
+  const get_message_result = await instance.call("messages", "get", {
     message_addr: address
   })
   t.deepEqual(get_message_result.Ok, {...testMessage, creator: authorAddress, address})
 }
 
 const people = async (s, t, players: Players) => {
-  const numPlayers = players.length
-  const index1 = random.int(0, numPlayers - 1)
-  const index2 = random.int(0, numPlayers - 1)
-  const player1 = players[index1]
-  const player2 = players[index2]
-  const name1 = `player-${index1}`
-  const name2 = `player-${index2}`
+  const batch = new Batch(players)
+  const instance1 = randomInstance(players)
+  const instance2 = randomInstance(players)
 
-  const getResult = await player1.call("app", 'people', 'get', {agent_id: player2.instance('app').agentAddress})
+  const getResult = await instance1.call('people', 'get', {agent_id: instance2.agentAddress})
   console.log('getResult', getResult)
-  t.deepEqual(getResult.Ok, { name: name2, avatar_url: `${name2}.jpg`, address: player2.instance('app').agentAddress })
+  t.deepEqual(getResult.Ok.address, instance2.agentAddress )
 
-  const getMeResult = await player1.call("app", 'people', 'get_me', {})
-  t.deepEqual(getMeResult.Ok, { name: name1, avatar_url: `${name1}.jpg`, address: player1.instance('app').agentAddress })
+  const getMeResult = await instance1.call('people', 'get_me', {})
+  t.deepEqual(getMeResult.Ok.address, instance1.agentAddress )
 
-  const allResult = await player1.call("app", 'people', 'all', {})
+  const allResult = await instance1.call('people', 'all', {})
   console.log('allResult', allResult)
-  t.equal(allResult.Ok.length, players.length)
+  t.equal(allResult.Ok.length, batch.instances().length)
 }
 
 const posts = async (s, t, players: Players) => {
@@ -171,25 +172,25 @@ const posts = async (s, t, players: Players) => {
     base: "community" + num,
   }
 
-  const player = randomElement(players)
+  const instance = randomInstance(players)
 
-  const add_post_result = await player.call("app", "posts", "create", testPost )
+  const add_post_result = await instance.call("posts", "create", testPost )
   await s.consistency()
   const { address } = add_post_result.Ok
   console.log('add_post_result', add_post_result)
   t.equal(address.length, 46)
-  t.deepEqual(add_post_result.Ok, { ...testPost, creator: player.instance('app').agentAddress, address })
+  t.deepEqual(add_post_result.Ok, { ...testPost, creator: instance.agentAddress, address })
 
-  const get_post_result = await player.call("app", "posts", "get", {
+  const get_post_result = await instance.call("posts", "get", {
     address
   })
-  t.deepEqual(get_post_result.Ok, { ...testPost, creator: player.instance('app').agentAddress, address }, "Could retrieve the added post by address")
+  t.deepEqual(get_post_result.Ok, { ...testPost, creator: instance.agentAddress, address }, "Could retrieve the added post by address")
 
-  const get_posts_result = await player.call("app", "posts", "all_for_base", {
+  const get_posts_result = await instance.call("posts", "all_for_base", {
     base: testPost.base
   })
   console.log(get_posts_result.Ok)
-  t.deepEqual(get_posts_result.Ok, [{ ...testPost, creator: player.instance('app').agentAddress, address }], "Could retrieve the added post from the base")
+  t.deepEqual(get_posts_result.Ok, [{ ...testPost, creator: instance.agentAddress, address }], "Could retrieve the added post from the base")
 }
 
 export default [
