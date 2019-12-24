@@ -17,6 +17,7 @@ const stageDuration = 10000  // duration of each stage (ms)
 const periodInitial = 1000  // initial interval between behavior runs (ms)
 const periodExpBase = 0.5  // subsequent scaling at each new stage
 const stageLimit = 1  // number of stages to run. If 0, will run until failure.
+const initialStage = 0  // start at a higher stage
 
 // Below this line should not need changes
 
@@ -68,7 +69,7 @@ orchestrator.registerScenario('behavior tests', async (s, t) => {
     failHandler: s.onFail,
     stageLimit,
     parameters: {
-      period: t => periodInitial * Math.pow(periodExpBase, t)
+      period: t => periodInitial * Math.pow(periodExpBase, t + initialStage)
     }
   })
 })
