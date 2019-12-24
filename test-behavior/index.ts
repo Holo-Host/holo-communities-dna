@@ -1,3 +1,5 @@
+import * as R from 'ramda'
+
 import { one } from '../test/config'
 import { parameterizedStages, stochasticPiecewise, periodically } from '@holochain/tryorama-stress-utils'
 import behaviors from './behaviors'
@@ -5,18 +7,22 @@ import { Orchestrator } from '@holochain/tryorama'
 import { Player } from '@holochain/tryorama'
 
 
+const N = 5
+
 const orchestrator = new Orchestrator()
 
 orchestrator.registerScenario('behavior tests', async (s, t) => {
 
   const init = async () => {
-    const players: Record<string, Player> = await s.players({alice: one, bob: one}, true)
+    const configs = R.repeat(one, N)
+    const players: Array<Player> = Object.values(await s.players(configs, true))
     const makeUser = name => ({
       name,
       avatar_url: `${name}.jpg`
     })
     Promise.all(
-      Object.entries(players).map(async ([name, player]) => {
+      players.map(async (player, i) => {
+        const name = `player-${i}`
         const result = await player.call("app", 'people', 'register_user', makeUser(name))
         t.ok(result.Ok)
       })
@@ -24,7 +30,7 @@ orchestrator.registerScenario('behavior tests', async (s, t) => {
     return players
   }
 
-  await parameterizedStages<Record<string, Player>>({
+  await parameterizedStages<Array<Player>>({
     init,
     stage: async (players, {period}) => {
       const behaviorRunners = Object.entries(behaviors).map(([name, runner]) => () => {

@@ -1,12 +1,19 @@
+/**
+ * Defines a collection of behaviors that can be run many times using the same set of players
+ * These are different from scenarios in that each behavior can be run against an existing state,
+ * and the assertions should be such that there is no interference with previous or concurrent runs.
+ */
+
 import {Mutex} from 'async-mutex'
 import { Player } from '@holochain/tryorama'
 
-type PlayerMap = Record<string, Player>
-
 const random = require('random')
+const seed = '0'
+random.use(require('seedrandom')(seed))
 
-const randomElement = <D>(map: Record<any, D>): D => {
-  const coll = Object.values(map)
+type Players = Array<Player>
+
+const randomElement = <D>(coll: Array<D>): D => {
   return coll[random.int(0, coll.length - 1)]
 }
 
@@ -14,7 +21,7 @@ let _nonce = 0
 const nonceMutex = new Mutex()
 const nonce = () => nonceMutex.runExclusive(() => _nonce++)
 
-const comments = async (s, t, players: PlayerMap) => {
+const comments = async (s, t, players: Players) => {
   const num = await nonce()
   const base = 'base-' + num
   const testComment1 = {
@@ -51,7 +58,7 @@ const comments = async (s, t, players: PlayerMap) => {
   t.deepEqual(allResult.Ok.length, 2)
 }
 
-const communities = async (s, t, players: PlayerMap) => {
+const communities = async (s, t, players: Players) => {
 
   const player = randomElement(players)
   const r = await nonce()
@@ -87,7 +94,7 @@ const communities = async (s, t, players: PlayerMap) => {
   t.ok(get_communities_result.Ok.some(community => community.name === communityResult.name), "Could retrieve the added community from the base")
 }
 
-const messages = async (s, t, players: PlayerMap) => {
+const messages = async (s, t, players: Players) => {
 
   const num = await nonce()
   const player = randomElement(players)
@@ -130,12 +137,14 @@ const messages = async (s, t, players: PlayerMap) => {
   t.deepEqual(get_message_result.Ok, {...testMessage, creator: authorAddress, address})
 }
 
-const people = async (s, t, players: PlayerMap) => {
-  const numPlayers = Object.keys(players).length
+const people = async (s, t, players: Players) => {
+  const numPlayers = players.length
   const index1 = random.int(0, numPlayers - 1)
   const index2 = random.int(0, numPlayers - 1)
-  const [name1, player1] = Object.entries(players)[index1]
-  const [name2, player2] = Object.entries(players)[index2]
+  const player1 = players[index1]
+  const player2 = players[index2]
+  const name1 = `player-${index1}`
+  const name2 = `player-${index2}`
 
   const getResult = await player1.call("app", 'people', 'get', {agent_id: player2.instance('app').agentAddress})
   console.log('getResult', getResult)
@@ -146,10 +155,10 @@ const people = async (s, t, players: PlayerMap) => {
 
   const allResult = await player1.call("app", 'people', 'all', {})
   console.log('allResult', allResult)
-  t.equal(allResult.Ok.length, Object.keys(players).length)
+  t.equal(allResult.Ok.length, players.length)
 }
 
-const posts = async (s, t, players: PlayerMap) => {
+const posts = async (s, t, players: Players) => {
 
   const num = await nonce()
 
