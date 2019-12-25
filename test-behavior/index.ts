@@ -6,18 +6,32 @@ import { Orchestrator, tapeExecutor, groupPlayersByMachine, compose } from '@hol
 import { Player } from '@holochain/tryorama'
 import { batcher, userName } from './config'
 
-// Hook these up to stress config:
+const defaultConfig = {
+    nodes: endpoints ? endpoints.length : 1,
+    conductors: 1,
+    instances: 10,
+    endpoints: null,
+    stageDuration: 10000,  // duration of each stage (ms)
+    periodInitial: 1000,  // initial interval between behavior runs (ms)
+    periodExpBase: 0.5,  // subsequent scaling at each new stage
+    stageLimit: 1,  // number of stages to run. If 0, will run until failure.
+    initialStage: 0,  // start at a higher stage
+}
 
-const endpoints = null
-const numMachines = endpoints ? endpoints.length : 1
-const conductorsPerMachine = 3
-const instancesPerConductor = 2
+const runName = process.argv[2] || ""+Date.now()  // default exam name is just a timestamp
+const config = process.argv[3] ? require(process.argv[3]) : defaultConfig
 
-const stageDuration = 10000  // duration of each stage (ms)
-const periodInitial = 1000  // initial interval between behavior runs (ms)
-const periodExpBase = 0.5  // subsequent scaling at each new stage
-const stageLimit = 1  // number of stages to run. If 0, will run until failure.
-const initialStage = 0  // start at a higher stage
+console.log(`Running behavior test id=${runName} with:\n`, config)
+
+const endpoints = config.endpoints
+const numMachines = config.nodes
+const conductorsPerMachine = config.conductors
+const instancesPerConductor = config.instances
+const stageDuration = config.stageDuration  // duration of each stage (ms)
+const periodInitial = config.periodInitial  // initial interval between behavior runs (ms)
+const periodExpBase = config.periodExpBase  // subsequent scaling at each new stage
+const stageLimit = config.stageLimit  // number of stages to run. If 0, will run until failure.
+const initialStage = config.initialStage  // start at a higher stage
 
 // Below this line should not need changes
 
