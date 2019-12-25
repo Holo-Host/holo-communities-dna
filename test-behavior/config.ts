@@ -4,12 +4,12 @@ import { commonConfig } from '../test/config'
 import { configBatchSimple } from '@holochain/tryorama-stress-utils'
 
 const dnaPath = path.join(__dirname, '../dist/holo-communities-dna.dna.json')
-const chosenDna = Config.dna(dnaPath, 'app')
+const dnaUri = 'https://github.com/Holo-Host/holo-communities-dna/releases/download/holoscape-bundle-v0.0.4/holo-communities.dna.json'
 
-export const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
+export const batcher = (isRemote, numConductors, instancesPerConductor) => configBatchSimple(
   numConductors,
   instancesPerConductor,
-  chosenDna,
+  Config.dna(isRemote ? dnaUri : dnaPath, 'app'),
   commonConfig
 )
 

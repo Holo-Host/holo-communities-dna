@@ -24,6 +24,7 @@ const config = process.argv[3] ? require(process.argv[3]) : defaultConfig
 console.log(`Running behavior test id=${runName} with:\n`, config)
 
 const endpoints = config.endpoints
+const isRemote = Boolean(config.endpoints)
 const numMachines = config.nodes
 const conductorsPerMachine = config.conductors
 const instancesPerConductor = config.instances
@@ -46,7 +47,7 @@ const orchestrator = new Orchestrator({middleware})
 orchestrator.registerScenario('behavior tests', async (s, t) => {
 
   const init = async () => {
-    const configs = await batcher(numConductors, instancesPerConductor)
+    const configs = await batcher(isRemote, numConductors, instancesPerConductor)
     // create and spawn some players
     const players: Array<Player> = Object.values(await s.players(configs, true))
     const makeUser = name => ({
