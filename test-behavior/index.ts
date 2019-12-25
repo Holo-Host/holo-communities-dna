@@ -7,7 +7,7 @@ import { Player } from '@holochain/tryorama'
 import { batcher, userName } from './config'
 
 const defaultConfig = {
-    nodes: endpoints ? endpoints.length : 1,
+    nodes: 1,
     conductors: 1,
     instances: 10,
     endpoints: null,
