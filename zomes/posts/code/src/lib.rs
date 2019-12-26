@@ -9,15 +9,9 @@ extern crate holochain_json_derive;
 
 use hdk::{
     error::ZomeApiResult,
-    holochain_core_types::{
-        agent::AgentId,
-        validation::EntryValidationData,
-    },
-    holochain_json_api::{
-        error::JsonError,
-        json::{JsonString},
-    },
-    holochain_persistence_api::{cas::content::Address},
+    holochain_core_types::{agent::AgentId, validation::EntryValidationData},
+    holochain_json_api::{error::JsonError, json::JsonString},
+    holochain_persistence_api::cas::content::Address,
 };
 
 mod post;
@@ -44,7 +38,7 @@ define_zome! {
      }}
 
     functions: [
-         get: {
+        get: {
             inputs: |address: Address|,
             outputs: |result: ZomeApiResult<post::PostWithAddress>|,
             handler: post::get
@@ -55,9 +49,14 @@ define_zome! {
             handler: post::create
         }
         all_for_base: {
-            inputs: |base: String|,
-            outputs: |result: ZomeApiResult<Vec<post::PostWithAddress>>|,
+            inputs: |base: String, since: Option<Address>, limit: Option<usize>, backsteps: Option<usize>|,
+            outputs: |result: ZomeApiResult<post::GetPostsResult>|,
             handler: post::all_for_base
+        }
+        adjacency_list_for_base: {
+            inputs: |base: String, since: Option<Address>|,
+            outputs: |result: ZomeApiResult<Vec<(Address, Address)>>|,
+            handler: post::adjacency_list_for_base
         }
     ]
 
@@ -65,7 +64,8 @@ define_zome! {
         hc_public [
             get,
             create,
-            all_for_base
+            all_for_base,
+            adjacency_list_for_base
         ]
     }
 }

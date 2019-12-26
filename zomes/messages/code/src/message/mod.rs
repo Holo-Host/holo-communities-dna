@@ -1,25 +1,14 @@
 use hdk::{
     self,
-    utils,
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
-    holochain_core_types::{
-        dna::entry_types::Sharing,
-        entry::Entry,
-    },
-    AGENT_ADDRESS,
-    holochain_json_api::{
-        error::JsonError,
-        json::{JsonString},
-    },
-    holochain_persistence_api::{cas::content::Address},
-
+    holochain_core_types::{dna::entry_types::Sharing, entry::Entry},
+    holochain_json_api::{error::JsonError, json::JsonString},
+    holochain_persistence_api::cas::content::Address,
+    utils, AGENT_ADDRESS,
 };
 
-use super::thread::{
-    THREAD_ENTRY_TYPE,
-    MESSAGE_LINK_TYPE
-};
+use super::thread::{MESSAGE_LINK_TYPE, THREAD_ENTRY_TYPE};
 
 pub const MESSAGE_ENTRY_TYPE: &str = "message";
 
@@ -51,33 +40,37 @@ pub struct MessageWithAddress {
     pub timestamp: String,
     pub text: String,
     pub thread_address: Address,
-    pub creator: Address
+    pub creator: Address,
 }
 
-pub fn create(thread_address: Address, text: String, timestamp: String) -> ZomeApiResult<MessageWithAddress> {
+pub fn create(
+    thread_address: Address,
+    text: String,
+    timestamp: String,
+) -> ZomeApiResult<MessageWithAddress> {
     let message = Message {
         text,
         timestamp: timestamp,
         thread_address: thread_address.to_owned(),
-        creator: AGENT_ADDRESS.to_string().into()
+        creator: AGENT_ADDRESS.to_string().into(),
     };
-    let message_entry = Entry::App(
-        MESSAGE_ENTRY_TYPE.into(),
-        message.clone().into()
-    );
+    let message_entry = Entry::App(MESSAGE_ENTRY_TYPE.into(), message.clone().into());
     let message_addr = hdk::commit_entry(&message_entry)?;
-    utils::link_entries_bidir(&message_addr, &thread_address, MESSAGE_MESSAGE_THREAD_LINK_TYPE, MESSAGE_LINK_TYPE, "", "")?;
+    utils::link_entries_bidir(
+        &message_addr,
+        &thread_address,
+        MESSAGE_MESSAGE_THREAD_LINK_TYPE,
+        MESSAGE_LINK_TYPE,
+        "",
+        "",
+    )?;
     Ok(message.with_address(message_addr))
 }
 
-
 pub fn get(message_addr: Address) -> ZomeApiResult<MessageWithAddress> {
     utils::get_as_type::<Message>(message_addr.clone())
-        .map(|message| {
-            message.with_address(message_addr)
-        })
+        .map(|message| message.with_address(message_addr))
 }
-
 
 pub fn def() -> ValidatingEntryType {
     entry!(

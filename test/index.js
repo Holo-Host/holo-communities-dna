@@ -30,12 +30,14 @@ const orchestrator = new Orchestrator({
   }
 })
 
-require('./agent/communities')(orchestrator.registerScenario)
-require('./agent/posts')(orchestrator.registerScenario)
-require('./agent/comments')(orchestrator.registerScenario)
-require('./agent/threads')(orchestrator.registerScenario)
-require('./agent/messages')(orchestrator.registerScenario)
-require('./agent/people')(orchestrator.registerScenario)
+require('./single_agent/communities')(orchestrator.registerScenario)
+require('./single_agent/posts')(orchestrator.registerScenario)
+require('./single_agent/comments')(orchestrator.registerScenario)
+require('./single_agent/threads')(orchestrator.registerScenario)
+require('./single_agent/messages')(orchestrator.registerScenario)
+require('./single_agent/people')(orchestrator.registerScenario)
+
+require('./multi_agent/posts')(orchestrator.registerScenario)
 
 orchestrator.run().then(stats => {
   console.log("All done.")

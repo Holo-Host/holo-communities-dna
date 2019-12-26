@@ -11,16 +11,9 @@ mod comments;
 
 use hdk::{
     error::ZomeApiResult,
-    holochain_core_types::{
-        agent::AgentId,
-        time::Iso8601,
-        validation::EntryValidationData,
-    },
-    holochain_json_api::{
-        error::JsonError,
-        json::{JsonString},
-    },
-    holochain_persistence_api::{cas::content::Address},
+    holochain_core_types::{agent::AgentId, time::Iso8601, validation::EntryValidationData},
+    holochain_json_api::{error::JsonError, json::JsonString},
+    holochain_persistence_api::cas::content::Address,
 };
 
 define_zome! {
