@@ -5,9 +5,16 @@ const { Config } = require('@holochain/tryorama')
 const dnaPath = path.join(__dirname, '../dist/holo-communities-dna.dna.json')
 const dna = Config.dna(dnaPath, 'app')
 
-const networkType = process.env.NETWORK_TYPE
-const network = 
-  ( networkType === 'websocket'
+let network;
+
+if (process.env.HC_TRANSPORT_CONFIG) {
+  network=require(process.env.HC_TRANSPORT_CONFIG)
+  console.log("setting network from:"+process.env.HC_TRANSPORT_CONFIG)
+} else {
+  console.log("setting network from:"+process.env.NETWORK_TYPE)
+  const networkType = process.env.NETWORK_TYPE
+  network =
+    ( networkType === 'websocket'
   ? Config.network('websocket')
 
   : networkType === 'memory'
@@ -26,7 +33,8 @@ const network =
   }
 
   : (() => {throw new Error(`Unsupported network type: ${networkType}`)})()
-)
+    )
+}
 
 const logger = {
   type: 'debug',
@@ -72,5 +80,6 @@ module.exports = {
       app: dna
     },
     commonConfig
-  )
+  ),
+  commonConfig
 }
