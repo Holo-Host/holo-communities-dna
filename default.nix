@@ -7,8 +7,8 @@ let
 in
 
 {
-  hylo-holo-dnas = buildDNA {
-    name = "hylo-holo-dnas";
+  holo-communities-dna = buildDNA {
+    name = "holo-communities-dna";
     src = gitignoreSource ./.;
 
     nativeBuildInputs = [ pkgs.libiconv ]

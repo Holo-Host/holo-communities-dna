@@ -20,7 +20,7 @@ npm-debug.log
 .floo
 .flooignore
 
-yarn-error.log
+*.log
 .idea
 dmg-mount
 conductor-config.toml
