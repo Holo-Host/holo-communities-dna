@@ -1,4 +1,4 @@
-{ pkgs ? import ./pkgs.nix {} }:
+{ pkgs ? import ./pkgs.nix {}, shell ? false }:
 
 with pkgs;
 
@@ -8,10 +8,14 @@ in
 
 {
   holo-communities-dna = buildDNA {
+    inherit shell;
+
     name = "holo-communities-dna";
     src = gitignoreSource ./.;
 
-    nativeBuildInputs = [ pkgs.libiconv ]
+    nativeBuildInputs = [
+      libiconv
+    ]
     ++ lib.optionals stdenv.isDarwin [ CoreServices ];
   };
 }

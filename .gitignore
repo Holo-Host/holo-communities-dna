@@ -10,7 +10,8 @@ coverage
 /dist
 /holochain-rust
 /target
-result
+/result
+*.log
 
 # misc
 .DS_Store
@@ -20,7 +21,6 @@ npm-debug.log
 .floo
 .flooignore
 
-*.log
 .idea
 dmg-mount
 conductor-config.toml
