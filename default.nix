@@ -15,6 +15,10 @@ in
 
     nativeBuildInputs = [
       libiconv
+      cmake # required by wabt
+      binaryen
+      wasm-gc
+      wabt
     ]
     ++ lib.optionals stdenv.isDarwin [ CoreServices ];
   };
