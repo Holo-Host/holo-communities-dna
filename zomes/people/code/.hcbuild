@@ -17,13 +17,15 @@
       "arguments": [
         "-Oz",
         "--vacuum",
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm"
+        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm",
+        "-o",
+        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm.opt"
       ]
     },
     {
       "command": "wasm2wat",
       "arguments": [
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm",
+        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm.opt",
         "-o",
         "../../../target/wasm32-unknown-unknown/release/hylo_people.wat"
       ]
