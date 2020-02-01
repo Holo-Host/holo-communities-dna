@@ -11,6 +11,7 @@ const postFactory = (title) => ({
     base: "community1",
 })
 
+// TODO: Remove pagination scheme params (since, etc)
 scenario('Can create multiple posts and paginate with two agents', async (s, t) => {
     const { alice, bob } = await s.players({alice: one, bob: one}, true)
 
