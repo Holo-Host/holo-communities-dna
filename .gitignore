@@ -11,6 +11,10 @@ coverage
 /holochain-rust
 /target
 /result
+holochain
+hc
+sim2h_server
+cas.db
 *.log
 
 # misc

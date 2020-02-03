@@ -49,14 +49,9 @@ define_zome! {
             handler: post::create
         }
         all_for_base: {
-            inputs: |base: String, since: Option<Address>, limit: Option<usize>, backsteps: Option<usize>|,
+            inputs: |base: String|,
             outputs: |result: ZomeApiResult<post::GetPostsResult>|,
             handler: post::all_for_base
-        }
-        adjacency_list_for_base: {
-            inputs: |base: String, since: Option<Address>|,
-            outputs: |result: ZomeApiResult<Vec<(Address, Address)>>|,
-            handler: post::adjacency_list_for_base
         }
     ]
 
@@ -64,8 +59,7 @@ define_zome! {
         hc_public [
             get,
             create,
-            all_for_base,
-            adjacency_list_for_base
+            all_for_base
         ]
     }
 }
