@@ -108,10 +108,11 @@ pub fn create(
 
 pub fn all_for_base(base: String) -> ZomeApiResult<GetPostsResult> {
     let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
-    // TODO: Return { posts, more } response format for pagination
+    // TODO: Returning { posts, more } response format in anticipation of pagination
     let posts = hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
       .addresses()
       .iter()
+      .rev()
       .map(|address| get(address.to_string().into()).unwrap())
       .collect();
     
