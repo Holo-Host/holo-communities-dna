@@ -9,8 +9,15 @@ extern crate holochain_json_derive;
 
 use hdk::{
     error::ZomeApiResult,
-    holochain_core_types::{agent::AgentId, validation::EntryValidationData},
-    holochain_json_api::{error::JsonError, json::JsonString},
+    holochain_core_types::{
+        agent::AgentId,
+        validation::EntryValidationData,
+        time::Iso8601,
+    },
+    holochain_json_api::{
+        error::JsonError,
+        json::JsonString,
+    },
     holochain_persistence_api::cas::content::Address,
 };
 
@@ -41,19 +48,19 @@ define_zome! {
     functions: [
         // message functions
         create: {
-            inputs: |thread_address: Address, text: String, timestamp: String|,
+            inputs: |thread_address: Address, text: String, timestamp: Iso8601|,
             outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
             handler: message::create
         }
         get: {
-            inputs: |message_addr: Address|,
+            inputs: |message_address: Address|,
             outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
             handler: message::get
         }
         // thread functions
         get_threads: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<Vec<Address>>|,
+            outputs: |result: ZomeApiResult<Vec<thread::GetThreadsResult>>|,
             handler: thread::get_threads
         }
         create_thread: {
@@ -71,6 +78,11 @@ define_zome! {
             outputs: |result: ZomeApiResult<Vec<message::MessageWithAddress>>|,
             handler: thread::get_thread_messages
         }
+        set_last_read_message: {
+            inputs: |thread_address: Address, message_address: Address|,
+            outputs: |result: ZomeApiResult<String>|,
+            handler: thread::set_last_read_message
+        }
     ]
     traits: {
         hc_public [
@@ -79,7 +91,8 @@ define_zome! {
             get_threads,
             create_thread,
             get_participants,
-            get_thread_messages
+            get_thread_messages,
+            set_last_read_message
         ]
     }
 }
