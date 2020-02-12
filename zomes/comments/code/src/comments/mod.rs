@@ -9,14 +9,18 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
     holochain_core_types::{
-        dna::entry_types::Sharing, entry::Entry, link::LinkMatch, time::Iso8601,
+        dna::entry_types::Sharing,
+        entry::Entry,
+        link::LinkMatch,
+        time::Iso8601,
     },
     holochain_json_api::{
         error::JsonError,
         json::{JsonString, RawString},
     },
     holochain_persistence_api::cas::content::Address,
-    utils, AGENT_ADDRESS,
+    utils,
+    AGENT_ADDRESS,
 };
 use hdk_helpers::commit_if_not_in_chain;
 
