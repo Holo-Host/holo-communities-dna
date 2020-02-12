@@ -1,5 +1,5 @@
 [package]
-name = "hylo_posts"
+name = "communities_posts"
 version = "0.0.3"
 authors = ["willem <willemolding@gmail.com>"]
 edition = "2018"

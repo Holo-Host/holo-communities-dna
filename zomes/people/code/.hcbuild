@@ -10,34 +10,34 @@
     },
     {
       "command": "wasm-gc",
-      "arguments": ["../../../target/wasm32-unknown-unknown/release/hylo_people.wasm"]
+      "arguments": ["../../../target/wasm32-unknown-unknown/release/communities_people.wasm"]
     },
     {
       "command": "wasm-opt",
       "arguments": [
         "-Oz",
         "--vacuum",
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm",
+        "../../../target/wasm32-unknown-unknown/release/communities_people.wasm",
         "-o",
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm.opt"
+        "../../../target/wasm32-unknown-unknown/release/communities_people.wasm.opt"
       ]
     },
     {
       "command": "wasm2wat",
       "arguments": [
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm.opt",
+        "../../../target/wasm32-unknown-unknown/release/communities_people.wasm.opt",
         "-o",
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wat"
+        "../../../target/wasm32-unknown-unknown/release/communities_people.wat"
       ]
     },
     {
       "command": "wat2wasm",
       "arguments": [
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wat",
+        "../../../target/wasm32-unknown-unknown/release/communities_people.wat",
         "-o",
-        "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm"
+        "../../../target/wasm32-unknown-unknown/release/communities_people.wasm"
       ]
     }
   ],
-  "artifact": "../../../target/wasm32-unknown-unknown/release/hylo_people.wasm"
+  "artifact": "../../../target/wasm32-unknown-unknown/release/communities_people.wasm"
 }

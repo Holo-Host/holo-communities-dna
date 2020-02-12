@@ -1,5 +1,5 @@
 [package]
-name = "hylo_messages"
+name = "communities_messages"
 version = "0.0.3"
 authors = ["willem <willemolding@gmail.com>"]
 edition = "2018"

@@ -1,6 +1,6 @@
-# holo-hylo
+# Communities on Holochain
 
-DNAs required for running Hylo on Holochain.
+DNAs required for running Communities on Holochain.
 
 ! This is a work in progress and only limited functionality is available at this stage !
 
