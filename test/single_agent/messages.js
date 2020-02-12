@@ -32,7 +32,7 @@ scenario('Can create a message and retrieve it', async (s, t) => {
     t.deepEqual(get_result.Ok[0], {...testMessage, creator: alice.info('app').agentAddress, address})
 
     const get_message_result = await alice.callSync("app", "messages", "get", {
-      message_addr: address
+      message_address: address
     })
     t.deepEqual(get_message_result.Ok, {...testMessage, creator: alice.info('app').agentAddress, address})
 
