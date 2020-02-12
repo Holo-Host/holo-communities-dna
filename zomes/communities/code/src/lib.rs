@@ -19,7 +19,7 @@ use communities::{Community, COMMUNITY_ENTRY_TYPE};
 
 // I'll put this here for now but really it should live in the .dna.json properties
 const DEFAULT_COMMUNITIES: &[(&str, &str)] = &[
-    ("Hylo Holochain", "hylo-holochain"),
+    ("Holochain Communities", "holochain-communities"),
     ("HoloPort Owners", "holoport-owners"),
     ("HoloPort Support", "holoport-support"),
 ];
