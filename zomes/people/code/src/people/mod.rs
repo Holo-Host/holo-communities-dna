@@ -2,11 +2,25 @@ use crate::anchor::{Anchor, ANCHOR_ENTRY_TYPE, ANCHOR_PERSON_LINK_TYPE};
 use hdk::{
     self,
     entry_definition::ValidatingEntryType,
-    error::{ZomeApiError, ZomeApiResult},
-    holochain_core_types::{dna::entry_types::Sharing, entry::Entry, link::LinkMatch},
-    holochain_json_api::{error::JsonError, json::JsonString},
-    holochain_persistence_api::cas::content::{Address, AddressableContent},
-    utils, AGENT_ADDRESS,
+    error::{
+        ZomeApiError,
+        ZomeApiResult,
+    },
+    holochain_core_types::{
+        dna::entry_types::Sharing,
+        entry::Entry,
+        link::LinkMatch,
+    },
+    holochain_json_api::{
+        error::JsonError,
+        json::JsonString,
+    },
+    holochain_persistence_api::cas::content::{
+        Address,
+        AddressableContent,
+    },
+    utils,
+    AGENT_ADDRESS,
 };
 use hdk_helpers::commit_if_not_in_chain;
 
@@ -69,8 +83,8 @@ pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonWi
 
     let person_entry = Entry::App(PERSON_ENTRY_TYPE.into(), person.clone().into());
 
-    let person_addr = hdk::commit_entry(&person_entry)?;
-    hdk::link_entries(&AGENT_ADDRESS, &person_addr, PERSON_AGENT_LINK_TYPE, "")?;
+    let person_address = hdk::commit_entry(&person_entry)?;
+    hdk::link_entries(&AGENT_ADDRESS, &person_address, PERSON_AGENT_LINK_TYPE, "")?;
 
     let anchor_entry = Entry::App(
         ANCHOR_ENTRY_TYPE.into(),
@@ -79,8 +93,8 @@ pub fn register_user(name: String, avatar_url: String) -> ZomeApiResult<PersonWi
         }
         .into(),
     );
-    let anchor_addr = commit_if_not_in_chain(&anchor_entry)?;
-    hdk::link_entries(&anchor_addr, &AGENT_ADDRESS, ANCHOR_PERSON_LINK_TYPE, "")?;
+    let anchor_address = commit_if_not_in_chain(&anchor_entry)?;
+    hdk::link_entries(&anchor_address, &AGENT_ADDRESS, ANCHOR_PERSON_LINK_TYPE, "")?;
 
     Ok(person.with_address(AGENT_ADDRESS.to_string().into()))
 }

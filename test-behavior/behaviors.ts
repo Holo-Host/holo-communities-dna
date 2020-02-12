@@ -137,7 +137,7 @@ const messages = async (s, t, players: Players) => {
   t.ok(texts.includes(text))
 
   const get_message_result = await instance.call("messages", "get", {
-    message_addr: address
+    message_address: address
   })
   t.deepEqual(get_message_result.Ok, {...testMessage, creator: authorAddress, address})
 }

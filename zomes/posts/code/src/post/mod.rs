@@ -2,14 +2,21 @@ use hdk::{
     self,
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
-    holochain_core_types::{dna::entry_types::Sharing, entry::Entry, link::LinkMatch},
+    holochain_core_types::{
+        dna::entry_types::Sharing,
+        entry::Entry,
+        link::LinkMatch,
+    },
     holochain_json_api::{
         error::JsonError,
-        json::{JsonString, RawString},
+        json::{
+            JsonString,
+            RawString,
+        },
     },
     holochain_persistence_api::cas::content::{Address},
     utils,
-    AGENT_ADDRESS
+    AGENT_ADDRESS,
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
