@@ -1,13 +1,26 @@
 use hdk::{
     self,
     entry_definition::ValidatingEntryType,
-    error::{ZomeApiError, ZomeApiResult},
-    holochain_core_types::{dna::entry_types::Sharing, entry::Entry, link::LinkMatch},
+    error::{
+        ZomeApiError,
+        ZomeApiResult,
+    },
+    holochain_core_types::{
+        dna::entry_types::Sharing,
+        entry::Entry,
+        link::LinkMatch,
+    },
     holochain_json_api::{
         error::JsonError,
-        json::{JsonString, RawString},
+        json::{
+            JsonString,
+            RawString,
+        },
     },
-    holochain_persistence_api::cas::content::{Address, AddressableContent},
+    holochain_persistence_api::cas::content::{
+        Address,
+        AddressableContent,
+    },
     utils,
 };
 use hdk_helpers::commit_if_not_in_chain;
