@@ -46,52 +46,39 @@ define_zome! {
      }}
 
     functions: [
-        // message functions
-        create: {
-            inputs: |thread_address: Address, text: String, timestamp: Iso8601|,
-            outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
-            handler: message::create
-        }
-        get: {
-            inputs: |message_address: Address|,
-            outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
-            handler: message::get
-        }
-        // thread functions
-        get_threads: {
-            inputs: | |,
-            outputs: |result: ZomeApiResult<Vec<thread::GetThreadsResult>>|,
-            handler: thread::get_threads
-        }
         create_thread: {
             inputs: |participant_ids: Vec<String>|,
             outputs: |result: ZomeApiResult<Address>|,
-            handler: thread::create_thread
+            handler: thread::create
         }
-        get_participants: {
-            inputs: |thread_address: Address|,
-            outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: thread::get_thread_participants
+        create_message: {
+            inputs: |thread_address: Address, text: String, timestamp: Iso8601|,
+            outputs: |result: ZomeApiResult<message::Message>|,
+            handler: message::create
         }
-        get_thread_messages: {
+        all_threads_for_current_agent: {
+            inputs: | |,
+            outputs: |result: ZomeApiResult<Vec<thread::Thread>>|,
+            handler: thread::all_for_current_agent
+        }
+        all_messages_for_thread: {
             inputs: |thread_address: Address|,
-            outputs: |result: ZomeApiResult<Vec<message::MessageWithAddress>>|,
-            handler: thread::get_thread_messages
+            outputs: |result: ZomeApiResult<Vec<message::Message>>|,
+            handler: message::all_for_thread
         }
         set_last_read_message: {
             inputs: |thread_address: Address, message_address: Address|,
-            outputs: |result: ZomeApiResult<String>|,
+            outputs: |result: ZomeApiResult<Address>|,
             handler: thread::set_last_read_message
         }
     ]
     traits: {
         hc_public [
-            create,
-            get,
-            get_threads,
             create_thread,
-            get_participants,
-            get_thread_messages,
+            create_message,
+            all_threads_for_current_agent,
+            all_messages_for_thread,
+            get_message,
             set_last_read_message
         ]
     }

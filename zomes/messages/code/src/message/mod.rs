@@ -6,6 +6,7 @@ use hdk::{
         dna::entry_types::Sharing,
         entry::Entry,
         time::Iso8601,
+        link::LinkMatch,
     },
     holochain_json_api::{
         error::JsonError,
@@ -18,8 +19,7 @@ use hdk::{
 
 use super::thread::{
     MESSAGE_LINK_TYPE,
-    THREAD_ENTRY_TYPE,
-    set_last_read_message
+    THREAD_ENTRY_TYPE
 };
 
 pub const MESSAGE_ENTRY_TYPE: &str = "message";
@@ -27,16 +27,16 @@ pub const MESSAGE_ENTRY_TYPE: &str = "message";
 pub const MESSAGE_MESSAGE_THREAD_LINK_TYPE: &str = "message_threads";
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct Message {
+pub struct MessageEntry {
     pub timestamp: Iso8601,
     pub text: String,
     pub thread_address: Address,
     pub creator: Address,
 }
 
-impl Message {
-    pub fn with_address(&self, address: Address) -> MessageWithAddress {
-        MessageWithAddress {
+impl MessageEntry {
+    pub fn with_address(&self, address: Address) -> Message {
+        Message {
             address,
             thread_address: self.thread_address.clone(),
             text: self.text.clone(),
@@ -47,7 +47,7 @@ impl Message {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct MessageWithAddress {
+pub struct Message {
     address: Address,
     pub timestamp: Iso8601,
     pub text: String,
@@ -59,8 +59,8 @@ pub fn create(
     thread_address: Address,
     text: String,
     timestamp: Iso8601,
-) -> ZomeApiResult<MessageWithAddress> {
-    let message = Message {
+) -> ZomeApiResult<Message> {
+    let message = MessageEntry {
         text,
         timestamp: timestamp.clone().into(),
         thread_address: thread_address.to_owned(),
@@ -78,30 +78,23 @@ pub fn create(
         "",
     )?;
 
-    // Set this as the latest unread message for the thread
-    //
-    // Using hdk::call...
-    // 
-    // #[derive(Serialize, Deserialize, Debug, DefaultJson)]
-    // struct MessageAddressInput {
-    //     message_address: String,
-    // };
-    // hdk::call(
-    //     hdk::THIS_INSTANCE,
-    //     "thread",
-    //     Address::from(hdk::PUBLIC_TOKEN.to_string()),
-    //     "set_last_read_message",
-    //     MessageAddressInput {
-    //         message_address: message_address.to_owned().into()
-    //     }.into()
-    // )?;
-    set_last_read_message(thread_address.into(), message_address.clone().into())?;
-
     Ok(message.with_address(message_address.clone()))
 }
 
-pub fn get(message_address: Address) -> ZomeApiResult<MessageWithAddress> {
-    utils::get_as_type::<Message>(message_address.clone())
+pub fn all_for_thread(thread_address: Address) -> ZomeApiResult<Vec<Message>> {
+    Ok(hdk::get_links(
+        &thread_address,
+        LinkMatch::Exactly(MESSAGE_LINK_TYPE.into()),
+        LinkMatch::Any,
+    )?
+    .addresses()
+    .iter()
+    .map(|address| get(address.to_string().into()).unwrap())
+    .collect())
+}
+
+pub fn get(message_address: Address) -> ZomeApiResult<Message> {
+    utils::get_as_type::<MessageEntry>(message_address.clone())
         .map(|message| message.with_address(message_address))
 }
 
@@ -115,7 +108,7 @@ pub fn def() -> ValidatingEntryType {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_validation_data: hdk::EntryValidationData<Message>| {
+        validation: |_validation_data: hdk::EntryValidationData<MessageEntry>| {
             Ok(())
         },
 
