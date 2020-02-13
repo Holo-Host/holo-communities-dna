@@ -48,12 +48,12 @@ define_zome! {
     functions: [
         get: {
             inputs: |agent_id: Address|,
-            outputs: |result: ZomeApiResult<people::PersonWithAddress>|,
+            outputs: |result: ZomeApiResult<people::Person>|,
             handler: people::get
         }
         get_me: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<people::PersonWithAddress>|,
+            outputs: |result: ZomeApiResult<people::Person>|,
             handler: people::get_me
         }
         is_registered: {
@@ -63,12 +63,12 @@ define_zome! {
         }
         register_user: {
             inputs: |name: String, avatar_url:String|,
-            outputs: |result: ZomeApiResult<people::PersonWithAddress>|,
+            outputs: |result: ZomeApiResult<people::Person>|,
             handler: people::register_user
         }
         all: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<Vec<people::PersonWithAddress>>|,
+            outputs: |result: ZomeApiResult<Vec<people::Person>>|,
             handler: people::all
         }
     ]

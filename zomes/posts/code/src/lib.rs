@@ -46,12 +46,12 @@ define_zome! {
     functions: [
         get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<post::PostWithAddress>|,
+            outputs: |result: ZomeApiResult<post::Post>|,
             handler: post::get
         }
         create: {
             inputs: |base: String, title: String, details: String, post_type: String, announcement: bool, timestamp: String|,
-            outputs: |result: ZomeApiResult<post::PostWithAddress>|,
+            outputs: |result: ZomeApiResult<post::Post>|,
             handler: post::create
         }
         all_for_base: {

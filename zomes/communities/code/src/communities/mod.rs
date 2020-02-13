@@ -28,14 +28,14 @@ use hdk_helpers::commit_if_not_in_chain;
 use super::DEFAULT_COMMUNITIES;
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct Community {
+pub struct CommunityEntry {
     pub name: String,
     pub slug: String,
 }
 
-impl Community {
-    pub fn with_address(&self, address: Address) -> CommunityWithAddress {
-        CommunityWithAddress {
+impl CommunityEntry {
+    pub fn with_address(&self, address: Address) -> Community {
+        Community {
             address,
             name: self.name.clone(),
             slug: self.slug.clone(),
@@ -43,9 +43,9 @@ impl Community {
     }
 }
 
-impl From<&(&str, &str)> for Community {
+impl From<&(&str, &str)> for CommunityEntry {
     fn from(tuple: &(&str, &str)) -> Self {
-        Community {
+        CommunityEntry {
             name: tuple.0.to_string(),
             slug: tuple.1.to_string(),
         }
@@ -53,16 +53,16 @@ impl From<&(&str, &str)> for Community {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct CommunityWithAddress {
+pub struct Community {
     pub address: Address,
     pub name: String,
     pub slug: String,
 }
 
-impl From<Community> for CommunityWithAddress {
-    fn from(community: Community) -> Self {
+impl From<Community> for Community {
+    fn from(community: CommunityEntry) -> Self {
         let address = Entry::App(COMMUNITY_ENTRY_TYPE.into(), community.clone().into()).address();
-        CommunityWithAddress {
+        Community {
             address,
             name: community.name,
             slug: community.slug,
@@ -76,18 +76,18 @@ pub const COMMUNITY_ENTRY_TYPE: &str = "community";
 const COMMUNITY_BASE_ENTRY: &str = "community_base";
 const COMMUNITY_LINK_TYPE: &str = "member_of";
 
-pub fn get(address: Address) -> ZomeApiResult<CommunityWithAddress> {
-    utils::get_as_type::<Community>(address.clone())
+pub fn get(address: Address) -> ZomeApiResult<Community> {
+    utils::get_as_type::<CommunityEntry>(address.clone())
         .map(|community| community.with_address(address))
 }
 
-pub fn get_by_slug(slug: String) -> ZomeApiResult<CommunityWithAddress> {
+pub fn get_by_slug(slug: String) -> ZomeApiResult<Community> {
     // first check the default communities and return early if one of those is found
     if let Some(t) = DEFAULT_COMMUNITIES
         .iter()
         .find(|(_, test_slug)| *test_slug == slug)
     {
-        return Ok(CommunityWithAddress::from(Community::from(t)));
+        return Ok(Community::from(CommunityEntry::from(t)));
     }
     // otherwise go to the DHT
     let slug_address = hdk::entry_address(&Entry::App(
@@ -112,7 +112,7 @@ pub fn get_by_slug(slug: String) -> ZomeApiResult<CommunityWithAddress> {
     get(community_address)
 }
 
-pub fn create(name: String, slug: String) -> ZomeApiResult<CommunityWithAddress> {
+pub fn create(name: String, slug: String) -> ZomeApiResult<Community> {
     let base_entry = Entry::App(
         COMMUNITY_BASE_ENTRY.into(),
         RawString::from(COMMUNITY_BASE_ENTRY).into(),
@@ -125,7 +125,7 @@ pub fn create(name: String, slug: String) -> ZomeApiResult<CommunityWithAddress>
     );
     let slug_address = hdk::commit_entry(&slug_entry)?;
 
-    let community = Community {
+    let community = CommunityEntry {
         name: name.clone(),
         slug: slug.clone(),
     };
@@ -141,7 +141,7 @@ pub fn create(name: String, slug: String) -> ZomeApiResult<CommunityWithAddress>
     Ok(community.with_address(community_address))
 }
 
-pub fn all() -> ZomeApiResult<Vec<CommunityWithAddress>> {
+pub fn all() -> ZomeApiResult<Vec<Community>> {
     let address = hdk::entry_address(&Entry::App(
         COMMUNITY_BASE_ENTRY.into(),
         RawString::from(COMMUNITY_BASE_ENTRY).into(),
@@ -157,7 +157,7 @@ pub fn all() -> ZomeApiResult<Vec<CommunityWithAddress>> {
     .chain(
         DEFAULT_COMMUNITIES
             .iter()
-            .map(|t| CommunityWithAddress::from(Community::from(t))),
+            .map(|t| Community::from(CommunityEntry::from(t))),
     ) // include the defaults also
     .collect())
 }
@@ -172,7 +172,7 @@ pub fn community_def() -> ValidatingEntryType {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_validation_data: hdk::EntryValidationData<Community>| {
+        validation: |_validation_data: hdk::EntryValidationData<CommunityEntry>| {
             Ok(())
         }
     )
