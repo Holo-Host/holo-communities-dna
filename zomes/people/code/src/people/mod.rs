@@ -24,15 +24,13 @@ use hdk::{
 };
 use hdk_helpers::commit_if_not_in_chain;
 
-pub const PERSON_ENTRY_TYPE: &str = "person";
-pub const PERSON_AGENT_LINK_TYPE: &str = "person_to_agent_link";
+// Core types
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct PersonEntry {
     pub name: String,
     pub avatar_url: String,
 }
-
 impl PersonEntry {
     pub fn with_address(&self, address: Address) -> Person {
         Person {
@@ -42,13 +40,16 @@ impl PersonEntry {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Person {
     pub address: Address,
     pub name: String,
     pub avatar_url: String,
 }
+pub const PERSON_ENTRY_TYPE: &str = "person";
+pub const PERSON_AGENT_LINK_TYPE: &str = "person_to_agent_link";
+
+// API
 
 pub fn get(agent_id: Address) -> ZomeApiResult<Person> {
     let person = utils::get_links_and_load_type::<PersonEntry>(

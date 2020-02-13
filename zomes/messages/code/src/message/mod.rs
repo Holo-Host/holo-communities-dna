@@ -16,15 +16,12 @@ use hdk::{
     utils,
     AGENT_ADDRESS,
 };
-
 use super::thread::{
     MESSAGE_LINK_TYPE,
     THREAD_ENTRY_TYPE
 };
 
-pub const MESSAGE_ENTRY_TYPE: &str = "message";
-
-pub const MESSAGE_MESSAGE_THREAD_LINK_TYPE: &str = "message_threads";
+// Core types
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct MessageEntry {
@@ -33,7 +30,6 @@ pub struct MessageEntry {
     pub thread_address: Address,
     pub creator: Address,
 }
-
 impl MessageEntry {
     pub fn with_address(&self, address: Address) -> Message {
         Message {
@@ -45,7 +41,6 @@ impl MessageEntry {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Message {
     address: Address,
@@ -54,6 +49,10 @@ pub struct Message {
     pub thread_address: Address,
     pub creator: Address,
 }
+pub const MESSAGE_ENTRY_TYPE: &str = "message";
+pub const MESSAGE_MESSAGE_THREAD_LINK_TYPE: &str = "message_threads";
+
+// API
 
 pub fn create(
     thread_address: Address,

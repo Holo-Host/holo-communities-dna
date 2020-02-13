@@ -24,15 +24,16 @@ use hdk::{
     utils,
 };
 use hdk_helpers::commit_if_not_in_chain;
-
 use super::DEFAULT_COMMUNITIES;
 
+// Core types
+
+pub type Base = RawString;
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct CommunityEntry {
     pub name: String,
     pub slug: String,
 }
-
 impl CommunityEntry {
     pub fn with_address(&self, address: Address) -> Community {
         Community {
@@ -42,7 +43,6 @@ impl CommunityEntry {
         }
     }
 }
-
 impl From<&(&str, &str)> for CommunityEntry {
     fn from(tuple: &(&str, &str)) -> Self {
         CommunityEntry {
@@ -51,14 +51,12 @@ impl From<&(&str, &str)> for CommunityEntry {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Community {
     pub address: Address,
     pub name: String,
     pub slug: String,
 }
-
 impl From<CommunityEntry> for Community {
     fn from(community_entry: CommunityEntry) -> Self {
         let address = Entry::App(COMMUNITY_ENTRY_TYPE.into(), community.clone().into()).address();
@@ -69,12 +67,11 @@ impl From<CommunityEntry> for Community {
         }
     }
 }
-
-pub type Base = RawString;
-
 pub const COMMUNITY_ENTRY_TYPE: &str = "community";
-const COMMUNITY_BASE_ENTRY: &str = "community_base";
-const COMMUNITY_LINK_TYPE: &str = "member_of";
+pub const COMMUNITY_BASE_ENTRY: &str = "community_base";
+pub const COMMUNITY_LINK_TYPE: &str = "member_of";
+
+// API
 
 pub fn get(address: Address) -> ZomeApiResult<Community> {
     utils::get_as_type::<CommunityEntry>(address.clone())
@@ -158,7 +155,7 @@ pub fn all() -> ZomeApiResult<Vec<Community>> {
         DEFAULT_COMMUNITIES
             .iter()
             .map(|t| Community::from(CommunityEntry::from(t))),
-    ) // include the defaults also
+    )
     .collect())
 }
 

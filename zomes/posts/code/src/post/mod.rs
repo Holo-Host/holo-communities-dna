@@ -19,6 +19,9 @@ use hdk::{
     AGENT_ADDRESS,
 };
 
+// Core types
+
+pub type Base = RawString;
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct PostEntry {
     pub title: String,
@@ -29,7 +32,6 @@ pub struct PostEntry {
     pub timestamp: String,
     pub base: String,
 }
-
 impl PostEntry {
     pub fn with_address(&self, address: Address) -> Post {
         Post {
@@ -44,7 +46,6 @@ impl PostEntry {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Post {
     pub address: Address,
@@ -56,19 +57,16 @@ pub struct Post {
     pub timestamp: String,
     pub base: String,
 }
-
-pub type Base = RawString;
-
-const POST_ENTRY_TYPE: &str = "post";
-const POST_BASE_ENTRY: &str = "post_base";
-const POST_LINK_TYPE: &str = "posted_in";
-
-// TODO: Return { posts, more } response format for pagination
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct GetPostsResult {
     posts: Vec<Post>,
     more: bool,
 }
+pub const POST_ENTRY_TYPE: &str = "post";
+pub const POST_BASE_ENTRY: &str = "post_base";
+pub const POST_LINK_TYPE: &str = "posted_in";
+
+// API
 
 pub fn get(address: Address) -> ZomeApiResult<Post> {
     utils::get_as_type::<PostEntry>(address.clone()).map(|post| post.with_address(address))

@@ -27,16 +27,9 @@ use hdk::{
 };
 use hdk_helpers::commit_if_not_in_chain;
 
-// tag for links from base to comment
+// Core types
 
-pub type Base = String;
-
-pub const COMMENT_ENTRY_TYPE: &str = "comment";
-pub const BASE_ENTRY_TYPE: &str = "base";
-pub const COMMENT_LINK_TYPE: &str = "commented_on";
-
-// comment type and result format
-
+pub type Base = String; // tag for links from base to comment
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct CommentEntry {
     base: String,
@@ -44,8 +37,6 @@ pub struct CommentEntry {
     text: String,
     timestamp: Iso8601,
 }
-
-// Converts a comment (without address) into a comment result for returning from the api call
 impl CommentEntry {
     pub fn with_address(&self, address: Address) -> Comment {
         Comment {
@@ -57,7 +48,6 @@ impl CommentEntry {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct Comment {
     address: Address,
@@ -66,6 +56,9 @@ pub struct Comment {
     text: String,
     timestamp: Iso8601,
 }
+pub const COMMENT_ENTRY_TYPE: &str = "comment";
+pub const BASE_ENTRY_TYPE: &str = "base";
+pub const COMMENT_LINK_TYPE: &str = "commented_on";
 
 // API methods
 

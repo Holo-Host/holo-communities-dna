@@ -19,21 +19,21 @@ use super::message::{
     MESSAGE_ENTRY_TYPE
 };
 
-pub const THREAD_ENTRY_TYPE: &str = "thread";
-pub const MESSAGE_LINK_TYPE: &str = "message_link_thread";
-pub const AGENT_MESSAGE_THREAD_LINK_TYPE: &str = "agent_message_thread";
+// Core types
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct ThreadEntry {
     pub participants: Vec<String>,
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Thread {
     pub address: String,
     pub last_read_message_address: String,
     pub participant_addresses: Vec<String>
 }
+pub const THREAD_ENTRY_TYPE: &str = "thread";
+pub const MESSAGE_LINK_TYPE: &str = "message_link_thread";
+pub const AGENT_MESSAGE_THREAD_LINK_TYPE: &str = "agent_message_thread";
 
 // API
 
@@ -90,7 +90,7 @@ pub fn all_for_current_agent() -> ZomeApiResult<Vec<Thread>> {
     .to_owned())
 }
 
-// PRIVATE
+// HELPERS
 
 // TODO: Convert to collect and return people records?
 fn get_thread_participants(thread_address: Address) -> ZomeApiResult<Vec<String>> {
