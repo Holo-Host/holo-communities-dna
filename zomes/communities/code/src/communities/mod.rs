@@ -59,13 +59,13 @@ pub struct Community {
     pub slug: String,
 }
 
-impl From<Community> for Community {
-    fn from(community: CommunityEntry) -> Self {
+impl From<CommunityEntry> for Community {
+    fn from(community_entry: CommunityEntry) -> Self {
         let address = Entry::App(COMMUNITY_ENTRY_TYPE.into(), community.clone().into()).address();
         Community {
             address,
-            name: community.name,
-            slug: community.slug,
+            name: community_entry.name,
+            slug: community_entry.slug,
         }
     }
 }
