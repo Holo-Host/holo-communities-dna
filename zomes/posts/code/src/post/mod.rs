@@ -121,7 +121,12 @@ pub fn all_for_base(base: String) -> ZomeApiResult<GetPostsResult> {
       .map(|address| get(address.to_string().into()).unwrap())
       .collect();
     
-    Ok(GetPostsResult { posts, more: false })
+    Ok(
+        GetPostsResult {
+            posts,
+            more: false
+        }
+    )
     // Ok(hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
     //   .addresses()
     //   .iter()

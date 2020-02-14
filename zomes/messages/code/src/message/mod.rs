@@ -80,7 +80,7 @@ pub fn create(
     Ok(message.with_address(message_address.clone()))
 }
 
-pub fn all_for_thread(thread_address: Address) -> ZomeApiResult<Vec<Message>> {
+pub fn all(thread_address: Address) -> ZomeApiResult<Vec<Message>> {
     Ok(hdk::get_links(
         &thread_address,
         LinkMatch::Exactly(MESSAGE_LINK_TYPE.into()),
@@ -88,14 +88,25 @@ pub fn all_for_thread(thread_address: Address) -> ZomeApiResult<Vec<Message>> {
     )?
     .addresses()
     .iter()
-    .map(|address| get(address.to_string().into()).unwrap())
-    .collect())
+    .map(|address| get(address.clone()).unwrap())
+    .collect::<Vec<Message>>())
 }
 
-pub fn get(message_address: Address) -> ZomeApiResult<Message> {
-    utils::get_as_type::<MessageEntry>(message_address.clone())
-        .map(|message| message.with_address(message_address))
+fn get(message_address: Address) -> ZomeApiResult<Message> {
+    let message_entry = utils::get_as_type::<MessageEntry>(message_address.clone())?;
+
+    Ok(
+        Message {
+            address: message_address,
+            thread_address: message_entry.thread_address,
+            creator: AGENT_ADDRESS.to_string().into(),
+            text: message_entry.text,
+            timestamp: message_entry.timestamp,
+        }
+    )
 }
+
+// PRIVATE
 
 pub fn def() -> ValidatingEntryType {
     entry!(

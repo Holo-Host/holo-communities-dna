@@ -59,7 +59,8 @@ pub struct Community {
 }
 impl From<CommunityEntry> for Community {
     fn from(community_entry: CommunityEntry) -> Self {
-        let address = Entry::App(COMMUNITY_ENTRY_TYPE.into(), community.clone().into()).address();
+        let address = Entry::App(COMMUNITY_ENTRY_TYPE.into(), community_entry.clone().into()).address();
+
         Community {
             address,
             name: community_entry.name,

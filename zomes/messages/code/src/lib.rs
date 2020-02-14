@@ -48,7 +48,7 @@ define_zome! {
     functions: [
         create_thread: {
             inputs: |participant_ids: Vec<String>|,
-            outputs: |result: ZomeApiResult<Address>|,
+            outputs: |result: ZomeApiResult<thread::Thread>|,
             handler: thread::create
         }
         create_message: {
@@ -56,15 +56,20 @@ define_zome! {
             outputs: |result: ZomeApiResult<message::Message>|,
             handler: message::create
         }
-        all_threads_for_current_agent: {
+        all_threads: {
             inputs: | |,
             outputs: |result: ZomeApiResult<Vec<thread::Thread>>|,
-            handler: thread::all_for_current_agent
+            handler: thread::all
+        }
+        get_thread: {
+            inputs: |thread_address: Address|,
+            outputs: |result: ZomeApiResult<thread::Thread>|,
+            handler: thread::get
         }
         all_messages_for_thread: {
             inputs: |thread_address: Address|,
             outputs: |result: ZomeApiResult<Vec<message::Message>>|,
-            handler: message::all_for_thread
+            handler: message::all
         }
         set_last_read_message: {
             inputs: |thread_address: Address, message_address: Address|,
@@ -76,7 +81,8 @@ define_zome! {
         hc_public [
             create_thread,
             create_message,
-            all_threads_for_current_agent,
+            all_threads,
+            get_thread,
             all_messages_for_thread,
             get_message,
             set_last_read_message
