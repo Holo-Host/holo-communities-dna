@@ -47,7 +47,7 @@ define_zome! {
 
     functions: [
         create_thread: {
-            inputs: |participant_ids: Vec<String>|,
+            inputs: |participant_ids: Vec<String>, timestamp: Iso8601|,
             outputs: |result: ZomeApiResult<thread::Thread>|,
             handler: thread::create
         }
@@ -71,10 +71,10 @@ define_zome! {
             outputs: |result: ZomeApiResult<Vec<message::Message>>|,
             handler: message::all
         }
-        set_last_read_message: {
-            inputs: |thread_address: Address, message_address: Address|,
-            outputs: |result: ZomeApiResult<Address>|,
-            handler: thread::set_last_read_message
+        set_last_read_time: {
+            inputs: |thread_address: Address, last_read_time: Iso8601|,
+            outputs: |result: ZomeApiResult<thread::Thread>|,
+            handler: thread::set_last_read_time
         }
     ]
     traits: {
@@ -84,8 +84,7 @@ define_zome! {
             all_threads,
             get_thread,
             all_messages_for_thread,
-            get_message,
-            set_last_read_message
+            set_last_read_time
         ]
     }
 }

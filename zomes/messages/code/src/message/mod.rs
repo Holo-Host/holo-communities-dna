@@ -31,7 +31,7 @@ pub struct MessageEntry {
     pub creator: Address,
 }
 impl MessageEntry {
-    pub fn with_address(&self, address: Address) -> Message {
+    pub fn to_message(&self, address: Address) -> Message {
         Message {
             address,
             thread_address: self.thread_address.clone(),
@@ -43,7 +43,7 @@ impl MessageEntry {
 }
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Message {
-    address: Address,
+    pub address: Address,
     pub timestamp: Iso8601,
     pub text: String,
     pub thread_address: Address,
@@ -59,14 +59,15 @@ pub fn create(
     text: String,
     timestamp: Iso8601,
 ) -> ZomeApiResult<Message> {
-    let message = MessageEntry {
+    let message_entry = MessageEntry {
         text,
         timestamp: timestamp.clone().into(),
         thread_address: thread_address.to_owned(),
         creator: AGENT_ADDRESS.to_string().into(),
     };
-    let message_entry = Entry::App(MESSAGE_ENTRY_TYPE.into(), message.clone().into());
-    let message_address = hdk::commit_entry(&message_entry)?;
+    let message_address = hdk::commit_entry(
+        &Entry::App(MESSAGE_ENTRY_TYPE.into(), message_entry.clone().into())
+    )?;
 
     utils::link_entries_bidir(
         &message_address,
@@ -77,7 +78,7 @@ pub fn create(
         "",
     )?;
 
-    Ok(message.with_address(message_address.clone()))
+    Ok(message_entry.to_message(message_address.clone()))
 }
 
 pub fn all(thread_address: Address) -> ZomeApiResult<Vec<Message>> {

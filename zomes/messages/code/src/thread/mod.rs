@@ -1,3 +1,8 @@
+use std::{
+    convert::{
+        TryFrom,
+    }
+};
 use hdk::{
     self,
     entry_definition::ValidatingEntryType,
@@ -5,15 +10,15 @@ use hdk::{
     holochain_core_types::{
         dna::entry_types::Sharing,
         entry::Entry,
-        link::LinkMatch
+        link::LinkMatch,
+        time::Iso8601,
     },
     holochain_json_api::{
         error::JsonError,
-        json::JsonString
+        json::JsonString,
     },
     holochain_persistence_api::cas::content::Address,
     holochain_wasm_utils::api_serialization::{
-        // get_entry::{GetEntryOptions, GetEntryResultType},
         get_links::{GetLinksResult, LinksResult},
     },
     utils,
@@ -31,22 +36,21 @@ pub struct ThreadEntry {
 }
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Thread {
-    pub address: String,
+    pub address: Address,
     pub participant_addresses: Vec<String>,
-    pub last_read_message_address: String,
+    pub last_read_time: Iso8601,
 }
 pub const THREAD_ENTRY_TYPE: &str = "thread";
 pub const MESSAGE_LINK_TYPE: &str = "message_link_thread";
 pub const AGENT_MESSAGE_THREAD_LINK_TYPE: &str = "agent_message_thread";
-pub const DEFAULT_LAST_MESSAGE_READ_TAG: &str = "";
 
 // API
 
-pub fn create(participant_ids: Vec<String>) -> ZomeApiResult<Thread> {
+pub fn create(participant_ids: Vec<String>, timestamp: Iso8601) -> ZomeApiResult<Thread> {
     let mut participant_agent_ids = participant_ids.clone();
 
     participant_agent_ids.push(AGENT_ADDRESS.to_string()); // add this agent to the list
-
+    
     let thread_entry = Entry::App(
         THREAD_ENTRY_TYPE.into(),
         ThreadEntry {
@@ -59,7 +63,7 @@ pub fn create(participant_ids: Vec<String>) -> ZomeApiResult<Thread> {
         create_or_update_agent_thread_link(
             participant_id.into(),
             thread_address.clone(),
-            DEFAULT_LAST_MESSAGE_READ_TAG.into()
+            timestamp.clone()
         )?;
     }
 
@@ -67,21 +71,27 @@ pub fn create(participant_ids: Vec<String>) -> ZomeApiResult<Thread> {
         Thread {
             address: thread_address.clone().into(),
             participant_addresses: participant_agent_ids.clone().into(),
-            last_read_message_address: DEFAULT_LAST_MESSAGE_READ_TAG.into()
+            last_read_time: timestamp.clone()
         }
     )
 }
 
-pub fn set_last_read_message(thread_address: Address, last_read_message_address: Address) -> ZomeApiResult<Address> {
+pub fn set_last_read_time(thread_address: Address, last_read_time: Iso8601) -> ZomeApiResult<Thread> {
     create_or_update_agent_thread_link(
         AGENT_ADDRESS.to_string().into(),
-        thread_address,
-        last_read_message_address.into()
-    )
+        thread_address.clone(),
+        last_read_time.clone()
+    )?;
+
+    Ok(Thread {
+        address: thread_address.clone(),
+        participant_addresses: get_thread_participants(thread_address)?,
+        last_read_time: last_read_time.clone()
+    })
 }
 
 pub fn all() -> ZomeApiResult<Vec<Thread>> {
-    Ok(get_thread_links()?
+    Ok(all_thread_links_for_agent()?
         .links()
         .iter()
         .map(|agent_thread_link| build_thread_from_thread_link(agent_thread_link.to_owned()).unwrap())
@@ -91,7 +101,7 @@ pub fn all() -> ZomeApiResult<Vec<Thread>> {
 }
 
 pub fn get(thread_address: Address) -> ZomeApiResult<Thread> {
-    let thread_link = get_thread_link(thread_address)?;
+    let thread_link = get_thread_link(thread_address).unwrap().unwrap();
 
     build_thread_from_thread_link(thread_link)
 }
@@ -102,33 +112,42 @@ fn get_thread_entry(thread_address: Address) -> ZomeApiResult<ThreadEntry> {
     utils::get_as_type::<ThreadEntry>(thread_address.clone())
 }
 
-fn get_thread_links() -> ZomeApiResult<GetLinksResult> {
+fn all_thread_links_for_agent() -> ZomeApiResult<GetLinksResult> {
     hdk::get_links(
         &AGENT_ADDRESS,
-        LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.into()),
+        LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.clone().into()),
         LinkMatch::Any,
     )
 }
 
-fn get_thread_link(thread_address: Address) -> ZomeApiResult<LinksResult> {    
-    Ok(get_thread_links()?
+fn get_thread_link(thread_address: Address) -> ZomeApiResult<Option<LinksResult>> {    
+    Ok(all_thread_links_for_agent()?
         .links()
         .into_iter()
-        .find(|thread_link| thread_link.address == thread_address)
-        .unwrap())
+        .rev()
+        .find(|thread_link| thread_link.address == thread_address))
 }
-
 
 fn create_or_update_agent_thread_link(
     agent_address: Address,
     thread_address: Address,
-    last_read_message_address_string: String
+    last_read_time: Iso8601
 ) -> ZomeApiResult<Address> {
+    if let Some(current_link) = get_thread_link(thread_address.clone())? {
+        // hdk::debug(format!("!!!!!! current_link: {:#?}", current_link)).ok();
+        hdk::remove_link(
+            &agent_address,
+            &thread_address,
+            AGENT_MESSAGE_THREAD_LINK_TYPE,
+            &current_link.tag
+        )?;    
+    }
+
     hdk::link_entries(
         &agent_address,
         &thread_address,
         AGENT_MESSAGE_THREAD_LINK_TYPE,
-        &last_read_message_address_string
+        &last_read_time.to_string()
     )
 }
 
@@ -137,7 +156,7 @@ fn get_thread_participants(thread_address: Address) -> ZomeApiResult<Vec<String>
         .participants
         .iter()
         .map(|participant_agent_id| {
-            // TODO: Convert to collect and return people records?
+            // TODO: Collect and return a <Vec<Person>> instead?
             // #[derive(Serialize, Deserialize, Debug, DefaultJson)]
             // struct GetPersonInput {
             //     agend_id: Address,
@@ -161,9 +180,9 @@ fn build_thread_from_thread_link(agent_thread_link: LinksResult) -> ZomeApiResul
     let participant_addresses = self::get_thread_participants(agent_thread_link.address.clone())?;
 
     Ok(Thread {
-        address: agent_thread_link.address.to_string(),
+        address: agent_thread_link.address,
         participant_addresses: participant_addresses,
-        last_read_message_address: agent_thread_link.tag.to_owned()
+        last_read_time: Iso8601::try_from(agent_thread_link.tag.to_owned()).unwrap()
     })
 }
 
@@ -211,21 +230,3 @@ pub fn def() -> ValidatingEntryType {
         ]
     )
 }
-
-// TODO: Remove any previous links excluding the one just created?
-// hdk::get_links(
-//     &AGENT_ADDRESS,
-//     LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.into()),
-//     LinkMatch::Any,
-// )?
-// .links()
-//
-//       need to get address of latest unread message to link match
-//       with that as tag
-//
-// hdk::remove_link(
-//     &AGENT_ADDRESS,
-//     &thread_addr,
-//     AGENT_MESSAGE_THREAD_LINK_TYPE,
-//     ""
-// )?;
