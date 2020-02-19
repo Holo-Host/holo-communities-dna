@@ -1,12 +1,12 @@
 const { one } = require('../config')
 module.exports = (scenario) => {
 
-scenario('Check for a nonexistent thread and then create it', async (s, t) => {
+scenario('Can create a new Message Thread, and retrieve it in my list of all Message Threads', async (s, t) => {
   const { alice } = await s.players({alice: one}, true)
   const timestamp = "2020-02-17T06:56:08+00:00"
 
   const createThreadZomeApiResult = await alice.callSync("app", "messages", "create_thread", {
-    participant_ids: [],
+    participant_addresses: [],
     timestamp
   })
 
@@ -24,12 +24,12 @@ scenario('Check for a nonexistent thread and then create it', async (s, t) => {
   t.deepEqual(allThreadsResult.Ok[0], expectedCreateThreadResult)
 }),
 
-scenario('create_thread, set last_read_time and confirm set with get_thread', async (s, t) => {
+scenario('Can set a Message Threads last read time', async (s, t) => {
   const { alice } = await s.players({alice: one}, true)
   
   const timestamp = "2020-02-11T06:56:08+00:00"
   const { address } = (await alice.callSync("app", "messages", "create_thread", {
-    participant_ids: [],
+    participant_addresses: [],
     timestamp
   })).Ok
 
@@ -56,6 +56,11 @@ scenario('create_thread, set last_read_time and confirm set with get_thread', as
   await s.consistency();
 
   t.deepEqual(getThreadResult, expectedSetLastReadTimeResult)
+
+  const allThreadsResult = await alice.callSync("app", "messages", "all_threads", {})
+  await s.consistency();
+
+  t.equal(allThreadsResult.Ok.length, 1)
 })
 
 }

@@ -6,7 +6,7 @@ module.exports = (scenario) => {
     const timestamp = "2020-01-09T06:56:08+00:00"
     // add a thread
     const createThreadResult = await alice.callSync("app", "messages", "create_thread", {
-      participant_ids: [],
+      participant_addresses: [],
       timestamp
     })
 

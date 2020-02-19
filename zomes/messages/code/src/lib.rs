@@ -47,7 +47,7 @@ define_zome! {
 
     functions: [
         create_thread: {
-            inputs: |participant_ids: Vec<String>, timestamp: Iso8601|,
+            inputs: |participant_addresses: Vec<Address>, timestamp: Iso8601|,
             outputs: |result: ZomeApiResult<thread::Thread>|,
             handler: thread::create
         }
