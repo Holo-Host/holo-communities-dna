@@ -17,6 +17,8 @@ use hdk::{
         get_links::{
             GetLinksResult,
             LinksResult,
+            // GetLinksOptions,
+            // LinksStatusRequestKind
         },
     },
     utils,
@@ -124,6 +126,12 @@ fn all_thread_links_for_agent() -> ZomeApiResult<GetLinksResult> {
         LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.clone().into()),
         LinkMatch::Any,
     )
+    // hdk::get_links_with_options(
+    //     &AGENT_ADDRESS,
+    //     LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.clone().into()),
+    //     LinkMatch::Any,
+    //     GetLinksOptions::default()
+    // )
 }
 
 fn get_thread_link(thread_address: Address) -> ZomeApiResult<Option<LinksResult>> {    
@@ -147,7 +155,7 @@ fn create_or_update_agent_thread_link(
             &thread_address,
             AGENT_MESSAGE_THREAD_LINK_TYPE,
             &current_link.tag
-        )?;    
+        )?;
         // hdk::debug(format!("!!!!!! after remove_link: {:#?}", _remove_link_result)).ok();
     }
 
