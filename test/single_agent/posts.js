@@ -46,6 +46,8 @@ scenario('Can create multiple posts', async (s, t) => {
     // try getting all of them
     const get_posts_result = await alice.callSync("app", "posts", "all_for_base", {
       base: postFactory("").base,
+      _limit: 10,
+      _from_time: "2020-02-17T06:56:08+00:00"
     })
     t.deepEqual(get_posts_result.Ok.posts.length, nTestPosts)
 
