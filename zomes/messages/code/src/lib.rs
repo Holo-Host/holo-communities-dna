@@ -47,7 +47,8 @@ define_zome! {
 
     functions: [
         create_thread: {
-            inputs: |participant_addresses: Vec<Address>, timestamp: Iso8601|,
+            // TODO: becomes Iso8601 once core regex tagging issue fixed
+            inputs: |participant_addresses: Vec<Address>, timestamp: String|,
             outputs: |result: ZomeApiResult<thread::Thread>|,
             handler: thread::create
         }
@@ -72,7 +73,8 @@ define_zome! {
             handler: message::all
         }
         set_last_read_time: {
-            inputs: |thread_address: Address, last_read_time: Iso8601|,
+            // TODO: becomes Iso8601 once core regex tagging issue fixed
+            inputs: |thread_address: Address, last_read_time: String|,
             outputs: |result: ZomeApiResult<thread::Thread>|,
             handler: thread::set_last_read_time
         }

@@ -27,14 +27,19 @@ scenario('Can create a new Message Thread, and retrieve it in my list of all Mes
 scenario('Can set a Message Threads last read time', async (s, t) => {
   const { alice } = await s.players({alice: one}, true)
   
-  const timestamp = "2020-02-11T06:56:08+00:00"
+  // TODO: becomes Iso8601 once core regex tagging issue fixed
+  // const timestamp = "2020-02-11T06:56:08+00:00"
+  const timestamp = "old"
   const { address } = (await alice.callSync("app", "messages", "create_thread", {
     participant_addresses: [],
     timestamp
   })).Ok
 
   await s.consistency();
-  const updatedTimestamp = "2020-02-17T06:56:08+00:00"
+
+  // TODO: becomes Iso8601 once core regex tagging issue fixed
+  // const updatedTimestamp = "2020-02-17T06:56:08+00:00"
+  const updatedTimestamp = "new"
   const setLastReadTimeApiResult = await alice.callSync("app", "messages", "set_last_read_time", {
     thread_address: address,
     last_read_time: updatedTimestamp

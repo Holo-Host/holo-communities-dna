@@ -89,6 +89,7 @@ pub fn all(thread_address: Address) -> ZomeApiResult<Vec<Message>> {
     )?
     .addresses()
     .iter()
+    .rev()
     .map(|address| get(address.clone()).unwrap())
     .collect::<Vec<Message>>())
 }

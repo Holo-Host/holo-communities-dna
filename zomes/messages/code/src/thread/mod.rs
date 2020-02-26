@@ -6,7 +6,7 @@ use hdk::{
         dna::entry_types::Sharing,
         entry::Entry,
         link::LinkMatch,
-        time::Iso8601,
+        // time::Iso8601,
     },
     holochain_json_api::{
         error::JsonError,
@@ -16,9 +16,7 @@ use hdk::{
     holochain_wasm_utils::api_serialization::{
         get_links::{
             GetLinksResult,
-            LinksResult,
-            // GetLinksOptions,
-            // LinksStatusRequestKind
+            LinksResult
         },
     },
     utils,
@@ -43,7 +41,7 @@ pub struct ThreadEntry {
 pub struct Thread {
     pub address: Address,
     pub participant_addresses: Vec<Address>,
-    pub last_read_time: Iso8601,
+    pub last_read_time: String,
 }
 pub const THREAD_ENTRY_TYPE: &str = "thread";
 pub const MESSAGE_LINK_TYPE: &str = "message_link_thread";
@@ -51,7 +49,11 @@ pub const AGENT_MESSAGE_THREAD_LINK_TYPE: &str = "agent_message_thread";
 
 // API
 
-pub fn create(participant_addresses: Vec<Address>, timestamp: Iso8601) -> ZomeApiResult<Thread> {
+pub fn create(
+    participant_addresses: Vec<Address>,
+    // TODO: becomes Iso8601 once core regex tagging issue fixed
+    timestamp: String
+) -> ZomeApiResult<Thread> {
     let mut participant_addresses_including_current = participant_addresses.clone();
 
     participant_addresses_including_current.push(AGENT_ADDRESS.to_string().into()); // add this agent to the list
@@ -81,7 +83,11 @@ pub fn create(participant_addresses: Vec<Address>, timestamp: Iso8601) -> ZomeAp
     )
 }
 
-pub fn set_last_read_time(thread_address: Address, last_read_time: Iso8601) -> ZomeApiResult<Thread> {
+pub fn set_last_read_time(
+    thread_address: Address,
+    // TODO: becomes Iso8601 once core regex tagging issue fixed
+    last_read_time: String
+) -> ZomeApiResult<Thread> {
     create_or_update_agent_thread_link(
         AGENT_ADDRESS.to_string().into(),
         thread_address.clone(),
@@ -96,8 +102,6 @@ pub fn set_last_read_time(thread_address: Address, last_read_time: Iso8601) -> Z
 }
 
 pub fn all() -> ZomeApiResult<Vec<Thread>> {
-    hdk::debug(format!("!!!! test {:#?}", all_thread_links_for_agent()?.links())).ok();
-
     Ok(all_thread_links_for_agent()?
         .links()
         .iter()
@@ -126,12 +130,6 @@ fn all_thread_links_for_agent() -> ZomeApiResult<GetLinksResult> {
         LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.clone().into()),
         LinkMatch::Any,
     )
-    // hdk::get_links_with_options(
-    //     &AGENT_ADDRESS,
-    //     LinkMatch::Exactly(AGENT_MESSAGE_THREAD_LINK_TYPE.clone().into()),
-    //     LinkMatch::Any,
-    //     GetLinksOptions::default()
-    // )
 }
 
 fn get_thread_link(thread_address: Address) -> ZomeApiResult<Option<LinksResult>> {    
@@ -145,18 +143,16 @@ fn get_thread_link(thread_address: Address) -> ZomeApiResult<Option<LinksResult>
 fn create_or_update_agent_thread_link(
     agent_address: Address,
     thread_address: Address,
-    last_read_time: Iso8601
+    // TODO: becomes Iso8601 once core regex tagging issue fixed
+    last_read_time: String
 ) -> ZomeApiResult<Address> {
     if let Some(current_link) = get_thread_link(thread_address.clone())? {
-        // Should be removing link here
-        hdk::debug(format!("!!!!!! current_link: {:#?}", current_link)).ok();
-        let _remove_link_result = hdk::remove_link(
+        hdk::remove_link(
             &agent_address,
             &thread_address,
             AGENT_MESSAGE_THREAD_LINK_TYPE,
             &current_link.tag
         )?;
-        // hdk::debug(format!("!!!!!! after remove_link: {:#?}", _remove_link_result)).ok();
     }
 
     hdk::link_entries(
@@ -182,7 +178,9 @@ fn build_thread_from_thread_link(agent_thread_link: LinksResult) -> ZomeApiResul
     Ok(Thread {
         address: agent_thread_link.address,
         participant_addresses: participant_addresses,
-        last_read_time: Iso8601::try_from(agent_thread_link.tag.to_owned()).unwrap()
+        // TODO: becomes Iso8601 once core regex tagging issue fixed
+        // last_read_time: Iso8601::try_from(agent_thread_link.tag.to_owned()).unwrap()
+        last_read_time: String::try_from(agent_thread_link.tag.to_owned()).unwrap()
     })
 }
 
