@@ -18,11 +18,11 @@ and started using
 ### For 2 instances (run the following in three seperate sessions of nix-shells)
 
 ```
-sim2h_server --port 9022
+nix-shell --run ./sim2h_server --port 9022
 
-hc run --agent-name agent0 --port 3400 --networked sim2h --sim2h-server ws://localhost:9022
+nix-shell --run "hc run --agent-name agent0 --port 3400 --networked sim2h --sim2h-server ws://localhost:9022"
 
-hc run --agent-name agent1 --port 3401 --networked sim2h --sim2h-server ws://localhost:9022
+nix-shell --run "hc run --agent-name agent1 --port 3401 --networked sim2h --sim2h-server ws://localhost:9022"
 ```
 
 If you plan to develop the DNA code further the automated tests can be run using
