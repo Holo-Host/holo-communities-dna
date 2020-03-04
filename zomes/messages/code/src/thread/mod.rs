@@ -74,13 +74,11 @@ pub fn create(
         )?;
     }
 
-    Ok(
-        Thread {
-            address: thread_address.clone().into(),
-            participant_addresses: participant_addresses_including_current.clone().into(),
-            last_read_time: timestamp.clone()
-        }
-    )
+    Ok(Thread {
+        address: thread_address.clone().into(),
+        participant_addresses: participant_addresses_including_current.clone().into(),
+        last_read_time: timestamp.clone()
+    })
 }
 
 pub fn set_last_read_time(
