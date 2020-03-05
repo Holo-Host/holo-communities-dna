@@ -25,7 +25,10 @@ scenario('Can create and retrieve post', async (s, t) => {
     t.deepEqual(get_post_result.Ok, { ...testPost, creator: alice.info('app').agentAddress, address }, "Could retrieve the added post by address")
 
     const get_posts_result = await alice.callSync("app", "posts", "all_for_base", {
-      base: testPost.base
+      base: testPost.base,
+      // TODO: becomes Iso8601 once core regex tagging issue fixed
+      _from_time: "new",
+      _limit: "10"  
     })
     console.log(get_posts_result.Ok)
     t.deepEqual(get_posts_result.Ok, {posts: [{ ...testPost, creator: alice.info('app').agentAddress, address }], more: false}, "Could retrieve the added post from the base")
@@ -46,8 +49,9 @@ scenario('Can create multiple posts', async (s, t) => {
     // try getting all of them
     const get_posts_result = await alice.callSync("app", "posts", "all_for_base", {
       base: postFactory("").base,
-      _limit: 10,
-      _from_time: "2020-02-17T06:56:08+00:00"
+      _limit: "10",
+      _from_time: "new"
+      // _from_time: "2020-02-17T06:56:08+00:00"
     })
     t.deepEqual(get_posts_result.Ok.posts.length, nTestPosts)
 

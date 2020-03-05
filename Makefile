@@ -47,9 +47,8 @@ test-unit:
 
 test-e2e:	$(DNA) test-sim2h test-node
 	@echo "Starting Scenario tests in $$(pwd)..."; \
-	    RUST_BACKTRACE=1 NETWORK_TYPE=sim2h hc test
-			#  \
-	    #     | test/node_modules/faucet/bin/cmd.js
+	    RUST_BACKTRACE=1 NETWORK_TYPE=sim2h hc test \
+	        | test/node_modules/faucet/bin/cmd.js
 
 test-node:
 	@echo "Setting up Scenario/Stress test Javascript..."; \

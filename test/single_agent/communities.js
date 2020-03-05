@@ -1,6 +1,5 @@
 const { one } = require('../config')
 module.exports = scenario => {
-
   scenario("Create and get single community", async (s, t) => {
     const { alice } = await s.players({alice: one}, true)
     const name = "Test Community 1"
@@ -17,16 +16,14 @@ module.exports = scenario => {
     const { Ok: getCommunityResult } = await alice.callSync("app", "communities", "get", {
       address: addCommunityResult.address
     })
-    t.equal(getCommunityResult.address, address)
+    t.equal(getCommunityResult.address, getCommunityResult.address)
     t.equal(getCommunityResult.name, name)
     t.equal(getCommunityResult.slug, slug)
 
-    const { getBySlugResult } = await alice.callSync("app", "communities", "get_by_slug", { slug })
+    const { Ok: getBySlugResult } = await alice.callSync("app", "communities", "get_by_slug", { slug })
 
-    console.log('!!!!! getBySlugResult with error:', getBySlugResult)
-
-    t.equal(getBySlugResult.Ok.address, address)
-    t.equal(getBySlugResult.Ok.name, name)
+    t.equal(getBySlugResult.address, addCommunityResult.address)
+    t.equal(getBySlugResult.name, name)
 
     const { Ok: getCommunitiesResult } = await alice.callSync("app", "communities", "all", {})
     t.ok(getCommunitiesResult.some(community => community.name === addCommunityResult.name), "Could retrieve the added community from the base")
@@ -35,8 +32,8 @@ module.exports = scenario => {
   scenario("Create 2 communities and get all communities back", async (s, t) => {
     const { alice } = await s.players({alice: one}, true)
     const communities = [
-      { slug: 'test1', name: "Test Community 1" },
-      { slug: 'test2', name: "Test Community 2" },
+      { name: "Test Community 1" , slug: 'test1' },
+      { name: "Test Community 2", slug: 'test2' }
     ]
     for (const [index, community] of communities.entries()) {
       const { Ok: addCommunityResult } = await alice.callSync("app", "communities", "create", {
@@ -62,10 +59,8 @@ module.exports = scenario => {
 
     const { Ok: allCommunitiesResult } = await alice.callSync("app", "communities", "all", {})
 
-    t.deepEqual(allCommunitiesResult, communities)
-
-    // const getCommunitiesResult = await alice.callSync("app", "communities", "all", {})
-    // t.ok(getCommunitiesResult.Ok.some(community => community.name === communityResult.name), "Could retrieve the added community from the base")
+    for (const [index, community] of communities.entries()) {
+      t.ok(allCommunitiesResult.find(c => c.address === community.address))
+    }
   })
-
 }

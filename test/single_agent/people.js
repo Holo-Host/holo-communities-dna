@@ -36,7 +36,7 @@ scenario('Can check if agent is registered, register agent, get an individual pe
 
   const allResult = await alice.call("app", 'people', 'all', {})
   t.deepEqual(allResult.Ok.length, 2)
-  t.deepEqual(allResult.Ok.sort().map(p => p.name), [aliceUser, bobUser].sort().map(p => p.name))
+  t.deepEqual(allResult.Ok.sort().map(p => p.name), [bobUser, aliceUser].sort().map(p => p.name))
 
 })
 

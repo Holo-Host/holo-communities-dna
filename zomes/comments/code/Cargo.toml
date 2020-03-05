@@ -5,11 +5,11 @@ authors = ["pospi <pospi@spadgos.com>"]
 edition = "2018"
 
 [dependencies]
-serde = "=1.0.104"
+serde = "=1.0.100"
 serde_json = { version = "=1.0.47", features = ["preserve_order"] }
-serde_derive = "=1.0.104"
-hdk = { git = "https://github.com/holochain/holochain-rust", tag = "v0.0.44-alpha3" }
-holochain_json_derive = "=0.0.23"
+serde_derive = "=1.0.100"
+hdk = { git = "https://github.com/holochain/holochain-rust", tag = "v0.0.43-alpha3" }
+holochain_json_derive = "=0.0.20"
 hdk-helpers = { path="../../../common/hdk-helpers" }
 
 [lib]
