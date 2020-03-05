@@ -7,11 +7,10 @@ use hdk::{
         entry::Entry,
         link::LinkMatch,
         time::Iso8601,
-        // network::query::{
-        //     Pagination,
-        //     TimePagination,
-        //     // SortOrder,
-        // },
+        network::query::{
+            Pagination,
+            TimePagination,
+        },
     },
     holochain_json_api::{
         error::JsonError,
@@ -23,7 +22,6 @@ use hdk::{
     holochain_persistence_api::cas::content::Address,
     holochain_wasm_utils::api_serialization::{
         get_links::{
-            // GetLinksResult,
             GetLinksOptions,
         },
     },
@@ -125,8 +123,8 @@ pub fn create(
 
 pub fn all_for_base(
     base: String,
-    _from_time: Iso8601,
-    _limit: String
+    from_time: Iso8601,
+    limit: usize
 ) -> ZomeApiResult<PaginatedPostsCollection> {
     let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
     // let posts = hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
@@ -135,10 +133,10 @@ pub fn all_for_base(
         LinkMatch::Exactly(POST_LINK_TYPE.into()),
         LinkMatch::Any,
         GetLinksOptions {
-            // pagination: Some(Pagination::Time(TimePagination {
-            //     from_time,
-            //     limit,
-            // })),
+            pagination: Some(Pagination::Time(TimePagination {
+                from_time,
+                limit
+            })),
             ..GetLinksOptions::default()
         }
     )?

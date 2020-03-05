@@ -56,7 +56,7 @@ define_zome! {
             handler: post::create
         }
         all_for_base: {
-            inputs: |base: String, _from_time: Iso8601, _limit: String|,
+            inputs: |base: String, from_time: Iso8601, limit: usize|,
             outputs: |result: ZomeApiResult<post::PaginatedPostsCollection>|,
             handler: post::all_for_base
         }
