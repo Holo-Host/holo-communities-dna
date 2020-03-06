@@ -126,9 +126,11 @@ pub fn all_for_base(
     from_time: Iso8601,
     limit: usize
 ) -> ZomeApiResult<PaginatedPostsCollection> {
-    let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
-    // let posts = hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
-    let posts = hdk::get_links_with_options(
+    let address = hdk::entry_address(
+        &Entry::App(POST_BASE_ENTRY.into(),
+        RawString::from(base).into())
+    )?;
+    let posts:Vec<Post> = hdk::get_links_with_options(
         &address,
         LinkMatch::Exactly(POST_LINK_TYPE.into()),
         LinkMatch::Any,
@@ -144,11 +146,16 @@ pub fn all_for_base(
         .iter()
         .map(|address| get(address.to_string().into()).unwrap())
         .collect();
+    let more: bool = if posts.len() < limit.clone() {
+        false
+    } else {
+        true
+    };
 
     Ok(
         PaginatedPostsCollection {
             posts,
-            more: false
+            more
         }
     )
 }
