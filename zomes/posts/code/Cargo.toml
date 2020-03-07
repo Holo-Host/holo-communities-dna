@@ -10,7 +10,8 @@ serde_json = { version = "=1.0.47", features = ["preserve_order"] }
 serde_derive = "=1.0.104"
 boolinator = "=2.4.0"
 derive_more = "0.9.0"
-hdk = { git = "https://github.com/holochain/holochain-rust", tag = "v0.0.44-alpha3" }
+hdk = { git = "https://github.com/holochain/holochain-rust", branch = "fix-time-pagination" }
+# hdk = { path="../../../../holochain-rust" }
 holochain_json_derive = "=0.0.23"
 hdk-helpers = { path="../../../common/hdk-helpers" }
 
