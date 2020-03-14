@@ -2,29 +2,37 @@ use hdk::{
     self,
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
-    holochain_core_types::{dna::entry_types::Sharing, entry::Entry},
-    holochain_json_api::{error::JsonError, json::JsonString},
+    holochain_core_types::{
+        dna::entry_types::Sharing,
+        entry::Entry,
+        time::Iso8601,
+        link::LinkMatch,
+    },
+    holochain_json_api::{
+        error::JsonError,
+        json::JsonString,
+    },
     holochain_persistence_api::cas::content::Address,
-    utils, AGENT_ADDRESS,
+    utils,
+    AGENT_ADDRESS,
+};
+use super::thread::{
+    MESSAGE_LINK_TYPE,
+    THREAD_ENTRY_TYPE
 };
 
-use super::thread::{MESSAGE_LINK_TYPE, THREAD_ENTRY_TYPE};
-
-pub const MESSAGE_ENTRY_TYPE: &str = "message";
-
-pub const MESSAGE_MESSAGE_THREAD_LINK_TYPE: &str = "message_threads";
+// Core types
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct Message {
-    pub timestamp: String,
+pub struct MessageEntry {
+    pub timestamp: Iso8601,
     pub text: String,
     pub thread_address: Address,
     pub creator: Address,
 }
-
-impl Message {
-    pub fn with_address(&self, address: Address) -> MessageWithAddress {
-        MessageWithAddress {
+impl MessageEntry {
+    pub fn to_message(&self, address: Address) -> Message {
+        Message {
             address,
             thread_address: self.thread_address.clone(),
             text: self.text.clone(),
@@ -33,44 +41,74 @@ impl Message {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct MessageWithAddress {
-    address: Address,
-    pub timestamp: String,
+pub struct Message {
+    pub address: Address,
+    pub timestamp: Iso8601,
     pub text: String,
     pub thread_address: Address,
     pub creator: Address,
 }
+pub const MESSAGE_ENTRY_TYPE: &str = "message";
+pub const MESSAGE_MESSAGE_THREAD_LINK_TYPE: &str = "message_threads";
+
+// API
 
 pub fn create(
     thread_address: Address,
     text: String,
-    timestamp: String,
-) -> ZomeApiResult<MessageWithAddress> {
-    let message = Message {
+    timestamp: Iso8601,
+) -> ZomeApiResult<Message> {
+    let message_entry = MessageEntry {
         text,
-        timestamp: timestamp,
+        timestamp: timestamp.clone().into(),
         thread_address: thread_address.to_owned(),
         creator: AGENT_ADDRESS.to_string().into(),
     };
-    let message_entry = Entry::App(MESSAGE_ENTRY_TYPE.into(), message.clone().into());
-    let message_addr = hdk::commit_entry(&message_entry)?;
+    let message_address = hdk::commit_entry(
+        &Entry::App(MESSAGE_ENTRY_TYPE.into(), message_entry.clone().into())
+    )?;
+
     utils::link_entries_bidir(
-        &message_addr,
+        &message_address,
         &thread_address,
         MESSAGE_MESSAGE_THREAD_LINK_TYPE,
         MESSAGE_LINK_TYPE,
         "",
         "",
     )?;
-    Ok(message.with_address(message_addr))
+
+    Ok(message_entry.to_message(message_address.clone()))
 }
 
-pub fn get(message_addr: Address) -> ZomeApiResult<MessageWithAddress> {
-    utils::get_as_type::<Message>(message_addr.clone())
-        .map(|message| message.with_address(message_addr))
+pub fn all(thread_address: Address) -> ZomeApiResult<Vec<Message>> {
+    Ok(hdk::get_links(
+        &thread_address,
+        LinkMatch::Exactly(MESSAGE_LINK_TYPE.into()),
+        LinkMatch::Any,
+    )?
+    .addresses()
+    .iter()
+    .rev()
+    .map(|address| get(address.clone()).unwrap())
+    .collect::<Vec<Message>>())
 }
+
+fn get(message_address: Address) -> ZomeApiResult<Message> {
+    let message_entry = utils::get_as_type::<MessageEntry>(message_address.clone())?;
+
+    Ok(
+        Message {
+            address: message_address,
+            thread_address: message_entry.thread_address,
+            creator: AGENT_ADDRESS.to_string().into(),
+            text: message_entry.text,
+            timestamp: message_entry.timestamp,
+        }
+    )
+}
+
+// PRIVATE
 
 pub fn def() -> ValidatingEntryType {
     entry!(
@@ -82,7 +120,7 @@ pub fn def() -> ValidatingEntryType {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_validation_data: hdk::EntryValidationData<Message>| {
+        validation: |_validation_data: hdk::EntryValidationData<MessageEntry>| {
             Ok(())
         },
 

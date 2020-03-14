@@ -1,40 +1,41 @@
 const { one } = require('../config')
 module.exports = (scenario) => {
 
-scenario('Can create a message and retrieve it', async (s, t) => {
-  const { alice } = await s.players({alice: one}, true)
-
+  scenario('Can create a message and retrieve it', async (s, t) => {
+    const { alice } = await s.players({alice: one}, true)
+    const timestamp = "2020-01-09T06:56:08+00:00"
     // add a thread
-    const addResult = await alice.callSync("app", "messages", "create_thread", {
-      participant_ids: []
+    const createThreadResult = await alice.callSync("app", "messages", "create_thread", {
+      participant_addresses: [],
+      timestamp
     })
 
-    const threadAddress = addResult.Ok
+    const { address: threadAddress } = createThreadResult.Ok
 
     t.equal(threadAddress.length, 46) // thread was created and hash returned
 
-    // post a message
-    const testMessage = {
+    const createMessageInput = {
       thread_address: threadAddress,
       text: "Hello hylo+holo!",
-      timestamp: "000"
+      timestamp
     }
-    const postResult = await alice.callSync("app", "messages", "create", testMessage)
-    const { address } = postResult.Ok
+    const createMessageZomeApiResult = await alice.callSync("app", "messages", "create_message", createMessageInput)
+    const createMessageResult = createMessageZomeApiResult.Ok
+    const expectedCreateMessageResult = {
+      address: createMessageResult.address,
+      timestamp: createMessageInput['timestamp'],
+      text: createMessageInput['text'],
+      thread_address: createMessageInput['thread_address'],
+      creator: alice.info('app').agentAddress
+    }
 
-    t.deepEqual(postResult.Ok, {...testMessage, creator: alice.info('app').agentAddress, address})
+    t.deepEqual(createMessageResult, expectedCreateMessageResult)
 
-    // retrieve message from channel
-    const get_result = await alice.callSync("app", "messages", "get_thread_messages", {
+    const get_result = await alice.callSync("app", "messages", "all_messages_for_thread", {
       thread_address: threadAddress,
     })
     t.equal(get_result.Ok.length, 1)
-    t.deepEqual(get_result.Ok[0], {...testMessage, creator: alice.info('app').agentAddress, address})
-
-    const get_message_result = await alice.callSync("app", "messages", "get", {
-      message_addr: address
-    })
-    t.deepEqual(get_message_result.Ok, {...testMessage, creator: alice.info('app').agentAddress, address})
-
+    t.deepEqual(get_result.Ok[0], expectedCreateMessageResult)
   })
+
 }

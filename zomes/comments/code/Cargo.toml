@@ -5,11 +5,16 @@ authors = ["pospi <pospi@spadgos.com>"]
 edition = "2018"
 
 [dependencies]
-serde = "=1.0.89"
-serde_json = { version = "=1.0.39", features = ["preserve_order"] }
-serde_derive = "=1.0.89"
-hdk = { path = "../../../holochain-rust/crates/hdk" }
-holochain_json_derive = "=0.0.17"
+# serde = "=1.0.89"
+# serde_json = { version = "=1.0.39", features = ["preserve_order"] }
+# serde_derive = "=1.0.89"
+# hdk = { path = "../../../holochain-rust/crates/hdk" }
+# holochain_json_derive = "=0.0.17"
+serde = "=1.0.100"
+serde_json = { version = "=1.0.47", features = ["preserve_order"] }
+serde_derive = "=1.0.100"
+hdk = { version = "0.0.43-alpha3" }
+holochain_json_derive = "=0.0.20"
 hdk-helpers = { path="../../../common/hdk-helpers" }
 
 [lib]

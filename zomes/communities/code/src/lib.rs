@@ -22,7 +22,7 @@ use hdk::{
 };
 
 mod communities;
-use communities::{Community, COMMUNITY_ENTRY_TYPE};
+use communities::{CommunityEntry, COMMUNITY_ENTRY_TYPE};
 
 // I'll put this here for now but really it should live in the .dna.json properties
 const DEFAULT_COMMUNITIES: &[(&str, &str)] = &[
@@ -44,7 +44,7 @@ define_zome! {
             hdk::commit_entry(
                 &Entry::App (
                     COMMUNITY_ENTRY_TYPE.into(),
-                    Community::from(tuple).into(),
+                    CommunityEntry::from(tuple).into(),
                 )
             )?;
         }
@@ -67,22 +67,22 @@ define_zome! {
     functions: [
         get: {
             inputs: |address: Address|,
-            outputs: |result: ZomeApiResult<communities::CommunityWithAddress>|,
+            outputs: |result: ZomeApiResult<communities::Community>|,
             handler: communities::get
         }
         get_by_slug: {
             inputs: |slug: String|,
-            outputs: |result: ZomeApiResult<communities::CommunityWithAddress>|,
+            outputs: |result: ZomeApiResult<communities::Community>|,
             handler: communities::get_by_slug
         }
         create: {
             inputs: |name: String, slug: String|,
-            outputs: |result: ZomeApiResult<communities::CommunityWithAddress>|,
+            outputs: |result: ZomeApiResult<communities::Community>|,
             handler: communities::create
         }
         all: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<Vec<communities::CommunityWithAddress>>|,
+            outputs: |result: ZomeApiResult<Vec<communities::Community>>|,
             handler: communities::all
         }
     ]

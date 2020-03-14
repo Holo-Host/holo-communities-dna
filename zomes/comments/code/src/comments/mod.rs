@@ -1,5 +1,5 @@
 /**
- * Comment entry type definition
+ * CommentEntry entry type definition
  *
  * @package: Holochain comments
  * @author:  pospi <pospi@spadgos.com>
@@ -27,28 +27,19 @@ use hdk::{
 };
 use hdk_helpers::commit_if_not_in_chain;
 
-// tag for links from base to comment
+// Core types
 
-pub type Base = String;
-
-pub const COMMENT_ENTRY_TYPE: &str = "comment";
-pub const BASE_ENTRY_TYPE: &str = "base";
-pub const COMMENT_LINK_TYPE: &str = "commented_on";
-
-// comment type and result format
-
+pub type Base = String; // tag for links from base to comment
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-pub struct Comment {
+pub struct CommentEntry {
     base: String,
     creator: Address,
     text: String,
     timestamp: Iso8601,
 }
-
-// Converts a comment (without address) into a comment result for returning from the api call
-impl Comment {
-    pub fn with_address(&self, address: Address) -> CommentWithAddress {
-        CommentWithAddress {
+impl CommentEntry {
+    pub fn with_address(&self, address: Address) -> Comment {
+        Comment {
             address,
             base: self.base.clone(),
             text: self.text.clone(),
@@ -57,21 +48,23 @@ impl Comment {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-pub struct CommentWithAddress {
+pub struct Comment {
     address: Address,
     base: String,
     creator: Address,
     text: String,
     timestamp: Iso8601,
 }
+pub const COMMENT_ENTRY_TYPE: &str = "comment";
+pub const BASE_ENTRY_TYPE: &str = "base";
+pub const COMMENT_LINK_TYPE: &str = "commented_on";
 
 // API methods
 
-pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<CommentWithAddress> {
+pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<Comment> {
     // create and store the comment
-    let comment = Comment {
+    let comment = CommentEntry {
         base: base.clone(),
         text: text.clone(),
         timestamp: timestamp.clone(),
@@ -90,11 +83,11 @@ pub fn create(base: String, text: String, timestamp: Iso8601) -> ZomeApiResult<C
     Ok(comment.with_address(address))
 }
 
-pub fn get(address: Address) -> ZomeApiResult<CommentWithAddress> {
-    utils::get_as_type::<Comment>(address.clone()).map(|comment| comment.with_address(address))
+pub fn get(address: Address) -> ZomeApiResult<Comment> {
+    utils::get_as_type::<CommentEntry>(address.clone()).map(|comment| comment.with_address(address))
 }
 
-pub fn all_for_base(base: String) -> ZomeApiResult<Vec<CommentWithAddress>> {
+pub fn all_for_base(base: String) -> ZomeApiResult<Vec<Comment>> {
     let address = hdk::entry_address(&Entry::App(
         BASE_ENTRY_TYPE.into(),
         RawString::from(base).into(),
@@ -120,7 +113,7 @@ pub fn comment_def() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<Comment>| {
+        validation: | _validation_data: hdk::EntryValidationData<CommentEntry>| {
             Ok(())
         }
     )

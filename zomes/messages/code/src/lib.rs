@@ -9,8 +9,15 @@ extern crate holochain_json_derive;
 
 use hdk::{
     error::ZomeApiResult,
-    holochain_core_types::{agent::AgentId, validation::EntryValidationData},
-    holochain_json_api::{error::JsonError, json::JsonString},
+    holochain_core_types::{
+        agent::AgentId,
+        validation::EntryValidationData,
+        time::Iso8601,
+    },
+    holochain_json_api::{
+        error::JsonError,
+        json::JsonString,
+    },
     holochain_persistence_api::cas::content::Address,
 };
 
@@ -39,47 +46,47 @@ define_zome! {
      }}
 
     functions: [
-        // message functions
-        create: {
-            inputs: |thread_address: Address, text: String, timestamp: String|,
-            outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
+        create_thread: {
+            // TODO: becomes Iso8601 once core regex tagging issue fixed
+            inputs: |participant_addresses: Vec<Address>, timestamp: String|,
+            outputs: |result: ZomeApiResult<thread::Thread>|,
+            handler: thread::create
+        }
+        create_message: {
+            inputs: |thread_address: Address, text: String, timestamp: Iso8601|,
+            outputs: |result: ZomeApiResult<message::Message>|,
             handler: message::create
         }
-        get: {
-            inputs: |message_addr: Address|,
-            outputs: |result: ZomeApiResult<message::MessageWithAddress>|,
-            handler: message::get
-        }
-        // thread functions
-        get_threads: {
+        all_threads: {
             inputs: | |,
-            outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: thread::get_threads
+            outputs: |result: ZomeApiResult<Vec<thread::Thread>>|,
+            handler: thread::all
         }
-        create_thread: {
-            inputs: |participant_ids: Vec<String>|,
-            outputs: |result: ZomeApiResult<Address>|,
-            handler: thread::create_thread
-        }
-        get_participants: {
+        get_thread: {
             inputs: |thread_address: Address|,
-            outputs: |result: ZomeApiResult<Vec<Address>>|,
-            handler: thread::get_thread_participants
+            outputs: |result: ZomeApiResult<thread::Thread>|,
+            handler: thread::get
         }
-        get_thread_messages: {
+        all_messages_for_thread: {
             inputs: |thread_address: Address|,
-            outputs: |result: ZomeApiResult<Vec<message::MessageWithAddress>>|,
-            handler: thread::get_thread_messages
+            outputs: |result: ZomeApiResult<Vec<message::Message>>|,
+            handler: message::all
+        }
+        set_last_read_time: {
+            // TODO: becomes Iso8601 once core regex tagging issue fixed
+            inputs: |thread_address: Address, last_read_time: String|,
+            outputs: |result: ZomeApiResult<thread::Thread>|,
+            handler: thread::set_last_read_time
         }
     ]
     traits: {
         hc_public [
-            create,
-            get,
-            get_threads,
             create_thread,
-            get_participants,
-            get_thread_messages
+            create_message,
+            all_threads,
+            get_thread,
+            all_messages_for_thread,
+            set_last_read_time
         ]
     }
 }

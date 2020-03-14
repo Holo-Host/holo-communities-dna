@@ -8,13 +8,16 @@ use hdk::{
     },
 };
 
-pub const ANCHOR_ENTRY_TYPE: &str = "anchor";
-pub const ANCHOR_PERSON_LINK_TYPE: &str = "registered";
+// Core types
 
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct Anchor {
     pub name: String,
 }
+pub const ANCHOR_ENTRY_TYPE: &str = "anchor";
+pub const ANCHOR_PERSON_LINK_TYPE: &str = "registered";
+
+// API
 
 pub fn def() -> ValidatingEntryType {
     entry!(

@@ -19,8 +19,11 @@ use hdk::{
     AGENT_ADDRESS,
 };
 
+// Core types
+
+pub type Base = RawString;
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct Post {
+pub struct PostEntry {
     pub title: String,
     pub details: String,
     pub post_type: String,
@@ -29,10 +32,9 @@ pub struct Post {
     pub timestamp: String,
     pub base: String,
 }
-
-impl Post {
-    pub fn with_address(&self, address: Address) -> PostWithAddress {
-        PostWithAddress {
+impl PostEntry {
+    pub fn with_address(&self, address: Address) -> Post {
+        Post {
             address,
             title: self.title.clone(),
             details: self.details.clone(),
@@ -44,9 +46,8 @@ impl Post {
         }
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct PostWithAddress {
+pub struct Post {
     pub address: Address,
     pub title: String,
     pub details: String,
@@ -56,22 +57,19 @@ pub struct PostWithAddress {
     pub timestamp: String,
     pub base: String,
 }
-
-pub type Base = RawString;
-
-const POST_ENTRY_TYPE: &str = "post";
-const POST_BASE_ENTRY: &str = "post_base";
-const POST_LINK_TYPE: &str = "posted_in";
-
-// TODO: Return { posts, more } response format for pagination
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
 pub struct GetPostsResult {
-    posts: Vec<PostWithAddress>,
+    posts: Vec<Post>,
     more: bool,
 }
+pub const POST_ENTRY_TYPE: &str = "post";
+pub const POST_BASE_ENTRY: &str = "post_base";
+pub const POST_LINK_TYPE: &str = "posted_in";
 
-pub fn get(address: Address) -> ZomeApiResult<PostWithAddress> {
-    utils::get_as_type::<Post>(address.clone()).map(|post| post.with_address(address))
+// API
+
+pub fn get(address: Address) -> ZomeApiResult<Post> {
+    utils::get_as_type::<PostEntry>(address.clone()).map(|post| post.with_address(address))
 }
 
 pub fn create(
@@ -81,11 +79,11 @@ pub fn create(
     post_type: String,
     announcement: bool,
     timestamp: String,
-) -> ZomeApiResult<PostWithAddress> {
+) -> ZomeApiResult<Post> {
     let base_entry = Entry::App(POST_BASE_ENTRY.into(), RawString::from(base.clone()).into());
     let base_address = hdk::commit_entry(&base_entry)?;
 
-    let post: Post = Post {
+    let post: PostEntry = PostEntry {
         title,
         details,
         post_type,
@@ -123,7 +121,12 @@ pub fn all_for_base(base: String) -> ZomeApiResult<GetPostsResult> {
       .map(|address| get(address.to_string().into()).unwrap())
       .collect();
     
-    Ok(GetPostsResult { posts, more: false })
+    Ok(
+        GetPostsResult {
+            posts,
+            more: false
+        }
+    )
     // Ok(hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
     //   .addresses()
     //   .iter()
@@ -142,7 +145,7 @@ pub fn post_def() -> ValidatingEntryType {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_validation_data: hdk::EntryValidationData<Post>| {
+        validation: |_validation_data: hdk::EntryValidationData<PostEntry>| {
             Ok(())
         }
     )

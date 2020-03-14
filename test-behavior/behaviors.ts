@@ -107,7 +107,7 @@ const messages = async (s, t, players: Players) => {
 
   // add a thread
   const addResult = await instance.call("messages", "create_thread", {
-    participant_ids: []
+    participant_addresses: []
   })
   await s.consistency()
 
