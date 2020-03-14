@@ -36,7 +36,7 @@ build:		$(DNA)
 # DNA's name, then this name is used by default, and the output directory is
 # created automatically.
 $(DNA):
-	hc package
+	./hc package
 
 .PHONY: test test-unit test-e2e test-stress test-sim2h test-node
 test:		test-unit test-e2e
@@ -47,9 +47,8 @@ test-unit:
 
 test-e2e:	$(DNA) test-sim2h test-node
 	@echo "Starting Scenario tests in $$(pwd)..."; \
-	    RUST_BACKTRACE=1 NETWORK_TYPE=sim2h hc test
-			#  \
-	    #     | test/node_modules/faucet/bin/cmd.js
+	    RUST_BACKTRACE=1 NETWORK_TYPE=sim2h ./hc test \
+	        | test/node_modules/faucet/bin/cmd.js
 
 test-node:
 	@echo "Setting up Scenario/Stress test Javascript..."; \
@@ -57,7 +56,7 @@ test-node:
 
 test-sim2h:
 	@echo "Starting sim2h_server on localhost:8999 (may already be running)..."; \
-	    sim2h_server -p 8999 >sim2h_server.log 2>&1 &
+	    ./sim2h_server -p 8999 >sim2h_server.log 2>&1 &
 
 
 # Generic targets; does not require a Nix environment

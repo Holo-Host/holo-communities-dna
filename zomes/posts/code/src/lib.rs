@@ -12,6 +12,7 @@ use hdk::{
     holochain_core_types::{
         agent::AgentId,
         validation::EntryValidationData,
+        time::Iso8601,
     },
     holochain_json_api::{
         error::JsonError,
@@ -55,8 +56,8 @@ define_zome! {
             handler: post::create
         }
         all_for_base: {
-            inputs: |base: String|,
-            outputs: |result: ZomeApiResult<post::GetPostsResult>|,
+            inputs: |base: String, from_time: Iso8601, limit: usize|,
+            outputs: |result: ZomeApiResult<post::PaginatedPostsCollection>|,
             handler: post::all_for_base
         }
     ]

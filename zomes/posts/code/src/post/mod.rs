@@ -6,6 +6,11 @@ use hdk::{
         dna::entry_types::Sharing,
         entry::Entry,
         link::LinkMatch,
+        time::Iso8601,
+        network::query::{
+            Pagination,
+            TimePagination,
+        },
     },
     holochain_json_api::{
         error::JsonError,
@@ -14,7 +19,12 @@ use hdk::{
             RawString,
         },
     },
-    holochain_persistence_api::cas::content::{Address},
+    holochain_persistence_api::cas::content::Address,
+    holochain_wasm_utils::api_serialization::{
+        get_links::{
+            GetLinksOptions,
+        },
+    },
     utils,
     AGENT_ADDRESS,
 };
@@ -58,7 +68,7 @@ pub struct Post {
     pub base: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
-pub struct GetPostsResult {
+pub struct PaginatedPostsCollection {
     posts: Vec<Post>,
     more: bool,
 }
@@ -100,7 +110,7 @@ pub fn create(
         )
     )?;
 
-    // link the post to its originating thing	
+    // link the post to its originating thing
     hdk::link_entries(	
         &base_address,	
         &post_address,	
@@ -111,28 +121,43 @@ pub fn create(
     Ok(post.with_address(post_address))
 }
 
-pub fn all_for_base(base: String) -> ZomeApiResult<GetPostsResult> {
-    let address = hdk::entry_address(&Entry::App(POST_BASE_ENTRY.into(), RawString::from(base).into()))?;
-    // TODO: Returning { posts, more } response format in anticipation of pagination
-    let posts = hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
-      .addresses()
-      .iter()
-      .rev()
-      .map(|address| get(address.to_string().into()).unwrap())
-      .collect();
-    
+pub fn all_for_base(
+    base: String,
+    from_time: Iso8601,
+    limit: usize
+) -> ZomeApiResult<PaginatedPostsCollection> {
+    let address = hdk::entry_address(
+        &Entry::App(POST_BASE_ENTRY.into(),
+        RawString::from(base).into())
+    )?;
+    let posts:Vec<Post> = hdk::get_links_with_options(
+        &address,
+        LinkMatch::Exactly(POST_LINK_TYPE.into()),
+        LinkMatch::Any,
+        GetLinksOptions {
+            pagination: Some(Pagination::Time(TimePagination {
+                from_time,
+                limit
+            })),
+            ..GetLinksOptions::default()
+        }
+    )?
+        .addresses()
+        .iter()
+        .map(|address| get(address.to_string().into()).unwrap())
+        .collect();
+    let more: bool = if posts.len() < limit.clone() {
+        false
+    } else {
+        true
+    };
+
     Ok(
-        GetPostsResult {
+        PaginatedPostsCollection {
             posts,
-            more: false
+            more
         }
     )
-    // Ok(hdk::get_links(&address, LinkMatch::Exactly(POST_LINK_TYPE.into()), LinkMatch::Any)?
-    //   .addresses()
-    //   .iter()
-    //   .map(|address| get(address.to_string().into()).unwrap())
-    //   .collect()
-    // )
 }
 
 pub fn post_def() -> ValidatingEntryType {
